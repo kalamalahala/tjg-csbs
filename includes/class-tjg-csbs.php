@@ -27,7 +27,8 @@
  * @subpackage Tjg_Csbs/includes
  * @author     Tyler Karle <tyler.karle@icloud.com>
  */
-class Tjg_Csbs {
+class Tjg_Csbs
+{
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -66,8 +67,9 @@ class Tjg_Csbs {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct() {
-		if ( defined( 'TJG_CSBS_VERSION' ) ) {
+	public function __construct()
+	{
+		if (defined('TJG_CSBS_VERSION')) {
 			$this->version = TJG_CSBS_VERSION;
 		} else {
 			$this->version = '1.0.0';
@@ -78,7 +80,6 @@ class Tjg_Csbs {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -97,33 +98,33 @@ class Tjg_Csbs {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_dependencies() {
+	private function load_dependencies()
+	{
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-tjg-csbs-loader.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-tjg-csbs-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-tjg-csbs-i18n.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-tjg-csbs-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-tjg-csbs-admin.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-tjg-csbs-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-tjg-csbs-public.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-tjg-csbs-public.php';
 
 		$this->loader = new Tjg_Csbs_Loader();
-
 	}
 
 	/**
@@ -135,12 +136,12 @@ class Tjg_Csbs {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function set_locale() {
+	private function set_locale()
+	{
 
 		$plugin_i18n = new Tjg_Csbs_i18n();
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
+		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
 	}
 
 	/**
@@ -150,13 +151,13 @@ class Tjg_Csbs {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
+	private function define_admin_hooks()
+	{
 
-		$plugin_admin = new Tjg_Csbs_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Tjg_Csbs_Admin($this->get_plugin_name(), $this->get_version());
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
+		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
+		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
 	}
 
 	/**
@@ -166,9 +167,10 @@ class Tjg_Csbs {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_public_hooks() {
+	private function define_public_hooks()
+	{
 
-		$plugin_public = new Tjg_Csbs_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Tjg_Csbs_Public($this->get_plugin_name(), $this->get_version());
 
 		// Array of hooks, filters, and shortcodes
 
@@ -184,19 +186,18 @@ class Tjg_Csbs {
 		);
 
 		$shortcode_hooks = array(
-			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates',
+			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates'
 		);
 
 		// Loop through action hooks and add them to the loader
-		foreach ( $action_hooks as $name => $hook_and_function ) {
-			$this->loader->add_action( $hook_and_function['hook'], $plugin_public, $hook_and_function['function'] );
+		foreach ($action_hooks as $name => $hook_and_function) {
+			$this->loader->add_action($hook_and_function['hook'], $plugin_public, $hook_and_function['function']);
 		}
 
 		// Loop through shortcode hooks and add them to the loader
-		foreach ( $shortcode_hooks as $name => $function ) {
-			$this->loader->add_shortcode( $name, $plugin_public, $function );
+		foreach ($shortcode_hooks as $name => $function) {
+			$this->loader->add_shortcode($name, $plugin_public, $function);
 		}
-		
 	}
 
 	/**
@@ -204,7 +205,8 @@ class Tjg_Csbs {
 	 *
 	 * @since    1.0.0
 	 */
-	public function run() {
+	public function run()
+	{
 		$this->loader->run();
 	}
 
@@ -215,7 +217,8 @@ class Tjg_Csbs {
 	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
 	 */
-	public function get_plugin_name() {
+	public function get_plugin_name()
+	{
 		return $this->plugin_name;
 	}
 
@@ -225,7 +228,8 @@ class Tjg_Csbs {
 	 * @since     1.0.0
 	 * @return    Tjg_Csbs_Loader    Orchestrates the hooks of the plugin.
 	 */
-	public function get_loader() {
+	public function get_loader()
+	{
 		return $this->loader;
 	}
 
@@ -235,8 +239,8 @@ class Tjg_Csbs {
 	 * @since     1.0.0
 	 * @return    string    The version number of the plugin.
 	 */
-	public function get_version() {
+	public function get_version()
+	{
 		return $this->version;
 	}
-
 }
