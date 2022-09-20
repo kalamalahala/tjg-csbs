@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Cornerstone Business Solutions - The Johnson Group
  * Plugin URI:        https://thejohnson.group/csb/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Functionality for the Cornerstone Business Solutions path on The Johnson Group website.
  * Version:           1.0.0
  * Author:            Tyler Karle
  * Author URI:        https://github.com/kalamalahala
