@@ -104,6 +104,9 @@ class Tjg_Csbs_Public {
 
 	// Shortcode for new candidate form
 	function csbs_upload_new_candidates() {
+		echo 'Callback found';
+		die;
+
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/shortcodes/tjg-csbs-upload-new-candidates.php';
 		$output = new_candidate_form();
 		return $output;
