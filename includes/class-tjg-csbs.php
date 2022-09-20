@@ -170,12 +170,33 @@ class Tjg_Csbs {
 
 		$plugin_public = new Tjg_Csbs_Public( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		// Array of hooks, filters, and shortcodes
 
-		// filter for page_template
-		// $this->loader->add_filter( 'page_template', $plugin_public, 'tjg_csbs_main_template' );
+		$action_hooks = array(
+			'scripts' => array(
+				'hook' => 'wp_enqueue_scripts',
+				'function' => 'enqueue_scripts',
+			),
+			'styles' => array(
+				'hook' => 'wp_enqueue_scripts',
+				'function' => 'enqueue_styles',
+			),
+		);
 
+		$shortcode_hooks = array(
+			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates',
+		);
+
+		// Loop through action hooks and add them to the loader
+		foreach ( $action_hooks as $name => $hook_and_function ) {
+			$this->loader->add_action( $hook_and_function['hook'], $plugin_public, $hook_and_function['function'] );
+		}
+
+		// Loop through shortcode hooks and add them to the loader
+		foreach ( $shortcode_hooks as $name => $function ) {
+			$this->loader->add_shortcode( $name, $plugin_public, $function );
+		}
+		
 	}
 
 	/**

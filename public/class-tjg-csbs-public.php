@@ -100,29 +100,13 @@ class Tjg_Csbs_Public {
 
 	}
 
-	// Template callback
-	public function tjg_csbs_main_template() {
+	// Begin Shortcode inclusions
 
-		global $post;
-
-		if ( $post->post_type == 'tjg_csbs' ) {
-
-			// Get the template
-			$template = plugin_dir_path( __FILE__ ) . 'partials/tjg-csbs-public-display.php';
-
-			// Check if the template exists
-			if ( file_exists( $template ) ) {
-
-				// Return the template
-				return $template;
-
-			} else {
-				echo 'Template not found';
-				die;
-			}
-
-		}
-
+	// Shortcode for new candidate form
+	function csbs_upload_new_candidates() {
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/shortcodes/tjg-csbs-upload-new-candidates.php';
+		$output = new_candidate_form();
+		return $output;
 	}
 
 }
