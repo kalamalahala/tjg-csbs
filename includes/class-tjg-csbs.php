@@ -186,7 +186,7 @@ class Tjg_Csbs
 		);
 
 		$shortcode_hooks = array(
-			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates'
+			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates_shortcode'
 		);
 
 		// Loop through action hooks and add them to the loader
