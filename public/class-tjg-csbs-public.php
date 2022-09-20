@@ -75,6 +75,9 @@ class Tjg_Csbs_Public {
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tjg-csbs-public.css', array(), $this->version, 'all' );
 
+		// Add boostrap CSS
+		wp_enqueue_style( 'tjg-csbs-bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css', array(), $this->version, 'all' );
+
 	}
 
 	/**
@@ -97,6 +100,9 @@ class Tjg_Csbs_Public {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tjg-csbs-public.js', array( 'jquery' ), $this->version, false );
+
+		// Add boostrap JS bundle
+		wp_enqueue_script( 'tjg-csbs-bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
 
 	}
 
