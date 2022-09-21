@@ -99,10 +99,18 @@ class Tjg_Csbs_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tjg-csbs-public.js', array( 'jquery' ), $this->version, false );
-
+		
 		// Add boostrap JS bundle
-		wp_enqueue_script( 'tjg-csbs-bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
+		// Exit script loading unless csb is inside the URL
+		$uri = $_SERVER['REQUEST_URI'];
+		$uri = explode('/', $uri);
+		$uri = in_array('csb', $uri);
+		if ( !$uri ) {
+			return;
+		} else {
+			wp_enqueue_script( 'tjg-csbs-bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tjg-csbs-public.js', array( 'jquery' ), $this->version, false );
+		}
 
 	}
 
