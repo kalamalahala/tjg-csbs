@@ -102,7 +102,7 @@ class Tjg_Csbs_Public {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tjg-csbs-public.js', array( 'jquery' ), $this->version, false );
 
 		// Add boostrap JS bundle
-		wp_enqueue_script( 'tjg-csbs-bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
+		// wp_enqueue_script( 'tjg-csbs-bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
 
 	}
 
@@ -110,6 +110,12 @@ class Tjg_Csbs_Public {
 
 	// Shortcode for new candidate form
 	function csbs_upload_new_candidates_shortcode() {
+		// echo $_SERVER contents and die
+		echo '<pre>';
+		print_r($_SERVER);
+		echo '</pre>';
+		die();
+
 		include plugin_dir_path( dirname( __FILE__ ) ) . 'public/shortcodes/tjg-csbs-upload-new-candidates.php';
 		$output = new_candidate_form();
 		return $output;
