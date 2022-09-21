@@ -112,7 +112,7 @@ class Tjg_Csbs_Public {
 	function csbs_upload_new_candidates_shortcode() {
 		// echo $_SERVER contents and die
 		echo '<pre>';
-		print_r($_SERVER);
+		print_r($_SERVER['REQUEST_URI']);
 		echo '</pre>';
 		die();
 
