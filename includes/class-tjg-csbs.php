@@ -170,6 +170,14 @@ class Tjg_Csbs
 	private function define_public_hooks()
 	{
 
+		// Exit script loading unless csb is inside the URL
+		$uri = $_SERVER['REQUEST_URI'];
+		$uri = explode('/', $uri);
+		$uri = in_array('csb', $uri);
+		if ( !$uri ) {
+			return;
+		}
+
 		$plugin_public = new Tjg_Csbs_Public($this->get_plugin_name(), $this->get_version());
 
 		// Array of hooks, filters, and shortcodes
