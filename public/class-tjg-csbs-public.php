@@ -113,11 +113,8 @@ class Tjg_Csbs_Public {
 		
 		$uri = $_SERVER['REQUEST_URI'];
 		$uri = explode('/', $uri);
-		if ( strpos($uri[0], 'csb') !== false ) {
-			die;
-		} else {
-			echo 'yeetle';
-		}
+		$contains_csb = in_array('csb', $uri);
+		echo $contains_csb;
 
 		include plugin_dir_path( dirname( __FILE__ ) ) . 'public/shortcodes/tjg-csbs-upload-new-candidates.php';
 		$output = new_candidate_form();
