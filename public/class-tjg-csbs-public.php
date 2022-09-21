@@ -73,10 +73,20 @@ class Tjg_Csbs_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tjg-csbs-public.css', array(), $this->version, 'all' );
+		// Don't load stylesheets unless inside /csb/ URI path
 
-		// Add boostrap CSS
-		wp_enqueue_style( 'tjg-csbs-bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css', array(), $this->version, 'all' );
+		$current_URI = $_SERVER['REQUEST_URI'];
+		$URI = explode('/', $current_URI);
+		$csb = in_array('csb', $URI);
+
+		if ($csb) {
+			wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tjg-csbs-public.css', array(), $this->version, 'all' );
+			// Add bootstrap CSS
+			wp_enqueue_style( 'tjg-csbs-bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css', array(), $this->version, 'all' );
+		} else {
+			// do nothing
+		}
+
 
 	}
 
@@ -105,11 +115,12 @@ class Tjg_Csbs_Public {
 		$uri = $_SERVER['REQUEST_URI'];
 		$uri = explode('/', $uri);
 		$uri = in_array('csb', $uri);
-		if ( !$uri ) {
-			return; // CPANEL AND GIT ON BLUEHOST IS AWFUL AND I HATE IT
-		} else {
+		
+		if ($uri) {
 			wp_enqueue_script( 'tjg-csbs-bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tjg-csbs-public.js', array( 'jquery' ), $this->version, false );
+		} else {
+			// do nothing
 		}
 
 	}
