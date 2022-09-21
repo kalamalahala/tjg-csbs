@@ -106,7 +106,7 @@ class Tjg_Csbs_Public {
 		$uri = explode('/', $uri);
 		$uri = in_array('csb', $uri);
 		if ( !$uri ) {
-			return;
+			return; // CPANEL AND GIT ON BLUEHOST IS AWFUL AND I HATE IT
 		} else {
 			wp_enqueue_script( 'tjg-csbs-bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tjg-csbs-public.js', array( 'jquery' ), $this->version, false );
