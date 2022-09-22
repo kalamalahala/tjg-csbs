@@ -29,14 +29,58 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
-	// When the page is ready, add text to the page
 	$(document).ready(function() {
+
 		let form = document.getElementById('tjg-csbs-upload-new-candidates');
 		let submitButton = document.getElementById('tjg-csbs-upload-submit');
 		let fileInput = document.getElementById('tjg-csbs-upload-new-candidates-file');
 		let textarea = document.getElementById('tjg-csbs-upload-new-candidates-summary');
-		
-		$(document).on('submit', form, function(e) {
+
+		// Collect file information when selected
+		$(fileInput).on('change', function() {
+			let file = fileInput.files[0];
+
+			console.log('File selected: ' + file.name);
+			
+			// Disable submit until file is parsed
+			$(submitButton).disabled = true;
+			
+			// assemble ajax data array
+			let ajaxData = new FormData();
+			ajaxData.append('action', 'tjg_csbs_primary_ajax');
+			ajaxData.append('method', 'get_spreadsheet_summary');
+			ajaxData.append('nonce', tjg_csbs_ajax_object.nonce);
+			ajaxData.append('file', file);
+
+			// Send AJAX request to get spreadsheet summary
+			$.ajax({
+				url: tjg_csbs_ajax_object.ajax_url,
+				type: 'POST',
+				contentType: false,
+				processData: false,
+				data: ajaxData,
+				success: function(response) {
+					console.log('Response: ' + response.data)
+					textarea.value = 'Response: ' + response.data;
+				},
+				error: function(error) {
+					console.log('Error: ' + error.responseText);
+					textarea.value = 'Error: ' + error.responseText;
+				},
+				complete: function() {
+					$(submitButton).disabled = false;
+				}
+			}); // End AJAX request
+
+		}); // End fileInput change event
+
+
+
+
+		/**
+		 * Candidate Form Submit Handler
+		 */
+		$(form).on('submit', form, function(e) {
 			// Don't submit the form normally
 			e.preventDefault();
 
@@ -51,7 +95,18 @@
 
 			// If no file was selected, display an error message and re-enable the button
 			if (file === undefined) {
+				// Animate.min.css headShake animation
+				$(fileInput).addClass('animate__animated animate__headShake');
+
+				// Remove the animation class after 1 second
+				setTimeout(function() {
+					$(fileInput).removeClass('animate__animated animate__headShake');
+				}, 1000);
+
+				// Display error message
 				textarea.innerHTML = 'No file selected. Please select a file and try again.';
+
+				// Re-enable the button
 				submitButton.innerHTML = 'Submit Candidate File';
 				submitButton.disabled = false;
 				return;
@@ -105,10 +160,6 @@
 			
 		});
 		
-
-
-		// Add text to the page
-		$(textarea).text('Upload new candidates and script loaded');
 
 	});
 

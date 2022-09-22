@@ -18,7 +18,7 @@
                     <div class="form-group row">
                         <label for="tjg-csbs-upload-new-candidates-file" class="col-sm-2 col-form-label">Upload File</label>
                         <div class="col-sm-10">
-                            <input type="file" class="form-control-file" id="tjg-csbs-upload-new-candidates-file" name="tjg-csbs-upload-new-candidates-file">
+                            <input type="file" class="form-control-file" id="tjg-csbs-upload-new-candidates-file" name="tjg-csbs-upload-new-candidates-file" accept=".xls,.xlsx">
                         </div>
                     </div>
                     <!-- Upload Contents Summary -->

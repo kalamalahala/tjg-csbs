@@ -124,6 +124,11 @@ class Tjg_Csbs
 		 */
 		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-tjg-csbs-public.php';
 
+		/**
+		 * Include composer vendor/autoload.php
+		 */
+		require_once plugin_dir_path(dirname(__FILE__)) . 'vendor/autoload.php';
+		
 		$this->loader = new Tjg_Csbs_Loader();
 	}
 
