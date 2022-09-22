@@ -183,6 +183,14 @@ class Tjg_Csbs
 				'hook' => 'wp_enqueue_scripts',
 				'function' => 'enqueue_styles',
 			),
+			'primary_ajax' => array(
+				'hook' => 'wp_ajax_tjg_csbs_primary_ajax',
+				'function' => 'tjg_csbs_ajax_primary',
+			),
+			'nopriv_ajax' => array(
+				'hook' => 'wp_ajax_nopriv_tjg_csbs_primary_ajax',
+				'function' => 'tjg_csbs_ajax_no_priv',
+			),
 		);
 
 		$shortcode_hooks = array(
@@ -193,7 +201,7 @@ class Tjg_Csbs
 		foreach ($action_hooks as $name => $hook_and_function) {
 			$this->loader->add_action($hook_and_function['hook'], $plugin_public, $hook_and_function['function']);
 		}
-
+		
 		// Loop through shortcode hooks and add them to the loader
 		foreach ($shortcode_hooks as $name => $function) {
 			$this->loader->add_shortcode($name, $plugin_public, $function);
