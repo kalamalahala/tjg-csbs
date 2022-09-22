@@ -10,6 +10,10 @@
  * @subpackage Tjg_Csbs/public
  */
 
+
+require_once( plugin_dir_path( __FILE__ ) . '../' );
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -83,6 +87,8 @@ class Tjg_Csbs_Public {
 			wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tjg-csbs-public.css', array(), $this->version, 'all' );
 			// Add bootstrap CSS
 			wp_enqueue_style( 'tjg-csbs-bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css', array(), $this->version, 'all' );
+			// Add Animate.min.css
+			wp_enqueue_style( 'tjg-csbs-animate-css', plugin_dir_url( __FILE__ ) . 'css/animate.min.css', array(), $this->version, 'all' );
 		} else {
 			// do nothing
 		}
@@ -108,27 +114,29 @@ class Tjg_Csbs_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tjg-csbs-public.js', array( 'jquery' ), $this->version, false );
 		
-		// AJAX for New Candidates Upload
-		wp_localize_script( $this->plugin_name, 'tjg_csbs_ajax_object', array(
-			'ajax_url' => admin_url( 'admin-ajax.php' ),
-			'nonce' => wp_create_nonce( 'tjg_csbs_nonce' )
-		));
-
-		// Add boostrap JS bundle
 		// Exit script loading unless csb is inside the URL
 		$uri = $_SERVER['REQUEST_URI'];
 		$uri = explode('/', $uri);
-		$uri = in_array('csb', $uri);
+		$csb = in_array('csb', $uri);
 		
-		if ($uri) {
+		if ($csb == true) {
+			// Add boostrap JS bundle
 			wp_enqueue_script( 'tjg-csbs-bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tjg-csbs-public.js', array( 'jquery' ), $this->version, false );
+			
+			// AJAX for New Candidates Upload
+			wp_localize_script( $this->plugin_name, 'tjg_csbs_ajax_object', array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'nonce' => wp_create_nonce( 'tjg_csbs_nonce' )
+			));
 		} else {
 			// do nothing
 		}
 
 	}
+
+
 
 	/**
 	 * AJAX handler/router for the TJG CSBS Plugin
@@ -143,39 +151,54 @@ class Tjg_Csbs_Public {
 		$verify = check_ajax_referer( 'tjg_csbs_nonce', 'nonce' );
 		if ( $verify == false ) {
 			wp_send_json_error( 'Nonce verification failed' );
+			die();
 		}
 		
 		if ( ! isset( $_POST['method'] ) ) {
 			wp_send_json_error( 'No method specified' );
+			die();
 		}
 		// Check for ajax method
 		$method = $_POST['method'];
 		$output = '';
-
-		// log to qm/debug bar the contents of $_POST and $_FILES
-
-		foreach ($_POST as $key => $value) {
-			do_action('qm/debug', $key . ' => ' . $value);
-		}
-
-		foreach ($_FILES as $key => $value) {
-			do_action('qm/debug', $key . ' => ' . $value);
-		}
-		// Send output
-		wp_send_json_success( $output );
-		die();
 		
 		// Switch on method
 		switch ( $method ) {
 			case 'upload_new_candidates':
 				$output = $this->tjg_csbs_ajax_parse_spreadsheet($_POST['file']);
 				break;
+			case 'get_spreadsheet_summary':
+				$output = $this->tjg_csbs_ajax_get_spreadsheet_summary($_FILES['file']);
+				break;
 			default:
 				wp_send_json_error( 'Invalid method' );
-				break;
+				die();
 		}
+
+		// Send output
+		wp_send_json_success( $output );
+		die();
 		
 	}
+
+	/**
+	 * AJAX handler for parsing spreadsheet
+	 */
+	public function tjg_csbs_ajax_get_spreadsheet_summary($file) {
+		// load file into PHPSpreadsheet
+		$reader = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
+
+
+
+
+
+
+
+
+		wp_send_json_success('tjg_csbs_ajax_get_spreadsheet_summary()');
+		die();
+	}
+
 
 	/**
 	 * Handle New Candidate Upload
