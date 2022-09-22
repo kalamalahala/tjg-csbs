@@ -35,9 +35,16 @@
 		let submitButton = document.getElementById('tjg-csbs-upload-submit');
 		let fileInput = document.getElementById('tjg-csbs-upload-new-candidates-file');
 		let textarea = document.getElementById('tjg-csbs-upload-new-candidates-summary');
+		let trashButton = document.getElementById('tjg-csbs-upload-new-candidates-trash');
 
 		// Collect file information when selected
 		$(fileInput).on('change', function() {
+			// If trash icon has hidden attribute, remove it
+			if (trashButton.hasAttribute('hidden')) {
+				trashButton.removeAttribute('hidden');
+			}
+
+
 			let file = fileInput.files[0];
 
 			console.log('File selected: ' + file.name);

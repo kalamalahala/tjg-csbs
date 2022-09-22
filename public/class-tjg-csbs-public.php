@@ -11,9 +11,23 @@
  */
 
 
-require_once( plugin_dir_path( __FILE__ ) . '../' );
-use PhpOffice\PhpSpreadsheet\IOFactory;
+require_once( plugin_dir_path( __FILE__ ) . '../vendor/autoload.php' );
 
+$included_file = plugin_dir_path( __FILE__ ) . '../vendor/autoload.php';
+do_action('qm/debug', $included_file . ' is included');
+
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
+try {
+	$iofactory = IOFactory::createReader('Xlsx');
+	do_action('qm/debug', 'IOFactory is instantiated');
+
+} catch (Exception $e) {
+	do_action('qm/debug', $e);
+}
+// do_action('qm/debug', $iofactory . ' is loaded');
 /**
  * The public-facing functionality of the plugin.
  *
@@ -185,17 +199,30 @@ class Tjg_Csbs_Public {
 	 * AJAX handler for parsing spreadsheet
 	 */
 	public function tjg_csbs_ajax_get_spreadsheet_summary($file) {
+		wp_send_json_success( $file['tmp_name'] );
+		die();
+
+
 		// load file into PHPSpreadsheet
-		$reader = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
+		$reader = IOFactory::createReader('Xlsx');
+		$spreadsheet = $reader->load($file['tmp_name']);
+		// Collect first row into Headers array
+		$headers = [];
 
+		// read first row
+		$sheet = $spreadsheet->getActiveSheet();
+		foreach ($sheet->getRowIterator(1, 1) as $row) {
+			$cellIterator = $row->getCellIterator();
+			$cellIterator->setIterateOnlyExistingCells(false);
+			foreach ($cellIterator as $cell) {
+				$headers[] = $cell->getValue();
+			}
+		}
 
-
-
-
-
-
-
-		wp_send_json_success('tjg_csbs_ajax_get_spreadsheet_summary()');
+		// AJAX xml header
+		header('Content-Type: application/json');
+		// return headers array
+		wp_send_json_success($headers);
 		die();
 	}
 
