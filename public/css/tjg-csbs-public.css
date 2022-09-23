@@ -13,3 +13,21 @@
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
  }
+
+ .tjg-csbs-trash-file {
+   display: inline-flex;
+   gap: 10px;
+   align-items: baseline;
+   padding: 10px;
+   border-radius: 12px;
+   background: #6C757D;
+   color: #fff;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   margin-top: 20px;
+   cursor: pointer;
+   font-size: 12pt;
+ }
+
+ .tjg-csbs-trash-file p {
+   margin: 0 !important;
+ }

@@ -174,15 +174,16 @@ class Tjg_Csbs_Public {
 		}
 		// Check for ajax method
 		$method = $_POST['method'];
+		$file = $_FILES['file'];
 		$output = '';
 		
 		// Switch on method
 		switch ( $method ) {
 			case 'upload_new_candidates':
-				$output = $this->tjg_csbs_ajax_parse_spreadsheet($_POST['file']);
+				$output = $this->tjg_csbs_ajax_parse_spreadsheet( $file );
 				break;
 			case 'get_spreadsheet_summary':
-				$output = $this->tjg_csbs_ajax_get_spreadsheet_summary($_FILES['file']);
+				$output = $this->tjg_csbs_ajax_get_spreadsheet_summary( $file );
 				break;
 			default:
 				wp_send_json_error( 'Invalid method' );
@@ -199,31 +200,40 @@ class Tjg_Csbs_Public {
 	 * AJAX handler for parsing spreadsheet
 	 */
 	public function tjg_csbs_ajax_get_spreadsheet_summary($file) {
-		wp_send_json_success( $file['tmp_name'] );
-		die();
+		
+		// Pass file to wp_handle_upload
+		$upload = wp_handle_upload($file, array('test_form' => false));
+		
+		// File type using IOFactory::identify()
+		$file_type = IOFactory::identify($upload['file']);
+		$reader = IOFactory::createReader($file_type);
 
+		// Pass upload to reader
+		$spreadsheet = $reader->load($upload['file']);
 
-		// load file into PHPSpreadsheet
-		$reader = IOFactory::createReader('Xlsx');
-		$spreadsheet = $reader->load($file['tmp_name']);
-		// Collect first row into Headers array
-		$headers = [];
+		if ($spreadsheet) {
+			// Get worksheet
+			$headers = [];
+			$worksheet = $spreadsheet->getActiveSheet();
 
-		// read first row
-		$sheet = $spreadsheet->getActiveSheet();
-		foreach ($sheet->getRowIterator(1, 1) as $row) {
-			$cellIterator = $row->getCellIterator();
-			$cellIterator->setIterateOnlyExistingCells(false);
-			foreach ($cellIterator as $cell) {
-				$headers[] = $cell->getValue();
+			// read first row
+			foreach ($worksheet->getRowIterator(1, 1) as $row) {
+				$cellIterator = $row->getCellIterator();
+				$cellIterator->setIterateOnlyExistingCells(false);
+				foreach ($cellIterator as $cell) {
+					if ($cell->getValue() != null) {
+						$headers[] = $cell->getValue();
+					}
+				}
 			}
+			unlink($upload['file']);
+			wp_send_json_success($headers);
+			die();
+		} else {
+			unlink($upload['file']);
+			wp_send_json_error('Error loading file');
+			die();
 		}
-
-		// AJAX xml header
-		header('Content-Type: application/json');
-		// return headers array
-		wp_send_json_success($headers);
-		die();
 	}
 
 

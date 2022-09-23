@@ -36,6 +36,7 @@
 		let fileInput = document.getElementById('tjg-csbs-upload-new-candidates-file');
 		let textarea = document.getElementById('tjg-csbs-upload-new-candidates-summary');
 		let trashButton = document.getElementById('tjg-csbs-upload-new-candidates-trash');
+		let cancelButton = document.getElementById('tjg-csbs-upload-cancel');
 
 		// Collect file information when selected
 		$(fileInput).on('change', function() {
@@ -43,7 +44,6 @@
 			if (trashButton.hasAttribute('hidden')) {
 				trashButton.removeAttribute('hidden');
 			}
-
 
 			let file = fileInput.files[0];
 
@@ -80,6 +80,36 @@
 			}); // End AJAX request
 
 		}); // End fileInput change event
+
+		// Clear file input when trash icon is clicked
+		$(trashButton).on('click', function() {
+			// Clear file input if it has a file
+			if (fileInput.files.length > 0) {
+				fileInput.value = '';
+			}
+
+			// Clear textarea
+			textarea.value = '';
+
+			// Hide trash icon
+			trashButton.setAttribute('hidden', true);
+		});
+
+		// Clear form when cancel button is clicked
+		$(cancelButton).on('click', function() {
+			// Clear file input if it has a file
+			if (fileInput.files.length > 0) {
+				fileInput.value = '';
+			}
+
+			// Clear textarea
+			textarea.value = '';
+
+			// Hide trash icon if visible
+			if (!trashButton.hasAttribute('hidden')) {
+				trashButton.setAttribute('hidden', true);
+			}
+		});
 
 
 
