@@ -13,20 +13,9 @@
 
 require_once( plugin_dir_path( __FILE__ ) . '../vendor/autoload.php' );
 
-$included_file = plugin_dir_path( __FILE__ ) . '../vendor/autoload.php';
-do_action('qm/debug', $included_file . ' is included');
-
-
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-try {
-	$iofactory = IOFactory::createReader('Xlsx');
-	do_action('qm/debug', 'IOFactory is instantiated');
-
-} catch (Exception $e) {
-	do_action('qm/debug', $e);
-}
 // do_action('qm/debug', $iofactory . ' is loaded');
 /**
  * The public-facing functionality of the plugin.

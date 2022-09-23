@@ -31,6 +31,14 @@ class Tjg_Csbs_Deactivator {
 	 */
 	public static function deactivate() {
 
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'tjg_csbs_candidates';
+
+		// Drop table if exists
+		$wpdb->query("DROP TABLE IF EXISTS $table_name");
+
+		do_action('qm/debug', 'Tjg_Csbs_Deactivator::deactivate()');
+
 	}
 
 }
