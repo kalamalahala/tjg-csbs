@@ -20,7 +20,8 @@
  * @subpackage Tjg_Csbs/admin
  * @author     Tyler Karle <tyler.karle@icloud.com>
  */
-class Tjg_Csbs_Admin {
+class Tjg_Csbs_Admin
+{
 
 	/**
 	 * The ID of this plugin.
@@ -47,11 +48,11 @@ class Tjg_Csbs_Admin {
 	 * @param      string    $plugin_name       The name of this plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct($plugin_name, $version)
+	{
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
 	}
 
 	/**
@@ -59,7 +60,8 @@ class Tjg_Csbs_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -73,8 +75,7 @@ class Tjg_Csbs_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/tjg-csbs-admin.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/tjg-csbs-admin.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -82,7 +83,8 @@ class Tjg_Csbs_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -96,8 +98,43 @@ class Tjg_Csbs_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/tjg-csbs-admin.js', array( 'jquery' ), $this->version, false );
-
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/tjg-csbs-admin.js', array('jquery'), $this->version, false);
 	}
 
+	public function tjg_csbs_register_settings()
+	{
+		register_setting($this->plugin_name, 'tjg_csbs_options', array($this, 'tjg_csbs_validate_options'));
+	}
+
+	public function tjg_csbs_validate_options() {
+		// TODO: Validate options
+	}
+
+	public function tjg_csbs_create_admin_menu()
+	{
+		add_menu_page(
+			'Cornerstone Business Solutions',
+			'Cornerstone',
+			'manage_options',
+			'tjg-csbs-admin',
+			array($this, 'tjg_csbs_admin_main_page'),
+			'dashicons-menu-alt3',
+			3
+		);
+		add_submenu_page(
+			'tjg-csbs-admin',
+			'Cornerstone Business Solutions',
+			'Settings',
+			'manage_options',
+			'tjg-csbs-admin-settings',
+			array($this, 'tjg_csbs_admin_settings_page')
+		);
+	}
+
+	public function tjg_csbs_admin_main_page()
+	{
+		ob_start();
+		include_once plugin_dir_path(__FILE__) . 'partials/tjg-csbs-admin-display.php';
+		echo ob_get_clean();
+	}
 }

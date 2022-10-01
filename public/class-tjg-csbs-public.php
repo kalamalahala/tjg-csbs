@@ -112,7 +112,7 @@ class Tjg_Csbs_Public
     /**
      * Register the JavaScript for the public-facing side of the site.
      *
-     * @since    1.0.0
+     * @since 1.0.0
      */
     public function enqueue_scripts()
     {
@@ -141,9 +141,11 @@ class Tjg_Csbs_Public
 
             // AJAX for New Candidates Upload
             wp_localize_script(
-                $this->plugin_name, 'tjg_csbs_ajax_object', array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('tjg_csbs_nonce')
+                $this->plugin_name,
+                'tjg_csbs_ajax_object',
+                array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('tjg_csbs_nonce')
                 )
             );
         } else {
@@ -158,7 +160,7 @@ class Tjg_Csbs_Public
      * 
      * csbs_ajax()
      * 
-     * @since 1.0.0
+     * @since  1.0.0
      * @return void
      */
     public function tjg_csbs_ajax_primary()
@@ -181,15 +183,15 @@ class Tjg_Csbs_Public
 
         // Switch on method
         switch ($method) {
-        case 'upload_new_candidates':
-            $output = $this->tjg_csbs_ajax_parse_spreadsheet($file);
-            break;
-        case 'get_spreadsheet_summary':
-            $output = $this->tjg_csbs_ajax_get_spreadsheet_summary($file);
-            break;
-        default:
-            wp_send_json_error('Invalid method');
-            die();
+            case 'upload_new_candidates':
+                $output = $this->tjg_csbs_ajax_parse_spreadsheet($file);
+                break;
+            case 'get_spreadsheet_summary':
+                $output = $this->tjg_csbs_ajax_get_spreadsheet_summary($file);
+                break;
+            default:
+                wp_send_json_error('Invalid method');
+                die();
         }
 
         // Send output
@@ -236,6 +238,10 @@ class Tjg_Csbs_Public
             wp_send_json_error('Error loading file');
             die();
         }
+    }
+
+    public function tjg_csbs_insert_new_candidate($candidate_data) {
+        
     }
 
 

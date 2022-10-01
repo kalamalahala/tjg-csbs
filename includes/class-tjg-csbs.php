@@ -158,11 +158,33 @@ class Tjg_Csbs
 	 */
 	private function define_admin_hooks()
 	{
-
+		// Create new instance of Tjg_Csbs_Admin
 		$plugin_admin = new Tjg_Csbs_Admin($this->get_plugin_name(), $this->get_version());
 
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+		// Action hook array
+		$action_hooks = array(
+			'create_menu' => array( // Main Menu Item
+				'hook' => 'admin_menu',
+				'callback' => 'tjg_csbs_create_admin_menu',
+			),
+			'plugin_settings' => array(
+				'hook' => 'admin_init',
+				'callback' => 'tjg_csbs_register_settings',
+			),
+			'admin_enqueue_styles' => array( // Enqueue scripts and styles
+				'hook' => 'admin_enqueue_scripts',
+				'callback' => 'enqueue_styles',
+			),
+			'admin_enqueue_scripts' => array( // Enqueue scripts and styles
+				'hook' => 'admin_enqueue_scripts',
+				'callback' => 'enqueue_scripts',
+			),
+		); // End action_hooks array
+
+		// Loop through action hooks and add them to the loader
+		foreach ($action_hooks as $action_hook) {
+			$this->loader->add_action($action_hook['hook'], $plugin_admin, $action_hook['callback']);
+		}
 	}
 
 	/**

@@ -14,3 +14,20 @@
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
+
+<div class="tjg_csbs_bootstrap_wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Custom Shortcode Builder Settings</h1>
+                <p>Use the form below to create a shortcode.</p>
+                <form method="post" action="options.php">
+                    <?php
+                    settings_fields($this->plugin_name);
+                    do_settings_sections($this->plugin_name);
+                    submit_button();
+                    ?>
+                </form>
+            </div>
+        </div>
+    </div>
