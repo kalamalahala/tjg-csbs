@@ -183,11 +183,14 @@ class Tjg_Csbs_Public
 
         // Switch on method
         switch ($method) {
-            case 'upload_new_candidates':
-                $output = $this->tjg_csbs_ajax_parse_spreadsheet($file);
-                break;
             case 'get_spreadsheet_summary':
+                // Returns a summary of the spreadsheet to select headers
                 $output = $this->tjg_csbs_ajax_get_spreadsheet_summary($file);
+                break;
+            case 'upload_new_candidates':
+                // Uploads new candidates to the database using desired headers
+                $columns = $_POST['columns'];
+                $output = $this->tjg_csbs_ajax_parse_spreadsheet($file, $columns);
                 break;
             default:
                 wp_send_json_error('Invalid method');
@@ -225,11 +228,18 @@ class Tjg_Csbs_Public
                 $cellIterator = $row->getCellIterator();
                 $cellIterator->setIterateOnlyExistingCells(false);
                 foreach ($cellIterator as $cell) {
-                    if ($cell->getValue() != null) {
-                        $headers[] = $cell->getValue();
-                    }
+                    $col = $cell->getColumn() ?? 'null column';
+                    $val = $cell->getValue() ?? 'Column ' . $col;
+                    
+                    // Add column number and value to array
+                    $headers[] = array(
+                        'column' => $col,
+                        'value' => $val
+                    );
+                    
                 }
             }
+
             unlink($upload['file']);
             wp_send_json_success($headers);
             die();
@@ -240,18 +250,141 @@ class Tjg_Csbs_Public
         }
     }
 
-    public function tjg_csbs_insert_new_candidate($candidate_data) {
-        
+    /**
+     * Parse uploaded sheet.
+     * 
+     * Extracts data from uploaded Excel file, formatting it for
+     * insertion into the database. Remove special characters from
+     * names and phone numbers. Add current date and time to each
+     * record passed to tjg_csbs_insert_new_candidate().
+     * 
+     * This function is called by tjg_csbs_ajax_primary() when the
+     * 'upload_new_candidates' method is passed. It returns an array
+     * of the inserted candidates, or an error message if the
+     * candidate already exists.
+     * 
+     * After the file is uploaded, it is deleted from the server.
+     * 
+     * @since  1.0.0
+     * @param  array $file
+     * @return array $output
+     */
+
+    public function tjg_csbs_ajax_parse_spreadsheet($candidate_file, $columns = null)
+    {
+        // If no columns are passed, use default (return error for now)
+        if ($columns == null) {
+            wp_send_json_error('No columns passed');
+            die();
+        }
+
+        // Check for columns and return list of provided columns then exit
+        if ($columns) {
+            for ($i = 0; $i < count($columns); $i++) {
+                $output[] = $columns[$i];
+            }
+
+            wp_send_json_success($output);
+            die();
+        }
+
+        // Pass file to wp_handle_upload
+        $upload = wp_handle_upload($candidate_file, array('test_form' => false));
+
+        // File type using IOFactory::identify()
+        $file_type = IOFactory::identify($upload['file']);
+        $reader = IOFactory::createReader($file_type);
+
+        // Pass upload to reader
+        $spreadsheet = $reader->load($upload['file']);
+
+        if ($spreadsheet) {
+            // Get worksheet
+            $worksheet = $spreadsheet->getActiveSheet();
+
+            // read first row
+            foreach ($worksheet->getRowIterator(1, 1) as $row) {
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+                foreach ($cellIterator as $cell) {
+                    if ($cell->getValue() != null) {
+                        $headers[] = $cell->getValue();
+                    }
+                }
+            }
+
+            // read all rows
+            $output = [];
+            foreach ($worksheet->getRowIterator(2) as $row) {
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+                $row = [];
+                foreach ($cellIterator as $cell) {
+                    if ($cell->getValue() != null) {
+                        $row[] = $cell->getValue();
+                    }
+                }
+                $output[] = array_combine($headers, $row);
+            }
+
+            // Remove special characters from names and phone numbers
+            $output = array_map(function ($candidate) {
+                $candidate['First Name'] = preg_replace('/[^A-Za-z0-9\-]/', '', $candidate['First Name']);
+                $candidate['Last Name'] = preg_replace('/[^A-Za-z0-9\-]/', '', $candidate['Last Name']);
+                $candidate['Phone Number'] = preg_replace('/[^0-9]/', '', $candidate['Phone Number']);
+                return $candidate;
+            }, $output);
+
+            // Add current date and time to each record
+            $output = array_map(function ($candidate) {
+                $candidate['Date Added'] = date('Y-m-d H:i:s');
+                return $candidate;
+            }, $output);
+
+            // Insert each candidate into the database
+            $output = array_map(function ($candidate) {
+                $insert = $this->tjg_csbs_insert_new_candidate($candidate);
+                return $insert;
+            }, $output);
+
+            // Delete file from server
+            unlink($upload['file']);
+
+            // Return output
+            return $output;
+        } else {
+            unlink($upload['file']);
+            return 'Error loading file';
+        }
+
+        // Output results of candidate insertion
+        wp_send_json_success();
     }
 
-
     /**
-     * Handle New Candidate Upload
+     * Insert new candidates.
+     * 
+     * Insert all candidates in the uploaded file into the database
+     * table 'tjg_csbs_candidates'. If the phone number already
+     * exists in the database, the candidate will not be inserted
+     * and the candidate's name will be added to the $duplicate
+     * array. Function returns an array of duplicate candidates
+     * and the number of candidates inserted.
+     * 
+     * @since  1.0.0
+     * @param  array $candidate_data
+     * @return array
      */
-    public function tjg_csbs_ajax_parse_spreadsheet($candidate_file)
+    public function tjg_csbs_insert_new_candidate($candidate_data)
     {
-        wp_send_json_success('Method successfully called');
-        die();
+        global $wpdb;
+        $table = $wpdb->prefix . 'tjg_csbs_candidates';
+        $duplicates = [];
+        $insertions = 0;
+
+        // Select candidates with Date Added before now
+        $query = "SELECT * FROM $table WHERE phone = %s";
+        $query = $wpdb->prepare($query, $candidate_data['phone']);
     }
 
     // Begin Shortcode inclusions

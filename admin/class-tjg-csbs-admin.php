@@ -76,6 +76,7 @@ class Tjg_Csbs_Admin
 		 */
 
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/tjg-csbs-admin.css', array(), $this->version, 'all');
+		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -103,12 +104,70 @@ class Tjg_Csbs_Admin
 
 	public function tjg_csbs_register_settings()
 	{
-		register_setting($this->plugin_name, 'tjg_csbs_options', array($this, 'tjg_csbs_validate_options'));
+		// Add section
+		add_settings_section(
+			'tjg_csbs_settings',
+			'Cornerstone Settings',
+			array($this, 'tjg_csbs_settings_header'),
+			'tjg-csbs-admin-settings'
+		);
+
+		// Sendgrid API Key
+		add_settings_field(
+			'tjg_csbs_sendgrid_api_key',
+			'SendGrid API Key',
+			array($this, 'tjg_csbs_settings_field_sendgrid_API_key'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
+
+		// Number of candidates to display on main page
+		add_settings_field(
+			'tjg_csbs_num_candidates',
+			'Number of Candidates to Display',
+			array($this, 'tjg_csbs_settings_field_num_candidates'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
+
+		// Register setting
+		register_setting(
+			'tjg_csbs_option_group',
+			'tjg_csbs_sendgrid_api_key'
+		);
+		register_setting(
+			'tjg_csbs_option_group',
+			'tjg_csbs_num_candidates'
+		);
 	}
 
-	public function tjg_csbs_validate_options() {
-		// TODO: Validate options
+	public function tjg_csbs_settings_header()
+	{
+		if ($_GET['page'] !== 'tjg-csbs-admin-settings') {
+			return;
+		}
+
+		// Handle $_GET requests here
+		if (isset($_GET['settings-updated'])) {
+			echo '<div class="row">';
+			echo '<div class="notice notice-success is-dismissible" col-md-5"><p>Settings updated.</p></div>';
+			echo '</div>';
+		}
 	}
+
+	public function tjg_csbs_settings_field_sendgrid_API_key()
+	{
+		$api_key = get_option('tjg_csbs_sendgrid_api_key');
+		// $sendgrid_api_key = $options['tjg_csbs_sendgrid_api_key'];
+		echo '<input type="text" id="tjg_csbs_sendgrid_api_key" name="tjg_csbs_sendgrid_api_key" value="' . $api_key .'">';
+	}
+
+	public function tjg_csbs_settings_field_num_candidates()
+	{
+		$num_candidates = get_option('tjg_csbs_num_candidates');
+		echo '<input type="number" id="tjg_csbs_num_candidates" name="tjg_csbs_num_candidates" value="' . $num_candidates .'">';
+	}
+	
 
 	public function tjg_csbs_create_admin_menu()
 	{
@@ -123,7 +182,7 @@ class Tjg_Csbs_Admin
 		);
 		add_submenu_page(
 			'tjg-csbs-admin',
-			'Cornerstone Business Solutions',
+			'CSBS Settings',
 			'Settings',
 			'manage_options',
 			'tjg-csbs-admin-settings',
@@ -135,6 +194,13 @@ class Tjg_Csbs_Admin
 	{
 		ob_start();
 		include_once plugin_dir_path(__FILE__) . 'partials/tjg-csbs-admin-display.php';
+		echo ob_get_clean();
+	}
+
+	public function tjg_csbs_admin_settings_page()
+	{
+		ob_start();
+		include_once plugin_dir_path(__FILE__) . 'partials/tjg-csbs-admin-settings.php';
 		echo ob_get_clean();
 	}
 }
