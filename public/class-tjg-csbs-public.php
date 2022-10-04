@@ -310,6 +310,8 @@ class Tjg_Csbs_Public
             die();
         }
 
+        $payload = [];
+
         // Specified column letters
         $first_name_column = $selected_columns->firstNameColumn;
         $last_name_column = $selected_columns->lastNameColumn;
@@ -365,28 +367,37 @@ class Tjg_Csbs_Public
                 // Insert candidate
                 $inserted = $this->tjg_csbs_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date);
 
-                // If candidate was inserted, add to output array
-                if ($inserted) {
-                    $output[] = array(
-                        'first_name' => $first_name,
-                        'last_name' => $last_name,
-                        'phone' => $phone,
-                        'email' => $email,
-                        'city' => $city,
-                        'state' => $state,
-                        'date' => $date
-                    );
-                } else {
-                    // If candidate already exists, add to error array
-                    $error[] = array(
-                        'first_name' => $first_name,
-                        'last_name' => $last_name,
-                        'phone' => $phone,
-                        'email' => $email,
-                        'city' => $city,
-                        'state' => $state,
-                        'date' => $date
-                    );
+                /* $inserted returns
+                 * true if candidate was inserted
+                 * false if candidate already exists
+                 * error string if error occurred
+                 */
+                switch ($inserted) {
+                    case true:
+                        $payload['inserted'][] = array(
+                            'first_name' => $first_name,
+                            'last_name' => $last_name,
+                            'phone' => $phone,
+                            'email' => $email,
+                            'city' => $city,
+                            'state' => $state,
+                            'date' => $date
+                        );
+                        break;
+                    case false:
+                        $payload['already_exists'][] = array(
+                            'first_name' => $first_name,
+                            'last_name' => $last_name,
+                            'phone' => $phone,
+                            'email' => $email,
+                            'city' => $city,
+                            'state' => $state,
+                            'date' => $date
+                        );
+                        break;
+                    default:
+                        $payload['error'][] = $inserted;
+                        break;
                 }
             }
  
@@ -394,15 +405,18 @@ class Tjg_Csbs_Public
             // Delete file from server
             unlink($upload['file']);
 
-            // Return output
-            return $output;
+            // Send json success with payload
+            wp_send_json_success($payload);
+            die();
         } else {
             unlink($upload['file']);
             wp_send_json_error('Error loading file');
+            die();
         }
 
         unlink($upload['file']);
         wp_send_json_error('Error loading file');
+        die();
     }
 
     /**
@@ -423,21 +437,21 @@ class Tjg_Csbs_Public
      * @param  string $city
      * @param  string $state
      * @param  string $date
-     * @return array
+     * @return bool|string
      */
     public function tjg_csbs_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date)
     {
-        $payload = array(
-            'first_name' => $first_name,
-            'last_name' => $last_name,
-            'phone' => $phone,
-            'email' => $email,
-            'city' => $city,
-            'state' => $state,
-            'date' => $date
-        );
-        wp_send_json_success($payload);
-        die();
+        /*
+        * $payload = array(
+        *     'first_name' => $first_name,
+        *     'last_name' => $last_name,
+        *     'phone' => $phone,
+        *     'email' => $email,
+        *     'city' => $city,
+        *     'state' => $state,
+        *     'date' => $date
+        * );
+        */
 
         global $wpdb;
         $table = $this->table_name;
@@ -445,8 +459,27 @@ class Tjg_Csbs_Public
         $insertions = 0;
 
         // Select candidates with Date Added before now
-        $query = "SELECT * FROM $table WHERE phone = %s";
-        $query = $wpdb->prepare($query, $candidate_data['phone']);
+        $query = "SELECT * FROM $table WHERE phone LIKE %s AND date_added < %s";
+        $query = $wpdb->prepare($query, $phone, $date);
+        $result = $wpdb->get_results($query);
+
+        // If no results, insert candidate
+        if (empty($result)) {
+            $insert_query = "INSERT INTO $table
+            (first_name, last_name, phone, email, city, state, date_added)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)";
+            $insert_query = $wpdb->prepare($insert_query, $first_name, $last_name, $phone, $email, $city, $state, $date);
+            $inserted = $wpdb->query($insert_query);
+            if ($inserted) return true;
+            else if (!$inserted) {
+                // get query error
+                $error = $wpdb->last_error;
+                return $error;
+            }
+        } else {
+            return false;
+        }
+
     }
 
     // Begin Shortcode inclusions
