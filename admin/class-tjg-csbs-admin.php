@@ -130,6 +130,15 @@ class Tjg_Csbs_Admin
 			'tjg_csbs_settings'
 		);
 
+		// Gravity Forms ID for Candidates
+		add_settings_field(
+			'tjg_csbs_gravity_forms_id',
+			'Gravity Forms ID for Candidates',
+			array($this, 'tjg_csbs_settings_field_gravity_forms_id'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
+
 		// Register setting
 		register_setting(
 			'tjg_csbs_option_group',
@@ -138,6 +147,10 @@ class Tjg_Csbs_Admin
 		register_setting(
 			'tjg_csbs_option_group',
 			'tjg_csbs_num_candidates'
+		);
+		register_setting(
+			'tjg_csbs_option_group',
+			'tjg_csbs_gravity_forms_id'
 		);
 	}
 
@@ -166,6 +179,12 @@ class Tjg_Csbs_Admin
 	{
 		$num_candidates = get_option('tjg_csbs_num_candidates');
 		echo '<input type="number" id="tjg_csbs_num_candidates" name="tjg_csbs_num_candidates" value="' . $num_candidates .'">';
+	}
+
+	public function tjg_csbs_settings_field_gravity_forms_id()
+	{
+		$gravity_forms_id = get_option('tjg_csbs_gravity_forms_id');
+		echo '<input type="number" id="tjg_csbs_gravity_forms_id" name="tjg_csbs_gravity_forms_id" value="' . $gravity_forms_id .'">';
 	}
 	
 
