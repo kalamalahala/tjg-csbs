@@ -31,12 +31,14 @@
 
 	$(document).ready(function() {
 
-		let form = document.getElementById('tjg-csbs-upload-new-candidates');
-		let submitButton = document.getElementById('tjg-csbs-upload-submit');
-		let fileInput = document.getElementById('tjg-csbs-upload-new-candidates-file');
-		let textarea = document.getElementById('tjg-csbs-upload-new-candidates-summary');
-		let trashButton = document.getElementById('tjg-csbs-upload-new-candidates-trash');
-		let cancelButton = document.getElementById('tjg-csbs-upload-cancel');
+		const form = document.getElementById('tjg-csbs-upload-new-candidates');
+		const submitButton = document.getElementById('tjg-csbs-upload-submit');
+		const fileInput = document.getElementById('tjg-csbs-upload-new-candidates-file');
+		const textarea = document.getElementById('tjg-csbs-upload-new-candidates-summary');
+		const trashButton = document.getElementById('tjg-csbs-upload-new-candidates-trash');
+		const cancelButton = document.getElementById('tjg-csbs-upload-cancel');
+		const selectGroupWrapper = document.getElementById('select-group-wrapper');
+
 
 		// Collect file information when selected
 		$(fileInput).on('change', function() {
@@ -93,6 +95,9 @@
 			// Clear textarea
 			textarea.value = '';
 
+			// Hide select group wrapper
+			selectGroupWrapper.setAttribute('hidden', true);
+
 			// Hide trash icon
 			trashButton.setAttribute('hidden', true);
 		});
@@ -106,6 +111,9 @@
 
 			// Clear textarea
 			textarea.value = '';
+
+			// Hide select group wrapper
+			selectGroupWrapper.setAttribute('hidden', true);
 
 			// Hide trash icon if visible
 			if (!trashButton.hasAttribute('hidden')) {
@@ -154,11 +162,30 @@
 			// Create a new FormData object.
 			let formData = new FormData();
 
+			// Collect Select Option values and append to formData
+			const firstNameColumn = document.getElementById('tjg-csbs-upload-new-candidates-first-name');
+			const lastNameColumn = document.getElementById('tjg-csbs-upload-new-candidates-last-name');
+			const emailColumn = document.getElementById('tjg-csbs-upload-new-candidates-email');
+			const phoneColumn = document.getElementById('tjg-csbs-upload-new-candidates-phone');
+			const cityColumn = document.getElementById('tjg-csbs-upload-new-candidates-city');
+			const stateColumn = document.getElementById('tjg-csbs-upload-new-candidates-state');
+
+			const selectData = {
+				firstNameColumn: firstNameColumn.value,
+				lastNameColumn: lastNameColumn.value,
+				emailColumn: emailColumn.value,
+				phoneColumn: phoneColumn.value,
+				cityColumn: cityColumn.value,
+				stateColumn: stateColumn.value
+			};
+
+
 			// Add the file to the request.
 			formData.append('file', file);
 			formData.append('filetype', file.type);
 			formData.append('filesize', file.size);
 			formData.append('filename', file.name);
+			formData.append('selectData', JSON.stringify(selectData));
 			formData.append('action', 'tjg_csbs_primary_ajax');
 			formData.append('method', 'upload_new_candidates');
 			formData.append('nonce', tjg_csbs_ajax_object.nonce);
@@ -179,9 +206,8 @@
 
 					// Remove spinning loading icon from button text
 					submitButton.innerHTML = 'Submit Candidate File';
+					submitButton.disabled = false;
 
-					// Clear the file input
-					fileInput.value = '';
 				},
 				error: function(response) {
 					console.log(response);
@@ -190,9 +216,7 @@
 
 					// Remove spinning loading icon from button text
 					submitButton.innerHTML = 'Submit Candidate File';
-
-					// Clear the file input
-					fileInput.value = '';
+					submitButton.disabled = false;
 				}
 			});
 
@@ -205,81 +229,34 @@
 	function createSelectors(headerData) {
 		/* 
 		 * Add Select / Option groups to form for these columns:
-		 * First Name
-		 * Last Name
-		 * Phone
-		 * Email
-		 * City
-		 * State
-		 *  
+		 * First Name 	Element ID: tjg-csbs-upload-new-candidates-first-name
+		 * Last Name 	Element ID: tjg-csbs-upload-new-candidates-last-name
+		 * Phone 		Element ID: tjg-csbs-upload-new-candidates-phone
+		 * Email 		Element ID: tjg-csbs-upload-new-candidates-email
+		 * City 		Element ID: tjg-csbs-upload-new-candidates-city
+		 * State 		Element ID: tjg-csbs-upload-new-candidates-state
 		*/
 
-		console.log('headerData length = ' + headerData.length);
+		// select-group-wrapper remove hidden attribute
+		const selectGroupWrapper = document.getElementById('select-group-wrapper');
+		selectGroupWrapper.removeAttribute('hidden');
 
+		const firstNameSelect = document.getElementById('tjg-csbs-upload-new-candidates-first-name');
+		const lastNameSelect = document.getElementById('tjg-csbs-upload-new-candidates-last-name');
+		const phoneSelect = document.getElementById('tjg-csbs-upload-new-candidates-phone');
+		const emailSelect = document.getElementById('tjg-csbs-upload-new-candidates-email');
+		const citySelect = document.getElementById('tjg-csbs-upload-new-candidates-city');
+		const stateSelect = document.getElementById('tjg-csbs-upload-new-candidates-state');
 
-		let summaryBox = document.getElementsByClassName('tjg-csbs-summary')[0];
+		/* Apend options to select elements
+		 * headerData.column
+		 * headerData.value
+		*/
 
-		// Create Select / Option groups
-		let firstNameSelect = document.createElement('select');
-		let lastNameSelect = document.createElement('select');
-		let phoneSelect = document.createElement('select');
-		let emailSelect = document.createElement('select');
-		let citySelect = document.createElement('select');
-		let stateSelect = document.createElement('select');
-
-		// Create Option groups
-		let firstNameOption = document.createElement('option');
-		let lastNameOption = document.createElement('option');
-		let phoneOption = document.createElement('option');
-		let emailOption = document.createElement('option');
-		let cityOption = document.createElement('option');
-		let stateOption = document.createElement('option');
-
-		// Add Select / Option groups to form
-		summaryBox.appendChild(firstNameSelect);
-		summaryBox.appendChild(lastNameSelect);
-		summaryBox.appendChild(phoneSelect);
-		summaryBox.appendChild(emailSelect);
-		summaryBox.appendChild(citySelect);
-		summaryBox.appendChild(stateSelect);
-
-		// Add Option groups to Select groups
-		firstNameSelect.appendChild(firstNameOption);
-		lastNameSelect.appendChild(lastNameOption);
-		phoneSelect.appendChild(phoneOption);
-		emailSelect.appendChild(emailOption);
-		citySelect.appendChild(cityOption);
-		stateSelect.appendChild(stateOption);
-
-		// Add Select / Option group attributes
-		firstNameSelect.setAttribute('id', 'tjg-csbs-upload-new-candidates-first-name');
-		lastNameSelect.setAttribute('id', 'tjg-csbs-upload-new-candidates-last-name');
-		phoneSelect.setAttribute('id', 'tjg-csbs-upload-new-candidates-phone');
-		emailSelect.setAttribute('id', 'tjg-csbs-upload-new-candidates-email');
-		citySelect.setAttribute('id', 'tjg-csbs-upload-new-candidates-city');
-		stateSelect.setAttribute('id', 'tjg-csbs-upload-new-candidates-state');
-
-		// Add Option group attributes
-		firstNameOption.setAttribute('value', '');
-		lastNameOption.setAttribute('value', '');
-		phoneOption.setAttribute('value', '');
-		emailOption.setAttribute('value', '');
-		cityOption.setAttribute('value', '');
-		stateOption.setAttribute('value', '');
-
-		// Add Option group text
-		firstNameOption.innerHTML = 'First Name';
-		lastNameOption.innerHTML = 'Last Name';
-		phoneOption.innerHTML = 'Phone';
-		emailOption.innerHTML = 'Email';
-		cityOption.innerHTML = 'City';
-		stateOption.innerHTML = 'State';
-
-		// Add Option groups to Select groups
-		for (let i = 0; i < headerData.length; i++) {
+		for (let i = 0; i < headerData.headers.length; i++) {
 			let option = document.createElement('option');
-			option.setAttribute('value', headerData[i].column);
-			option.innerHTML = headerData[i].value;
+			option.value = headerData.headers[i].column;
+			option.text = headerData.headers[i].value;
 			firstNameSelect.appendChild(option);
 			lastNameSelect.appendChild(option.cloneNode(true));
 			phoneSelect.appendChild(option.cloneNode(true));
@@ -287,6 +264,7 @@
 			citySelect.appendChild(option.cloneNode(true));
 			stateSelect.appendChild(option.cloneNode(true));
 		}
+		
 	}
 
 })( jQuery );

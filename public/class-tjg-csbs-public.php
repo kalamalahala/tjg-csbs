@@ -57,6 +57,11 @@ class Tjg_Csbs_Public
     private $version;
 
     /**
+     * Primary wpdb table name.
+     */
+    private $table_name;
+
+    /**
      * Initialize the class and set its properties.
      *
      * @param string $plugin_name The name of the plugin.
@@ -69,6 +74,7 @@ class Tjg_Csbs_Public
 
         $this->plugin_name = $plugin_name;
         $this->version = $version;
+        $this->table_name = (defined('TJG_CSBS_TABLE_NAME')) ? TJG_CSBS_TABLE_NAME : $GLOBALS['wpdb']->prefix . 'tjg_csbs_candidates';
     }
 
     /**
@@ -153,6 +159,22 @@ class Tjg_Csbs_Public
         }
     }
 
+    /**
+     * Get list of columns in $wpdb table
+     * 
+     * Returns a list of the columns in the primary table tjg_csbs_candidates
+     * 
+     * @return array $columns
+     */
+    public function get_columns() {
+        global $wpdb;
+        $table_name = $this->table_name;
+
+        $columns = $wpdb->get_col("DESC $table_name", 0);
+
+        return $columns;
+    }
+
 
 
     /**
@@ -180,6 +202,7 @@ class Tjg_Csbs_Public
         $method = $_POST['method'];
         $file = $_FILES['file'];
         $output = '';
+        $table_columns = $this->get_columns();
 
         // Switch on method
         switch ($method) {
@@ -189,8 +212,8 @@ class Tjg_Csbs_Public
                 break;
             case 'upload_new_candidates':
                 // Uploads new candidates to the database using desired headers
-                $columns = $_POST['columns'];
-                $output = $this->tjg_csbs_ajax_parse_spreadsheet($file, $columns);
+                $selected_columns = json_decode(stripslashes($_POST['selectData']));
+                $output = $this->tjg_csbs_ajax_parse_spreadsheet($file, $selected_columns, $table_columns);
                 break;
             default:
                 wp_send_json_error('Invalid method');
@@ -218,10 +241,14 @@ class Tjg_Csbs_Public
         // Pass upload to reader
         $spreadsheet = $reader->load($upload['file']);
 
+
         if ($spreadsheet) {
             // Get worksheet
-            $headers = [];
+            $payload = [];
             $worksheet = $spreadsheet->getActiveSheet();
+
+            // Number of rows besides header that has data
+            $payload['num_rows'] = $worksheet->getHighestRow() - 1;
 
             // read first row
             foreach ($worksheet->getRowIterator(1, 1) as $row) {
@@ -235,13 +262,16 @@ class Tjg_Csbs_Public
                     $headers[] = array(
                         'column' => $col,
                         'value' => $val
-                    );
-                    
+                    );                    
                 }
             }
 
+            // Add headers to payload
+            $payload['headers'] = $headers;
+
+
             unlink($upload['file']);
-            wp_send_json_success($headers);
+            wp_send_json_success($payload);
             die();
         } else {
             unlink($upload['file']);
@@ -267,10 +297,12 @@ class Tjg_Csbs_Public
      * 
      * @since  1.0.0
      * @param  array $file
+     * @param  object $selected_columns
+     * @param  array $table_columns
      * @return array $output
      */
 
-    public function tjg_csbs_ajax_parse_spreadsheet($candidate_file, $columns = null)
+    public function tjg_csbs_ajax_parse_spreadsheet(array $candidate_file, object $selected_columns, array $columns = null)
     {
         // If no columns are passed, use default (return error for now)
         if ($columns == null) {
@@ -278,15 +310,13 @@ class Tjg_Csbs_Public
             die();
         }
 
-        // Check for columns and return list of provided columns then exit
-        if ($columns) {
-            for ($i = 0; $i < count($columns); $i++) {
-                $output[] = $columns[$i];
-            }
-
-            wp_send_json_success($output);
-            die();
-        }
+        // Specified column letters
+        $first_name_column = $selected_columns->firstNameColumn;
+        $last_name_column = $selected_columns->lastNameColumn;
+        $phone_column = $selected_columns->phoneColumn;
+        $email_column = $selected_columns->emailColumn;
+        $city_column = $selected_columns->cityColumn;
+        $state_column = $selected_columns->stateColumn;
 
         // Pass file to wp_handle_upload
         $upload = wp_handle_upload($candidate_file, array('test_form' => false));
@@ -302,50 +332,64 @@ class Tjg_Csbs_Public
             // Get worksheet
             $worksheet = $spreadsheet->getActiveSheet();
 
-            // read first row
-            foreach ($worksheet->getRowIterator(1, 1) as $row) {
-                $cellIterator = $row->getCellIterator();
-                $cellIterator->setIterateOnlyExistingCells(false);
-                foreach ($cellIterator as $cell) {
-                    if ($cell->getValue() != null) {
-                        $headers[] = $cell->getValue();
-                    }
-                }
-            }
-
-            // read all rows
-            $output = [];
+            // Collect specified columns from each row and insert into database
             foreach ($worksheet->getRowIterator(2) as $row) {
                 $cellIterator = $row->getCellIterator();
                 $cellIterator->setIterateOnlyExistingCells(false);
-                $row = [];
                 foreach ($cellIterator as $cell) {
-                    if ($cell->getValue() != null) {
-                        $row[] = $cell->getValue();
-                    }
+                    $col = $cell->getColumn();
+                    $val = $cell->getValue();
+
+                    // Add column number and value to array
+                    $row_data[$col] = $val;
                 }
-                $output[] = array_combine($headers, $row);
+
+                // Get data from selected columns
+                $first_name = $row_data[$first_name_column];
+                $last_name = $row_data[$last_name_column];
+                $phone = $row_data[$phone_column];
+                $email = $row_data[$email_column];
+                $city = $row_data[$city_column];
+                $state = $row_data[$state_column];
+
+                // Format phone number
+                $phone = preg_replace('/[^0-9]/', '', $phone);
+
+                // Format name
+                $first_name = preg_replace('/[^A-Za-z]/', '', $first_name);
+                $last_name = preg_replace('/[^A-Za-z]/', '', $last_name);
+
+                // Add current date and time
+                $date = date('Y-m-d H:i:s');
+
+                // Insert candidate
+                $inserted = $this->tjg_csbs_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date);
+
+                // If candidate was inserted, add to output array
+                if ($inserted) {
+                    $output[] = array(
+                        'first_name' => $first_name,
+                        'last_name' => $last_name,
+                        'phone' => $phone,
+                        'email' => $email,
+                        'city' => $city,
+                        'state' => $state,
+                        'date' => $date
+                    );
+                } else {
+                    // If candidate already exists, add to error array
+                    $error[] = array(
+                        'first_name' => $first_name,
+                        'last_name' => $last_name,
+                        'phone' => $phone,
+                        'email' => $email,
+                        'city' => $city,
+                        'state' => $state,
+                        'date' => $date
+                    );
+                }
             }
-
-            // Remove special characters from names and phone numbers
-            $output = array_map(function ($candidate) {
-                $candidate['First Name'] = preg_replace('/[^A-Za-z0-9\-]/', '', $candidate['First Name']);
-                $candidate['Last Name'] = preg_replace('/[^A-Za-z0-9\-]/', '', $candidate['Last Name']);
-                $candidate['Phone Number'] = preg_replace('/[^0-9]/', '', $candidate['Phone Number']);
-                return $candidate;
-            }, $output);
-
-            // Add current date and time to each record
-            $output = array_map(function ($candidate) {
-                $candidate['Date Added'] = date('Y-m-d H:i:s');
-                return $candidate;
-            }, $output);
-
-            // Insert each candidate into the database
-            $output = array_map(function ($candidate) {
-                $insert = $this->tjg_csbs_insert_new_candidate($candidate);
-                return $insert;
-            }, $output);
+ 
 
             // Delete file from server
             unlink($upload['file']);
@@ -354,11 +398,11 @@ class Tjg_Csbs_Public
             return $output;
         } else {
             unlink($upload['file']);
-            return 'Error loading file';
+            wp_send_json_error('Error loading file');
         }
 
-        // Output results of candidate insertion
-        wp_send_json_success();
+        unlink($upload['file']);
+        wp_send_json_error('Error loading file');
     }
 
     /**
@@ -372,13 +416,31 @@ class Tjg_Csbs_Public
      * and the number of candidates inserted.
      * 
      * @since  1.0.0
-     * @param  array $candidate_data
+     * @param  string $first_name
+     * @param  string $last_name
+     * @param  string $phone
+     * @param  string $email
+     * @param  string $city
+     * @param  string $state
+     * @param  string $date
      * @return array
      */
-    public function tjg_csbs_insert_new_candidate($candidate_data)
+    public function tjg_csbs_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date)
     {
+        $payload = array(
+            'first_name' => $first_name,
+            'last_name' => $last_name,
+            'phone' => $phone,
+            'email' => $email,
+            'city' => $city,
+            'state' => $state,
+            'date' => $date
+        );
+        wp_send_json_success($payload);
+        die();
+
         global $wpdb;
-        $table = $wpdb->prefix . 'tjg_csbs_candidates';
+        $table = $this->table_name;
         $duplicates = [];
         $insertions = 0;
 
