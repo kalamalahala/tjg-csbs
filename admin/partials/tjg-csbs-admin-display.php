@@ -45,7 +45,7 @@
                         global $wpdb;
                         $tjg_csbs_table_name = $wpdb->prefix . 'tjg_csbs_candidates';
                         $candidate_query = "SELECT * FROM $tjg_csbs_table_name ORDER BY date_added DESC";
-                        $candidate_query .= " LIMIT $tjg_csbs_num_candidates";
+                        // $candidate_query .= " LIMIT $tjg_csbs_num_candidates";
 
                         // $_GET['next-page'] is set in the pagination links
                         if (isset($_GET['next-page'])) {
@@ -78,13 +78,6 @@
                             echo "<td><a href='?page=tjg-csbs-admin&delete=$id'>Delete</a></td>";
                             echo "</tr>";
                         }
-
-                        // Next page
-                        echo "<tr>";
-                        echo "<td colspan='8'><a href='?page=tjg-csbs-admin&next_page=1'>Next Page</a></td>";
-                        echo "</tr>";
-
-
                         ?>
                     </tbody>
                 </table>

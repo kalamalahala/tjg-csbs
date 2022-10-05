@@ -29,8 +29,24 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	/*
+	* DataTables Extensions List
+	* https://datatables.net/extensions/
+	* Buttons, HTML5 Export, DateTime, FixedHeader, Responsive, Scroller, SearchBuilder, SearchPanes, Select
+	*/
+
 	$(document).ready(function() {
-		('#tjg-csbs-candidates').DataTable();
+		console.log('DataTable loaded');
+		$('#tjg-csbs-candidates').DataTable({
+			"dom": 'Bfrtip',
+			"buttons": [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			],
+			"order": [[ 0, "desc" ]],
+			"pageLength": 50,
+			"lengthMenu": [ 10, 25, 50, 100, 250, 500 ],
+			"responsive": true
+		});
 	});
 
 })( jQuery );
