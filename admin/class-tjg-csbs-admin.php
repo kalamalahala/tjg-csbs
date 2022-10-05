@@ -81,6 +81,7 @@ class Tjg_Csbs_Admin
 		if ($pagenow == 'admin.php' && $csbs_admin) {
 			wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/tjg-csbs-admin.css', array(), $this->version, 'all');
 			wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), $this->version, 'all');
+			wp_enqueue_style('dataTables', plugin_dir_url(__FILE__) . 'css/dataTables.bootstrap4.min.css', array(), $this->version, 'all');
 		}
 
 		
@@ -106,7 +107,14 @@ class Tjg_Csbs_Admin
 		 * class.
 		 */
 
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/tjg-csbs-admin.js', array('jquery'), $this->version, false);
+		// Only load resources if in a plugin page containing tjg-csbs
+		global $pagenow;
+		$csbs_admin = str_contains($_GET['page'], 'tjg-csbs');
+		if ($pagenow == 'admin.php' && $csbs_admin) {
+			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/tjg-csbs-admin.js', array('jquery'), $this->version, false);
+			wp_enqueue_script('bootstrap', plugin_dir_url(__FILE__) . 'js/bootstrap.min.js', array('jquery'), $this->version, false);
+			wp_enqueue_script('dataTables', plugin_dir_url(__FILE__) . 'js/jquery.dataTables.min.js', array('jquery'), $this->version, false);
+		}
 	}
 
 	public function tjg_csbs_register_settings()
