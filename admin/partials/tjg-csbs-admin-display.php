@@ -23,7 +23,7 @@
         <div class="row">
             <div class="col-md-12">
                 <!-- Table to display list of contacts in $wpdb -->
-                <table class="table table-striped table-bordered table-hover">
+                <table id="tjg-csbs-candidates" class="table table-striped table-bordered table-hover">
                     <thead>
                         <tr>
                             <th>Date Added</th>
