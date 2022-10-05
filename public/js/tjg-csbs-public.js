@@ -188,6 +188,8 @@
 			formData.append('selectData', JSON.stringify(selectData));
 			formData.append('action', 'tjg_csbs_primary_ajax');
 			formData.append('method', 'upload_new_candidates');
+			// Set mode to 'gf' for Gravity Forms for now TODO: Add option to select mode
+			formData.append('mode', 'gf');
 			formData.append('nonce', tjg_csbs_ajax_object.nonce);
 
 			// Set up the request.

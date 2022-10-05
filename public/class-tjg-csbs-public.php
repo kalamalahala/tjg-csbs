@@ -200,6 +200,7 @@ class Tjg_Csbs_Public
         }
         // Check for ajax method
         $method = $_POST['method'];
+        $mode = $_POST['mode'];
         $file = $_FILES['file'];
         $output = '';
         $table_columns = $this->get_columns();
@@ -213,7 +214,7 @@ class Tjg_Csbs_Public
             case 'upload_new_candidates':
                 // Uploads new candidates to the database using desired headers
                 $selected_columns = json_decode(stripslashes($_POST['selectData']));
-                $output = $this->tjg_csbs_ajax_parse_spreadsheet($file, $selected_columns, $table_columns);
+                $output = $this->tjg_csbs_ajax_parse_spreadsheet($file, $selected_columns, $table_columns, $mode);
                 break;
             default:
                 wp_send_json_error('Invalid method');
@@ -302,7 +303,7 @@ class Tjg_Csbs_Public
      * @return array $output
      */
 
-    public function tjg_csbs_ajax_parse_spreadsheet(array $candidate_file, object $selected_columns, array $columns = null)
+    public function tjg_csbs_ajax_parse_spreadsheet(array $candidate_file, object $selected_columns, array $columns = null, string $mode = 'db')
     {
         // If no columns are passed, use default (return error for now)
         if ($columns == null) {
@@ -364,8 +365,18 @@ class Tjg_Csbs_Public
                 // Add current date and time
                 $date = date('Y-m-d H:i:s');
 
-                // Insert candidate
-                $inserted = $this->tjg_csbs_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date);
+                // Insert candidate based on mode
+                switch ($mode) {
+                    case 'db':
+                        $inserted = $this->tjg_csbs_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date);
+                        break;
+                    case 'gf':
+                        $inserted = $this->tjg_csbs_gf_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date);
+                        break;
+                    default:
+                        wp_send_json_error('Invalid mode');
+                        die();
+                }
 
                 /* $inserted returns
                  * true if candidate was inserted
@@ -480,6 +491,54 @@ class Tjg_Csbs_Public
             return false;
         }
 
+    }
+
+    public function tjg_csbs_gf_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date)
+    {
+        // Collect form ID from Plugin Settings
+        $form_id = get_option('tjg_csbs_gravity_forms_id');
+        if (!$form_id) {
+            echo 'No Gravity Form ID set';
+            die();
+        }
+
+        // Check if candidate already exists by phone number
+        $search_criteria = array(
+            'status' => 'active',
+            'field_filters' => array(
+                array(
+                    'key' => '3',
+                    'value' => $phone
+                )
+            )
+        );
+        $entry = GFAPI::get_entries($form_id, $search_criteria);
+
+        // If no entry exists, insert candidate
+        if (empty($entry)) {
+            $entry = array(
+                'form_id' => $form_id,
+                'date_created' => $date,
+                'created_by' => 1,
+                '1.3' => $first_name,
+                '1.6' => $last_name,
+                '3' => $phone,
+                '4' => $email,
+                '6' => $city,
+                '7' => $state
+            );
+    
+            // Insert entry try/catch
+            try {
+                $inserted = GFAPI::add_entry($entry);
+            } catch (Exception $e) {
+                $error = $e->getMessage();
+                return $error;
+            }
+
+        }
+        if ($inserted) return true;
+        else return false;
     }
 
     // Begin Shortcode inclusions
