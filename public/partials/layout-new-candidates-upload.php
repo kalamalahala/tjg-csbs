@@ -13,6 +13,15 @@
 <div class="tjg-csbs-form-wrapper">
     <div class="container-fluid">
         <h3 class="mt-0">Upload Candidate Data</h3>
+        <div class="card">
+            <div class="card-body">
+                Click to test AJAX Functionality
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" id="class-test">Test AJAX</button>
+                <div id="tjg-csbs-ajax-response"></div>
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <form id="tjg-csbs-upload-new-candidates" method="post" enctype="multipart/form-data" action="">

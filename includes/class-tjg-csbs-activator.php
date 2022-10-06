@@ -58,6 +58,7 @@ class Tjg_Csbs_Activator
                 city VARCHAR(255) DEFAULT NULL,
                 state VARCHAR(255) DEFAULT NULL,
                 date_added DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                date_updated DATETIME DEFAULT NULL,
                 date_worked DATETIME DEFAULT NULL,
                 date_scheduled DATETIME DEFAULT NULL,
                 phone_number_status VARCHAR(255) DEFAULT NULL,

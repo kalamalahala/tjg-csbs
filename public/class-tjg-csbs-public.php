@@ -17,10 +17,12 @@
  * @since      1.0.0
  */
 
-require_once plugin_dir_path(__FILE__) . '../vendor/autoload.php';
+// require_once plugin_dir_path(__FILE__) . '../vendor/autoload.php';
+require_once plugin_dir_path(__FILE__) . '../includes/class-tjg-csbs-methods.php';
+use Tjg_Csbs_Common as Common;
 
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
+// use PhpOffice\PhpSpreadsheet\IOFactory;
+// use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 /**
  * The public-facing functionality of the plugin.
@@ -37,7 +39,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
  */
 class Tjg_Csbs_Public
 {
-
+    #region Properties, Construct, and enqueue_scripts and styles ######################################
     /**
      * The ID of this plugin.
      *
@@ -61,6 +63,8 @@ class Tjg_Csbs_Public
      */
     private $table_name;
 
+    private $common;
+
     /**
      * Initialize the class and set its properties.
      *
@@ -76,6 +80,7 @@ class Tjg_Csbs_Public
         $this->version = $version;
         $this->table_name = (defined('TJG_CSBS_TABLE_NAME'))
             ? TJG_CSBS_TABLE_NAME : $GLOBALS['wpdb']->prefix . 'tjg_csbs_candidates';
+        $this->common = new Common();
     }
 
     /**
@@ -164,10 +169,7 @@ class Tjg_Csbs_Public
             // do nothing
         }
     }
-
-
-
-
+    #endregion Properties, Construct, and enqueue_scripts and styles ##########################################
 
     /**
      * AJAX handler/router for the TJG CSBS Plugin
@@ -183,489 +185,99 @@ class Tjg_Csbs_Public
         $verify = check_ajax_referer('tjg_csbs_nonce', 'nonce');
         if ($verify == false) {
             wp_send_json_error('Nonce verification failed');
-            die();
         }
 
         if (!isset($_POST['method'])) {
             wp_send_json_error('No method specified');
-            die();
         }
+
+        // Instantiate method handler
+        $common = new Common();
+
         // Check for ajax method
         $method = $_POST['method'];
-        $mode = $_POST['mode'];
-        $file = $_FILES['file'];
-        $output = '';
-        $table_columns = $this->get_columns();
 
+        $output = '';
+        $table_columns = $common->get_columns();
+        
         // Switch on method
         switch ($method) {
             case 'get_spreadsheet_summary':
+                $file = $_FILES['file'] ?? null;
+                if (is_null($file)) wp_send_json_error('No file specified');
                 // Returns a summary of the spreadsheet to select headers
-                $output = $this->tjg_csbs_ajax_get_spreadsheet_summary($file);
+                $output = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
                 break;
+
             case 'upload_new_candidates':
+                $file = $_FILES['file'];
+                if (is_null($file)) wp_send_json_error('No file specified');
+                $mode = $_POST['mode'];
+                if (is_null($mode)) wp_send_json_error('No mode specified');
                 // Uploads new candidates to the database using desired headers
                 $selected_columns = json_decode(stripslashes($_POST['selectData']));
-                $output = $this->tjg_csbs_ajax_parse_spreadsheet(
+                $output = $common->tjg_csbs_ajax_parse_spreadsheet(
                     $file,
                     $selected_columns,
                     $table_columns,
                     $mode
                 );
+
                 break;
+
+            case 'get_candidates':
+                // Returns all candidates from the database
+                // $output = $this->get_candidates();
+                $output = $common->get_candidate_table();
+                break;
+
+            case 'get_candidate_by_id':
+                // Returns a single candidate by ID
+                $id = $_POST['id'] ?? null;
+                if (is_null($id)) wp_send_json_error('No ID specified');
+                $output = $common->get_candidate_by_id($id);
+                break;
+
+            case 'update_candidate':
+                // Updates a candidate in the database
+                $id = $_POST['id'] ?? null;
+                if (is_null($id)) wp_send_json_error('No ID specified');
+
+                $data = json_decode(stripslashes($_POST['data']), true) ?? null;
+                if (is_null($data)) wp_send_json_error('No data specified');
+
+                $output = $common->update_candidate($id, $data);
+                break;
+
+            case 'delete_candidate':
+                // Deletes a candidate from the database
+                $id = $_POST['id'] ?? null;
+                if (is_null($id)) wp_send_json_error('No ID specified');
+                $output = $common->delete_candidate($id);
+                break;
+
+            case 'assign_candidate':
+                // Assigns a candidate to a user
+                $id = $_POST['id'] ?? null;
+                if (is_null($id)) wp_send_json_error('No ID specified');
+
+                $user_id = $_POST['user_id'] ?? null;
+                if (is_null($user_id)) wp_send_json_error('No user ID specified');
+
+                $output = $common->assign_candidate($id, $user_id);
+                break;
+
             default:
                 wp_send_json_error('Invalid method');
                 die();
         }
 
         // Send output
-        wp_send_json_success($output);
-        die();
+        if ($output) wp_send_json_success($output);
+        else wp_send_json_error('No output');
     }
 
-    /**
-     * AJAX handler for parsing spreadsheet
-     */
-    public function tjg_csbs_ajax_get_spreadsheet_summary($file)
-    {
-
-        // Pass file to wp_handle_upload
-        $upload = wp_handle_upload($file, array('test_form' => false));
-
-        // File type using IOFactory::identify()
-        $file_type = IOFactory::identify($upload['file']);
-        $reader = IOFactory::createReader($file_type);
-
-        // Pass upload to reader
-        $spreadsheet = $reader->load($upload['file']);
-
-
-        if ($spreadsheet) {
-            // Get worksheet
-            $payload = [];
-            $worksheet = $spreadsheet->getActiveSheet();
-
-            // Number of rows besides header that has data
-            $payload['num_rows'] = $worksheet->getHighestRow() - 1;
-
-            // read first row
-            foreach ($worksheet->getRowIterator(1, 1) as $row) {
-                $cellIterator = $row->getCellIterator();
-                $cellIterator->setIterateOnlyExistingCells(false);
-                foreach ($cellIterator as $cell) {
-                    $col = $cell->getColumn() ?? 'null column';
-                    $val = $cell->getValue() ?? 'Column ' . $col;
-
-                    // Add column number and value to array
-                    $headers[] = array(
-                        'column' => $col,
-                        'value' => $val
-                    );
-                }
-            }
-
-            // Add headers to payload
-            $payload['headers'] = $headers;
-
-
-            unlink($upload['file']);
-            wp_send_json_success($payload);
-            die();
-        } else {
-            unlink($upload['file']);
-            wp_send_json_error('Error loading file');
-            die();
-        }
-    }
-
-    /**
-     * Parse uploaded sheet.
-     * 
-     * Extracts data from uploaded Excel file, formatting it for
-     * insertion into the database. Remove special characters from
-     * names and phone numbers. Add current date and time to each
-     * record passed to tjg_csbs_insert_new_candidate().
-     * 
-     * This function is called by tjg_csbs_ajax_primary() when the
-     * 'upload_new_candidates' method is passed. It returns an array
-     * of the inserted candidates, or an error message if the
-     * candidate already exists.
-     * 
-     * After the file is uploaded, it is deleted from the server.
-     * 
-     * @since  1.0.0
-     * @param  array $file
-     * @param  object $selected_columns
-     * @param  array $table_columns
-     * @return array $output
-     */
-
-    public function tjg_csbs_ajax_parse_spreadsheet(
-        array $candidate_file,
-        object $selected_columns,
-        array $columns = null,
-        string $mode = 'db'
-    ) {
-        // If no columns are passed, use default (return error for now)
-        if ($columns == null) {
-            wp_send_json_error('No columns passed');
-            die();
-        }
-
-        $payload = [];
-
-        // Specified column letters
-        $first_name_column = $selected_columns->firstNameColumn;
-        $last_name_column = $selected_columns->lastNameColumn;
-        $phone_column = $selected_columns->phoneColumn;
-        $email_column = $selected_columns->emailColumn;
-        $city_column = $selected_columns->cityColumn;
-        $state_column = $selected_columns->stateColumn;
-
-        // Pass file to wp_handle_upload
-        $upload = wp_handle_upload($candidate_file, array('test_form' => false));
-
-        // File type using IOFactory::identify()
-        $file_type = IOFactory::identify($upload['file']);
-        $reader = IOFactory::createReader($file_type);
-
-        // Pass upload to reader
-        $spreadsheet = $reader->load($upload['file']);
-
-        if ($spreadsheet) {
-            // Get worksheet
-            $worksheet = $spreadsheet->getActiveSheet();
-
-            // Collect specified columns from each row and insert into database
-            foreach ($worksheet->getRowIterator(2) as $row) {
-                $cellIterator = $row->getCellIterator();
-                $cellIterator->setIterateOnlyExistingCells(false);
-                foreach ($cellIterator as $cell) {
-                    $col = $cell->getColumn();
-                    $val = $cell->getValue();
-
-                    // Add column number and value to array
-                    $row_data[$col] = $val;
-                }
-
-                // Get data from selected columns
-                $first_name = $row_data[$first_name_column];
-                $last_name = $row_data[$last_name_column];
-                $phone = $row_data[$phone_column];
-                $email = $row_data[$email_column];
-                $city = $row_data[$city_column];
-                $state = $row_data[$state_column];
-
-                // Format phone number
-                $phone = preg_replace('/[^0-9]/', '', $phone);
-
-                // Format name
-                $first_name = preg_replace('/[^A-Za-z]/', '', $first_name);
-                $last_name = preg_replace('/[^A-Za-z]/', '', $last_name);
-
-                // Add current date and time
-                $date = date('Y-m-d H:i:s');
-
-                // Insert candidate based on mode
-                switch ($mode) {
-                    case 'db':
-                        $inserted = $this->tjg_csbs_insert_new_candidate(
-                            $first_name,
-                            $last_name,
-                            $phone,
-                            $email,
-                            $city,
-                            $state,
-                            $date
-                        );
-                        break;
-                    case 'gf':
-                        $inserted = $this->tjg_csbs_gf_insert_new_candidate(
-                            $first_name,
-                            $last_name,
-                            $phone,
-                            $email,
-                            $city,
-                            $state,
-                            $date
-                        );
-                        break;
-                    default:
-                        wp_send_json_error('Invalid mode');
-                        die();
-                }
-
-                /* $inserted returns
-                 * true if candidate was inserted
-                 * false if candidate already exists
-                 * error string if error occurred
-                 */
-                switch ($inserted) {
-                    case true:
-                        $payload['inserted'][] = array(
-                            'first_name' => $first_name,
-                            'last_name' => $last_name,
-                            'phone' => $phone,
-                            'email' => $email,
-                            'city' => $city,
-                            'state' => $state,
-                            'date' => $date
-                        );
-                        break;
-                    case false:
-                        $payload['already_exists'][] = array(
-                            'first_name' => $first_name,
-                            'last_name' => $last_name,
-                            'phone' => $phone,
-                            'email' => $email,
-                            'city' => $city,
-                            'state' => $state,
-                            'date' => $date
-                        );
-                        break;
-                    default:
-                        $payload['error'][] = $inserted;
-                        break;
-                }
-            }
-
-
-            // Delete file from server
-            unlink($upload['file']);
-
-            // Send json success with payload
-            wp_send_json_success($payload);
-            die();
-        } else {
-            unlink($upload['file']);
-            wp_send_json_error('Error loading file');
-            die();
-        }
-
-        unlink($upload['file']);
-        wp_send_json_error('Error loading file');
-        die();
-    }
-
-    #region CRUD Operations for Candidates ############################################################
-
-    /*
-    * Create ##########################################################################################
-    */
-
-    /**
-     * Insert new candidates.
-     * 
-     * Insert all candidates in the uploaded file into the database
-     * table 'tjg_csbs_candidates'. If the phone number already
-     * exists in the database, the candidate will not be inserted
-     * and the candidate's name will be added to the $duplicate
-     * array. Function returns an array of duplicate candidates
-     * and the number of candidates inserted.
-     * 
-     * @since  1.0.0
-     * @param  string $first_name
-     * @param  string $last_name
-     * @param  string $phone
-     * @param  string $email
-     * @param  string $city
-     * @param  string $state
-     * @param  string $date
-     * @return bool|string
-     */
-    public function tjg_csbs_insert_new_candidate(
-        string $first_name,
-        string $last_name,
-        string $phone,
-        string $email,
-        string $city,
-        string $state,
-        string $date
-    ) {
-        /*
-        * $payload = array(
-        *     'first_name' => $first_name,
-        *     'last_name' => $last_name,
-        *     'phone' => $phone,
-        *     'email' => $email,
-        *     'city' => $city,
-        *     'state' => $state,
-        *     'date' => $date
-        * );
-        */
-
-        global $wpdb;
-        $table = $this->table_name;
-        $duplicates = [];
-        $insertions = 0;
-
-        // Select candidates with Date Added before now
-        $query = "SELECT * FROM $table WHERE phone LIKE %s AND date_added < %s";
-        $query = $wpdb->prepare($query, $phone, $date);
-        $result = $wpdb->get_results($query);
-
-        // If no results, insert candidate
-        if (empty($result)) {
-            $insert_query = "INSERT INTO $table
-            (first_name, last_name, phone, email, city, state, date_added)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)";
-            $insert_query = $wpdb->prepare(
-                $insert_query,
-                $first_name,
-                $last_name,
-                $phone,
-                $email,
-                $city,
-                $state,
-                $date
-            );
-            $inserted = $wpdb->query($insert_query);
-            if ($inserted) return true;
-            else if (!$inserted) {
-                // get query error
-                $error = $wpdb->last_error;
-                return $error;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public function tjg_csbs_gf_insert_new_candidate(
-        $first_name,
-        $last_name,
-        $phone,
-        $email,
-        $city,
-        $state,
-        $date
-    ) {
-        // Collect form ID from Plugin Settings
-        $form_id = get_option('tjg_csbs_gravity_forms_id');
-        if (!$form_id) {
-            echo 'No Gravity Form ID set';
-            die();
-        }
-
-        // Check if candidate already exists by phone number
-        $search_criteria = array(
-            'status' => 'active',
-            'field_filters' => array(
-                array(
-                    'key' => '3',
-                    'value' => $phone
-                )
-            )
-        );
-        $entry = GFAPI::get_entries($form_id, $search_criteria);
-
-        // If no entry exists, insert candidate
-        if (empty($entry)) {
-            $entry = array(
-                'form_id' => $form_id,
-                'date_created' => $date,
-                'created_by' => 1,
-                '1.3' => $first_name,
-                '1.6' => $last_name,
-                '3' => $phone,
-                '4' => $email,
-                '6' => $city,
-                '7' => $state
-            );
-
-            // Insert entry try/catch
-            try {
-                // @php-ignore
-                $inserted = GFAPI::add_entry($entry);
-            } catch (Exception $e) {
-                $error = $e->getMessage();
-                return $error;
-            }
-        }
-        if ($inserted) return true;
-        else return false;
-    }
-
-    /*
-    * Read  ##########################################################################################
-    */
-
-    /**
-     * Get list of columns in $wpdb table
-     * 
-     * Returns a list of the columns in the primary table tjg_csbs_candidates
-     * 
-     * @return array $columns
-     */
-    public function get_columns()
-    {
-        global $wpdb;
-        $table_name = $this->table_name;
-
-        $columns = $wpdb->get_col("DESC $table_name", 0);
-
-        return $columns;
-    }
-
-    /**
-     * Get all candidates
-     * 
-     * Returns all candidates in the database table tjg_csbs_candidates
-     * 
-     * @return array $candidates
-     */
-    public function get_candidates()
-    {
-        global $wpdb;
-        $table_name = $this->table_name;
-
-        $query = "SELECT * FROM $table_name";
-        $results = $wpdb->get_results($query, ARRAY_A);
-
-        return $results;
-    }
-
-    /**
-     * Get candidate by ID
-     * 
-     * Returns a candidate from the database table tjg_csbs_candidates
-     * 
-     * @param int $id
-     * @return array $candidate
-     */
-    public function get_candidate_by_id($id)
-    {
-        global $wpdb;
-        $table_name = $this->table_name;
-
-        $query = "SELECT * FROM $table_name WHERE id = %d";
-        $query = $wpdb->prepare($query, $id);
-        $result = $wpdb->get_row($query, ARRAY_A);
-
-        return $result;
-    }
-
-    /**
-     * Get candidate by phone number
-     * 
-     * Returns a candidate from the database table tjg_csbs_candidates
-     * 
-     * @param string $phone
-     * @return array $candidate
-     */
-    public function get_candidate_by_phone($phone)
-    {
-        global $wpdb;
-        $table_name = $this->table_name;
-
-        $query = "SELECT * FROM $table_name WHERE phone = %s";
-        $query = $wpdb->prepare($query, $phone);
-        $result = $wpdb->get_row($query, ARRAY_A);
-
-        return $result;
-    }
-
-
+    #region Shortcodes  ######################################################################################
 
     // Begin Shortcode inclusions
 
@@ -685,4 +297,6 @@ class Tjg_Csbs_Public
         $output = new_candidate_form();
         return $output;
     }
+
+    #endregion
 }

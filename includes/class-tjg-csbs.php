@@ -59,6 +59,15 @@ class Tjg_Csbs
 	protected $version;
 
 	/**
+	 * CSBS Candidate table name.
+	 * 
+	 * @since 1.0.0
+	 * @access protected
+	 * @var string $table_name The name of the CSBS Candidate table.
+	 */
+	protected $table_name;
+
+	/**
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
@@ -74,6 +83,14 @@ class Tjg_Csbs
 		} else {
 			$this->version = '1.0.0';
 		}
+
+		if (defined('TJG_CSBS_TABLE_NAME')) {
+			$this->table_name = TJG_CSBS_TABLE_NAME;
+		} else {
+			global $wpdb;
+			$this->table_name = $wpdb->prefix . 'tjg_csbs_candidates';
+		}
+
 		$this->plugin_name = 'tjg-csbs';
 
 		$this->load_dependencies();

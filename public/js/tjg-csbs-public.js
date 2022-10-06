@@ -224,6 +224,27 @@
 
 			
 		});
+
+		$('#class-test').on('click', function() {
+			console.log('class-test clicked');
+	
+			$.ajax({
+				url: tjg_csbs_ajax_object.ajax_url,
+				type: 'POST',
+				data: {
+					action: 'tjg_csbs_primary_ajax',
+					method: 'get_candidates',
+					nonce: tjg_csbs_ajax_object.nonce
+				},
+				success: function(response) {
+					console.log(response);
+					$('#tjg-csbs-ajax-response').html(response.data);
+				},
+				error: function(response) {
+					console.log(response.responseText);
+				}
+			});
+		});
 		
 
 	});
