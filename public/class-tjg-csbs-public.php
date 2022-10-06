@@ -74,7 +74,8 @@ class Tjg_Csbs_Public
 
         $this->plugin_name = $plugin_name;
         $this->version = $version;
-        $this->table_name = (defined('TJG_CSBS_TABLE_NAME')) ? TJG_CSBS_TABLE_NAME : $GLOBALS['wpdb']->prefix . 'tjg_csbs_candidates';
+        $this->table_name = (defined('TJG_CSBS_TABLE_NAME'))
+            ? TJG_CSBS_TABLE_NAME : $GLOBALS['wpdb']->prefix . 'tjg_csbs_candidates';
     }
 
     /**
@@ -105,11 +106,14 @@ class Tjg_Csbs_Public
         $csb = in_array('csb', $URI);
 
         if ($csb) {
-            wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/tjg-csbs-public.css', array(), $this->version, 'all');
+            wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__)
+                . 'css/tjg-csbs-public.css', array(), $this->version, 'all');
             // Add bootstrap CSS
-            wp_enqueue_style('tjg-csbs-bootstrap-css', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), $this->version, 'all');
+            wp_enqueue_style('tjg-csbs-bootstrap-css', plugin_dir_url(__FILE__)
+                . 'css/bootstrap.min.css', array(), $this->version, 'all');
             // Add Animate.min.css
-            wp_enqueue_style('tjg-csbs-animate-css', plugin_dir_url(__FILE__) . 'css/animate.min.css', array(), $this->version, 'all');
+            wp_enqueue_style('tjg-csbs-animate-css', plugin_dir_url(__FILE__)
+                . 'css/animate.min.css', array(), $this->version, 'all');
         } else {
             // do nothing
         }
@@ -142,8 +146,10 @@ class Tjg_Csbs_Public
 
         if ($csb == true) {
             // Add boostrap JS bundle
-            wp_enqueue_script('tjg-csbs-bootstrap-js', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.min.js', array('jquery'), $this->version, false);
-            wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/tjg-csbs-public.js', array('jquery'), $this->version, false);
+            wp_enqueue_script('tjg-csbs-bootstrap-js', plugin_dir_url(__FILE__)
+                . 'js/bootstrap.bundle.min.js', array('jquery'), $this->version, false);
+            wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__)
+                . 'js/tjg-csbs-public.js', array('jquery'), $this->version, false);
 
             // AJAX for New Candidates Upload
             wp_localize_script(
@@ -159,21 +165,7 @@ class Tjg_Csbs_Public
         }
     }
 
-    /**
-     * Get list of columns in $wpdb table
-     * 
-     * Returns a list of the columns in the primary table tjg_csbs_candidates
-     * 
-     * @return array $columns
-     */
-    public function get_columns() {
-        global $wpdb;
-        $table_name = $this->table_name;
 
-        $columns = $wpdb->get_col("DESC $table_name", 0);
-
-        return $columns;
-    }
 
 
 
@@ -214,7 +206,12 @@ class Tjg_Csbs_Public
             case 'upload_new_candidates':
                 // Uploads new candidates to the database using desired headers
                 $selected_columns = json_decode(stripslashes($_POST['selectData']));
-                $output = $this->tjg_csbs_ajax_parse_spreadsheet($file, $selected_columns, $table_columns, $mode);
+                $output = $this->tjg_csbs_ajax_parse_spreadsheet(
+                    $file,
+                    $selected_columns,
+                    $table_columns,
+                    $mode
+                );
                 break;
             default:
                 wp_send_json_error('Invalid method');
@@ -258,12 +255,12 @@ class Tjg_Csbs_Public
                 foreach ($cellIterator as $cell) {
                     $col = $cell->getColumn() ?? 'null column';
                     $val = $cell->getValue() ?? 'Column ' . $col;
-                    
+
                     // Add column number and value to array
                     $headers[] = array(
                         'column' => $col,
                         'value' => $val
-                    );                    
+                    );
                 }
             }
 
@@ -303,8 +300,12 @@ class Tjg_Csbs_Public
      * @return array $output
      */
 
-    public function tjg_csbs_ajax_parse_spreadsheet(array $candidate_file, object $selected_columns, array $columns = null, string $mode = 'db')
-    {
+    public function tjg_csbs_ajax_parse_spreadsheet(
+        array $candidate_file,
+        object $selected_columns,
+        array $columns = null,
+        string $mode = 'db'
+    ) {
         // If no columns are passed, use default (return error for now)
         if ($columns == null) {
             wp_send_json_error('No columns passed');
@@ -368,10 +369,26 @@ class Tjg_Csbs_Public
                 // Insert candidate based on mode
                 switch ($mode) {
                     case 'db':
-                        $inserted = $this->tjg_csbs_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date);
+                        $inserted = $this->tjg_csbs_insert_new_candidate(
+                            $first_name,
+                            $last_name,
+                            $phone,
+                            $email,
+                            $city,
+                            $state,
+                            $date
+                        );
                         break;
                     case 'gf':
-                        $inserted = $this->tjg_csbs_gf_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date);
+                        $inserted = $this->tjg_csbs_gf_insert_new_candidate(
+                            $first_name,
+                            $last_name,
+                            $phone,
+                            $email,
+                            $city,
+                            $state,
+                            $date
+                        );
                         break;
                     default:
                         wp_send_json_error('Invalid mode');
@@ -411,7 +428,7 @@ class Tjg_Csbs_Public
                         break;
                 }
             }
- 
+
 
             // Delete file from server
             unlink($upload['file']);
@@ -429,6 +446,12 @@ class Tjg_Csbs_Public
         wp_send_json_error('Error loading file');
         die();
     }
+
+    #region CRUD Operations for Candidates ############################################################
+
+    /*
+    * Create ##########################################################################################
+    */
 
     /**
      * Insert new candidates.
@@ -450,8 +473,15 @@ class Tjg_Csbs_Public
      * @param  string $date
      * @return bool|string
      */
-    public function tjg_csbs_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date)
-    {
+    public function tjg_csbs_insert_new_candidate(
+        string $first_name,
+        string $last_name,
+        string $phone,
+        string $email,
+        string $city,
+        string $state,
+        string $date
+    ) {
         /*
         * $payload = array(
         *     'first_name' => $first_name,
@@ -479,7 +509,16 @@ class Tjg_Csbs_Public
             $insert_query = "INSERT INTO $table
             (first_name, last_name, phone, email, city, state, date_added)
             VALUES (%s, %s, %s, %s, %s, %s, %s)";
-            $insert_query = $wpdb->prepare($insert_query, $first_name, $last_name, $phone, $email, $city, $state, $date);
+            $insert_query = $wpdb->prepare(
+                $insert_query,
+                $first_name,
+                $last_name,
+                $phone,
+                $email,
+                $city,
+                $state,
+                $date
+            );
             $inserted = $wpdb->query($insert_query);
             if ($inserted) return true;
             else if (!$inserted) {
@@ -490,11 +529,17 @@ class Tjg_Csbs_Public
         } else {
             return false;
         }
-
     }
 
-    public function tjg_csbs_gf_insert_new_candidate($first_name, $last_name, $phone, $email, $city, $state, $date)
-    {
+    public function tjg_csbs_gf_insert_new_candidate(
+        $first_name,
+        $last_name,
+        $phone,
+        $email,
+        $city,
+        $state,
+        $date
+    ) {
         // Collect form ID from Plugin Settings
         $form_id = get_option('tjg_csbs_gravity_forms_id');
         if (!$form_id) {
@@ -527,19 +572,100 @@ class Tjg_Csbs_Public
                 '6' => $city,
                 '7' => $state
             );
-    
+
             // Insert entry try/catch
             try {
+                // @php-ignore
                 $inserted = GFAPI::add_entry($entry);
             } catch (Exception $e) {
                 $error = $e->getMessage();
                 return $error;
             }
-
         }
         if ($inserted) return true;
         else return false;
     }
+
+    /*
+    * Read  ##########################################################################################
+    */
+
+    /**
+     * Get list of columns in $wpdb table
+     * 
+     * Returns a list of the columns in the primary table tjg_csbs_candidates
+     * 
+     * @return array $columns
+     */
+    public function get_columns()
+    {
+        global $wpdb;
+        $table_name = $this->table_name;
+
+        $columns = $wpdb->get_col("DESC $table_name", 0);
+
+        return $columns;
+    }
+
+    /**
+     * Get all candidates
+     * 
+     * Returns all candidates in the database table tjg_csbs_candidates
+     * 
+     * @return array $candidates
+     */
+    public function get_candidates()
+    {
+        global $wpdb;
+        $table_name = $this->table_name;
+
+        $query = "SELECT * FROM $table_name";
+        $results = $wpdb->get_results($query, ARRAY_A);
+
+        return $results;
+    }
+
+    /**
+     * Get candidate by ID
+     * 
+     * Returns a candidate from the database table tjg_csbs_candidates
+     * 
+     * @param int $id
+     * @return array $candidate
+     */
+    public function get_candidate_by_id($id)
+    {
+        global $wpdb;
+        $table_name = $this->table_name;
+
+        $query = "SELECT * FROM $table_name WHERE id = %d";
+        $query = $wpdb->prepare($query, $id);
+        $result = $wpdb->get_row($query, ARRAY_A);
+
+        return $result;
+    }
+
+    /**
+     * Get candidate by phone number
+     * 
+     * Returns a candidate from the database table tjg_csbs_candidates
+     * 
+     * @param string $phone
+     * @return array $candidate
+     */
+    public function get_candidate_by_phone($phone)
+    {
+        global $wpdb;
+        $table_name = $this->table_name;
+
+        $query = "SELECT * FROM $table_name WHERE phone = %s";
+        $query = $wpdb->prepare($query, $phone);
+        $result = $wpdb->get_row($query, ARRAY_A);
+
+        return $result;
+    }
+
+
 
     // Begin Shortcode inclusions
 
@@ -554,7 +680,8 @@ class Tjg_Csbs_Public
     {
         // Include the form
 
-        include plugin_dir_path(dirname(__FILE__)) . 'public/shortcodes/tjg-csbs-upload-new-candidates.php';
+        include plugin_dir_path(dirname(__FILE__))
+            . 'public/shortcodes/tjg-csbs-upload-new-candidates.php';
         $output = new_candidate_form();
         return $output;
     }
