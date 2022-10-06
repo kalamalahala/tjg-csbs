@@ -38,9 +38,16 @@
 	$(document).ready(function() {
 		console.log('DataTable loaded');
 		$('#tjg-csbs-candidates').DataTable({
-			"dom": 'Bfrtip',
+			"dom": 'BPlfrtip',
 			"buttons": [
-				'copy', 'csv', 'excel', 'pdf', 'print'
+				'selectAll',
+				'selectNone',
+				{	
+					extend: 'searchPanes',
+					config: {
+						cascadePanes: true,
+					}
+				}
 			],
 			"order": [[ 0, "desc" ]],
 			"pageLength": 50,
