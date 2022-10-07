@@ -32,12 +32,14 @@ class Tjg_Csbs_Deactivator {
 	public static function deactivate() {
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'tjg_csbs_candidates';
+		$candidate_table_name = $wpdb->prefix . 'tjg_csbs_candidates';
+		$log_table_name = $wpdb->prefix . 'tjg_csbs_log';
 
 		// Drop table if exists
-		$wpdb->query("DROP TABLE IF EXISTS $table_name");
+		$wpdb->query("DROP TABLE IF EXISTS $candidate_table_name");
+		$wpdb->query("DROP TABLE IF EXISTS $log_table_name");
 
-		do_action('qm/debug', 'Tjg_Csbs_Deactivator::deactivate()');
+		// do_action('qm/debug', 'Tjg_Csbs_Deactivator::deactivate()');
 
 	}
 

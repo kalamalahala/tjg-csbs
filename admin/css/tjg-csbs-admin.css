@@ -2,3 +2,55 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+div.dataTables_filter,
+div.dataTables_length {
+  display: inline-block;
+  margin-left: 1em;
+}
+
+form#tjg-csbs-select-agent-form {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-content: flex-start;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+form#tjg-csbs-select-agent-form > label {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.tjg-csbs-form-wrapper {
+    width: 100%;
+    max-width: 1280px;
+    margin: 20px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+ }
+
+ .tjg-csbs-trash-file {
+   display: inline-flex;
+   gap: 10px;
+   align-items: baseline;
+   padding: 10px;
+   border-radius: 12px;
+   background: #6C757D;
+   color: #fff;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   margin-top: 20px;
+   cursor: pointer;
+   font-size: 12pt;
+ }
+
+ .tjg-csbs-trash-file p {
+   margin: 0 !important;
+ }

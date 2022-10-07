@@ -7,7 +7,7 @@
 function new_candidate_form()
 {
 
-    // include layout-new-candidates.html
+    // include layout-new-candidates-upload.php
     ob_start();
     include plugin_dir_path(dirname(__FILE__)) . '/partials/layout-new-candidates-upload.php';
     $output = ob_get_clean();

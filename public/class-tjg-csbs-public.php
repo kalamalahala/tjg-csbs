@@ -119,6 +119,9 @@ class Tjg_Csbs_Public
             // Add Animate.min.css
             wp_enqueue_style('tjg-csbs-animate-css', plugin_dir_url(__FILE__)
                 . 'css/animate.min.css', array(), $this->version, 'all');
+            // Add Datatables CSS
+            wp_enqueue_style('datatables-nobootstrap', plugin_dir_url(__FILE__)
+                . 'datatables-nobootstrap/datatables.min.css', array(), $this->version, 'all');
         } else {
             // do nothing
         }
@@ -156,13 +159,18 @@ class Tjg_Csbs_Public
             wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__)
                 . 'js/tjg-csbs-public.js', array('jquery'), $this->version, false);
 
+            // Datatables
+            wp_enqueue_script('datatables-nobootstrap', plugin_dir_url(__FILE__)
+                . 'datatables-nobootstrap/datatables.min.js', array('jquery'), $this->version, false);
+
             // AJAX for New Candidates Upload
             wp_localize_script(
                 $this->plugin_name,
                 'tjg_csbs_ajax_object',
                 array(
                     'ajax_url' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('tjg_csbs_nonce')
+                    'nonce' => wp_create_nonce('tjg_csbs_nonce'),
+                    'current_user_id' => get_current_user_id(),
                 )
             );
         } else {
@@ -186,19 +194,18 @@ class Tjg_Csbs_Public
         if ($verify == false) {
             wp_send_json_error('Nonce verification failed');
         }
+        // Check for ajax method
+        $method = $_POST['method'] ?? $_GET['method'] ?? null;
 
-        if (!isset($_POST['method'])) {
+        if (!isset($method)) {
             wp_send_json_error('No method specified');
         }
 
         // Instantiate method handler
         $common = new Common();
 
-        // Check for ajax method
-        $method = $_POST['method'];
 
         $output = '';
-        $table_columns = $common->get_columns();
         
         // Switch on method
         switch ($method) {
@@ -219,7 +226,6 @@ class Tjg_Csbs_Public
                 $output = $common->tjg_csbs_ajax_parse_spreadsheet(
                     $file,
                     $selected_columns,
-                    $table_columns,
                     $mode
                 );
 
@@ -228,7 +234,7 @@ class Tjg_Csbs_Public
             case 'get_candidates':
                 // Returns all candidates from the database
                 // $output = $this->get_candidates();
-                $output = $common->get_candidate_table();
+                $output = $common->get_candidates();
                 break;
 
             case 'get_candidate_by_id':
@@ -236,6 +242,13 @@ class Tjg_Csbs_Public
                 $id = $_POST['id'] ?? null;
                 if (is_null($id)) wp_send_json_error('No ID specified');
                 $output = $common->get_candidate_by_id($id);
+                break;
+
+            case 'get_candidates_assigned_to_user':
+                // Returns all candidates assigned to a user
+                $user_id = $_POST['user_id'] ?? $_GET['user_id'] ?? null;
+                if (is_null($user_id)) wp_send_json_error('No user ID specified');
+                $output = $common->get_candidates_assigned_to_user($user_id);
                 break;
 
             case 'update_candidate':
@@ -295,6 +308,17 @@ class Tjg_Csbs_Public
         include plugin_dir_path(dirname(__FILE__))
             . 'public/shortcodes/tjg-csbs-upload-new-candidates.php';
         $output = new_candidate_form();
+        return $output;
+    }
+
+    function csbs_show_agent_leads_shortcode()
+    {
+        // Include the form
+
+        include plugin_dir_path(dirname(__FILE__))
+            . 'public/shortcodes/tjg-csbs-show-agent-leads.php';
+        $output = get_candidate_layout();
+
         return $output;
     }
 

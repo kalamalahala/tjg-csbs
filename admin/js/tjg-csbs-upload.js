@@ -56,14 +56,14 @@
 			
 			// assemble ajax data array
 			let ajaxData = new FormData();
-			ajaxData.append('action', 'tjg_csbs_primary_ajax');
+			ajaxData.append('action', 'tjg_csbs_admin');
 			ajaxData.append('method', 'get_spreadsheet_summary');
-			ajaxData.append('nonce', tjg_csbs_ajax_object.nonce);
+			ajaxData.append('nonce', ajax_object.nonce);
 			ajaxData.append('file', file);
 
 			// Send AJAX request to get spreadsheet summary
 			$.ajax({
-				url: tjg_csbs_ajax_object.ajax_url,
+				url: ajax_object.ajax_url,
 				type: 'POST',
 				contentType: false,
 				processData: false,
@@ -186,25 +186,24 @@
 			formData.append('filesize', file.size);
 			formData.append('filename', file.name);
 			formData.append('selectData', JSON.stringify(selectData));
-			formData.append('action', 'tjg_csbs_primary_ajax');
+			formData.append('action', 'tjg_csbs_admin');
 			formData.append('method', 'upload_new_candidates');
 			// Set mode to 'gf' for Gravity Forms for now TODO: Add option to select mode
-			formData.append('mode', 'gf');
-			formData.append('nonce', tjg_csbs_ajax_object.nonce);
+			formData.append('mode', 'db');
+			formData.append('nonce', ajax_object.nonce);
 
 			// Set up the request.
 
 			// submit the form via ajax
 			$.ajax({
-				url: tjg_csbs_ajax_object.ajax_url,
+				url: ajax_object.ajax_url,
 				type: 'POST',
 				contentType: false,
 				processData: false,
 				data: formData,
 				success: function(response) {
-					console.log(response);
 					// Display the returned data in browser
-					textarea.innerHTML = response;
+					textarea.value = JSON.stringify(response);
 
 					// Remove spinning loading icon from button text
 					submitButton.innerHTML = 'Submit Candidate File';
@@ -212,9 +211,8 @@
 
 				},
 				error: function(response) {
-					console.log(response);
 					// Display the returned data in browser
-					textarea.innerHTML = response;
+					textarea.value = JSON.stringify(response);
 
 					// Remove spinning loading icon from button text
 					submitButton.innerHTML = 'Submit Candidate File';
@@ -225,133 +223,8 @@
 			
 		});
 
-		$('#class-test').on('click', function() {
-			console.log('class-test clicked');
-	
-			$.ajax({
-				url: tjg_csbs_ajax_object.ajax_url,
-				type: 'POST',
-				data: {
-					action: 'tjg_csbs_primary_ajax',
-					method: 'get_candidates',
-					nonce: tjg_csbs_ajax_object.nonce
-				},
-				success: function(response) {
-					console.log(response);
-					$('#tjg-csbs-ajax-response').html(response.data);
-				},
-				error: function(response) {
-					console.log(response.responseText);
-				}
-			});
-		});
+
 		
-		const dtAjaxUrl = tjg_csbs_ajax_object.ajax_url;
-		const dtNonce = tjg_csbs_ajax_object.nonce;
-		const currentUser = tjg_csbs_ajax_object.current_user_id;
-		const dtAction = 'tjg_csbs_primary_ajax';
-		const dtMethod = 'get_candidates_assigned_to_user';
-		const dtUrlString = dtAjaxUrl + '?action=' + dtAction + '&method=' + dtMethod + '&nonce=' + dtNonce + '&user_id=' + currentUser;
-		// Initialize DataTables
-		$('#tjg-csbs-candidate-table').DataTable({
-			ajax: {
-				url: dtUrlString,
-				dataSrc: 'data',
-			},
-			columns: [
-				{ defaultContent: '' },
-				{ data: 'id' },
-				{ data: 'date_added' },
-				{ data: 'date_updated' },
-				{ data: 'first_name' },
-				{ data: 'last_name' },
-				{ data: 'phone' },
-				{ data: 'email' },
-				{ data: 'city' },
-				{ data: 'state' },
-				{ data: 'disposition' },
-				{ defaultContent: '<button class="btn btn-primary tjg-csbs-candidate-table-edit">View</button>' },
-			],
-			language: {
-				searchPanes: {
-				  clearMessage: "Clear All Filters",
-				  collapse: {
-					0: "Filter Candidates",
-					_: "Filter Candidates (%d)",
-				  },
-				},
-			  },
-			  columnDefs: [
-				{
-				  targets: -1,
-				  orderable: false,
-				  sortable: false,
-				  data: 'id',
-				  render: function(data, type, row, meta) {
-					return '<button class="btn btn-primary tjg-csbs-candidate-table-edit" data-id="' + data + '">View</button>';
-				  }
-				},
-				{
-				  targets: [0],
-				  orderable: false,
-				  searchable: false,
-				  className: "select-checkbox",
-				},
-				{ 
-				  targets: [1],
-				  visible: false,
-				},
-				{
-				  targets: [2, 3], // Date Added and Date Updated
-				  render: function(data, type, row, meta) { // data is the cell value
-					// if the date is empty, return empty string
-					if (data === null) {
-						return '';
-					}
-					let date = new Date(data);
-					let format = date.toLocaleString();
-					let formattedDate = format.split(',')[0];
-					let formattedTime = format.split(',')[1];
-					return formattedDate + '<br />' + formattedTime;
-				  }
-				}
-			  ],
-			  buttons: {
-				dom: {
-				  button: {
-					className: "btn mb-2",
-				  },
-				},
-				buttons: [
-				  {
-					text: "Select Visible",
-					action: function (e, dt, node, config) {
-					  dt.rows({ search: "applied" }).select();
-					},
-				  },
-				  {
-					extend: "selectNone",
-					className: "btn-secondary",
-					text: "De-select All",
-				  },
-				  {
-					extend: "searchPanes",
-					config: {
-					  cascadePanes: true,
-					},
-				  },
-				],
-			  },
-			  select: {
-				style: "multi",
-				selector: "td:first-child",
-			  },
-			  order: [[1, "desc"]],
-			  pageLength: 10,
-			  lengthMenu: [10, 25, 50, 100, 250, 500],
-			  responsive: true,
-			  dom: 'Bflrtip',
-		});
 
 	});
 

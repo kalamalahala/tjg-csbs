@@ -196,6 +196,14 @@ class Tjg_Csbs
 				'hook' => 'admin_enqueue_scripts',
 				'callback' => 'enqueue_scripts',
 			),
+			'wp_ajax_tjg_csbs_admin' => array( // Ajax handler for admin
+				'hook' => 'wp_ajax_tjg_csbs_admin',
+				'callback' => 'tjg_csbs_admin_ajax_handler',
+			),
+			'wp_ajax_nopriv_tjg_csbs_admin' => array( // Ajax handler for admin
+				'hook' => 'wp_ajax_nopriv_tjg_csbs_admin',
+				'callback' => 'tjg_csbs_admin_ajax_handler_nopriv',
+			),
 		); // End action_hooks array
 
 		// Loop through action hooks and add them to the loader
@@ -238,7 +246,8 @@ class Tjg_Csbs
 		);
 
 		$shortcode_hooks = array(
-			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates_shortcode'
+			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates_shortcode',
+			'csbs_agent_candidates' => 'csbs_show_agent_leads_shortcode'
 		);
 
 		// Loop through action hooks and add them to the loader

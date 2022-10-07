@@ -40,16 +40,18 @@ class Tjg_Csbs_Activator
      */
     public static function activate()
     {
+        // Include upgrade.php to use dbDelta
+        include_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-        $table_name = $wpdb->prefix . 'tjg_csbs_candidates';
+        $candidate_table_name = $wpdb->prefix . 'tjg_csbs_candidates';
+        $log_table_name = $wpdb->prefix . 'tjg_csbs_log';
 
         // Check if the table exists
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
-
+        if ($wpdb->get_var("SHOW TABLES LIKE '$candidate_table_name'") != $candidate_table_name) {
             // Create CSBS Candidate table
-            $query_sql = "CREATE TABLE $table_name (
+            $candidate_table_query = "CREATE TABLE $candidate_table_name (
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 first_name VARCHAR(255) DEFAULT NULL,
                 last_name VARCHAR(255) DEFAULT NULL,
@@ -69,14 +71,25 @@ class Tjg_Csbs_Activator
                 merge_status VARCHAR(255) DEFAULT NULL,
                 PRIMARY KEY  (id)
                 ) $charset_collate;";
-
-            // Include upgrade.php to use dbDelta
-            include_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
-            // Create the table
-            dbDelta($query_sql);
         }
 
-        do_action('qm/debug', 'Tjg_Csbs_Activator::activate()');
+        if ($wpdb->get_var("SHOW TABLES LIKE '$log_table_name'") != $log_table_name) {
+            // Create CSBS Log table
+            $log_table = "CREATE TABLE $log_table_name (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                wp_user_id mediumint(9) NOT NULL,
+                candidate_id mediumint(9) NOT NULL,
+                action VARCHAR(255) NOT NULL,
+                notes TEXT DEFAULT NULL,
+                date DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                PRIMARY KEY  (id)
+                ) $charset_collate;";
+        }
+
+        // Create the table
+        if (isset($candidate_table_query)) dbDelta($candidate_table_query);
+        if (isset($log_table)) dbDelta($log_table);
+
+        // do_action('qm/debug', 'Tjg_Csbs_Activator::activate()');
     }
 }

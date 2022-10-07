@@ -31,3 +31,8 @@
  .tjg-csbs-trash-file p {
    margin: 0 !important;
  }
+
+ .select-checkbox::before,
+ .select-checkbox::after{
+  top: 48% !important;
+}

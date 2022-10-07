@@ -9,11 +9,13 @@ require_once plugin_dir_path(dirname(__FILE__)) . '/vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-class Tjg_Csbs_Common {
+class Tjg_Csbs_Common
+{
 
     private $candidate_table;
 
-    function __construct() {
+    public function __construct()
+    {
 
         if (defined('TJG_CSBS_TABLE_NAME')) {
             $this->candidate_table = TJG_CSBS_TABLE_NAME;
@@ -22,16 +24,23 @@ class Tjg_Csbs_Common {
             $this->candidate_table = $wpdb->prefix . 'tjg_csbs_candidates';
         }
 
-        add_action('qm/debug', 'Tjg_Csbs_Common::__construct()');
+        if (defined('TJG_CSBS_LOG_TABLE_NAME')) {
+            $this->log_table = TJG_CSBS_LOG_TABLE_NAME;
+        } else {
+            global $wpdb;
+            $this->log_table = $wpdb->prefix . 'tjg_csbs_log';
+        }
+
     }
 
-    public function get_candidate_table() {
+    public function get_candidate_table()
+    {
         $table = $this->candidate_table;
         return $this->candidate_table;
     }
 
-        #region Spreadsheet Handlers #############################################################################
-    
+    #region Spreadsheet Handlers #############################################################################
+
     /**
      * AJAX handler for parsing spreadsheet
      */
@@ -112,15 +121,8 @@ class Tjg_Csbs_Common {
     public function tjg_csbs_ajax_parse_spreadsheet(
         array $candidate_file,
         object $selected_columns,
-        array $columns,
         string $mode = 'db'
     ) {
-        // If no columns are passed, use default (return error for now)
-        if ($columns == null) {
-            wp_send_json_error('No columns passed');
-            die();
-        }
-
         $payload = [];
 
         // Specified column letters
@@ -158,12 +160,12 @@ class Tjg_Csbs_Common {
                 }
 
                 // Get data from selected columns
-                $first_name = $row_data[$first_name_column];
-                $last_name = $row_data[$last_name_column];
-                $phone = $row_data[$phone_column];
-                $email = $row_data[$email_column];
-                $city = $row_data[$city_column];
-                $state = $row_data[$state_column];
+                $first_name = $row_data[$first_name_column] ?? '';
+                $last_name = $row_data[$last_name_column] ?? '';
+                $phone = $row_data[$phone_column] ?? '';
+                $email = $row_data[$email_column] ?? '';
+                $city = $row_data[$city_column] ?? '';
+                $state = $row_data[$state_column] ?? '';
 
                 // Format phone number
                 $phone = preg_replace('/[^0-9]/', '', $phone);
@@ -257,11 +259,54 @@ class Tjg_Csbs_Common {
     }
     #endregion Spreadsheet
 
-        #region CRUD Operations for Candidates ###################################################################
+    #region CRUD Operations for Candidates ###################################################################
 
     /*
     * Create ##########################################################################################
     */
+
+    /**
+     * Create new log entry.
+     * 
+     * Create a new entry in the log table.
+     * @todo: call with AJAX sometimes
+     * 
+     * @since  1.0.0
+     * @param  int user_id
+     * @param  int candidate_id
+     * @param  string action
+     * @param  string date
+     * @return int $log_id
+     */
+    public function tjg_csbs_create_log_entry(
+        int $user_id,
+        int $candidate_id,
+        string $action,
+        string $date
+    ) {
+        global $wpdb;
+        $log_table = $this->log_table;
+        if (empty($date)) $date = date('Y-m-d H:i:s'); 
+
+        $log_query_raw = "INSERT INTO $log_table
+        (wp_user_id, candidate_id, action, date)
+        VALUES (%d, %d, %s, %s)";
+        $log_query = $wpdb->prepare(
+            $log_query_raw,
+            $user_id,
+            $candidate_id,
+            $action,
+            $date
+        );
+        $log_inserted = $wpdb->query($log_query);
+
+        if ($log_inserted) {
+            $log_id = $wpdb->insert_id;
+            return $log_id;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Insert new candidates.
@@ -305,22 +350,23 @@ class Tjg_Csbs_Common {
         */
 
         global $wpdb;
-        $table = $this->candidate_table;
+        $candidate_table = $this->candidate_table;
+        $log_table = $this->log_table;
         $duplicates = [];
         $insertions = 0;
 
         // Select candidates with Date Added before now
-        $query = "SELECT * FROM $table WHERE phone LIKE %s AND date_added < %s";
+        $query = "SELECT * FROM $candidate_table WHERE phone LIKE %s AND date_added < %s";
         $query = $wpdb->prepare($query, $phone, $date);
         $result = $wpdb->get_results($query);
 
         // If no results, insert candidate
         if (empty($result)) {
-            $insert_query = "INSERT INTO $table
+            $candidate_query_raw = "INSERT INTO $candidate_table
             (first_name, last_name, phone, email, city, state, date_added)
             VALUES (%s, %s, %s, %s, %s, %s, %s)";
-            $insert_query = $wpdb->prepare(
-                $insert_query,
+            $candidate_query = $wpdb->prepare(
+                $candidate_query_raw,
                 $first_name,
                 $last_name,
                 $phone,
@@ -329,8 +375,16 @@ class Tjg_Csbs_Common {
                 $state,
                 $date
             );
-            $inserted = $wpdb->query($insert_query);
-            if ($inserted) return true;
+            $inserted = $wpdb->query($candidate_query);
+
+            $log_inserted = $this->tjg_csbs_create_log_entry(
+                get_current_user_id(),
+                $wpdb->insert_id,
+                'add_candidate',
+                $date
+            );
+
+            if ($inserted && $log_inserted) return true;
             else if (!$inserted) {
                 // get query error
                 $error = $wpdb->last_error;
@@ -432,8 +486,58 @@ class Tjg_Csbs_Common {
         $query = "SELECT * FROM $table_name";
         $results = $wpdb->get_results($query, ARRAY_A);
 
+        if ($results) {
+            return $results;
+        } else {
+            $error = [
+                'error' => $wpdb->last_error,
+                'query' => $query,
+                'results' => $results,
+                'table' => $table_name,
+                'columns' => $this->get_columns(),
+                'last_query' => $wpdb->last_query
+            ];
+            error_log(print_r($error, true));
+            return false;
+        }
+
         return $results;
     }
+
+    /**
+     * Get candidate assigned to a user ID
+     * 
+     * Returns all candidates assigned to a user ID
+     * 
+     * @param int $user_id
+     * @return array $candidates
+     */
+    public function get_candidates_assigned_to_user($user_id) {
+        global $wpdb;
+        $table_name = $this->candidate_table;
+
+        $query = "SELECT * FROM $table_name WHERE rep_user_id = %d";
+        $query = $wpdb->prepare($query, $user_id);
+        $results = $wpdb->get_results($query, ARRAY_A);
+
+        if ($results) {
+            return $results;
+        } else {
+            $error = [
+                'error' => $wpdb->last_error,
+                'query' => $query,
+                'results' => $results,
+                'table' => $table_name,
+                'columns' => $this->get_columns(),
+                'last_query' => $wpdb->last_query
+            ];
+            error_log(print_r($error, true));
+            return false;
+        }
+
+        return $results;
+    }
+
 
     /**
      * Get candidates before date
@@ -444,7 +548,8 @@ class Tjg_Csbs_Common {
      * @param string $date
      * @return array $candidates
      */
-    public function get_candidates_before_date(string $date) {
+    public function get_candidates_before_date(string $date)
+    {
         global $wpdb;
         $table_name = $this->candidate_table;
 
@@ -454,7 +559,6 @@ class Tjg_Csbs_Common {
 
         return $results;
     }
-    
 
     /**
      * Get candidate by ID
@@ -494,6 +598,39 @@ class Tjg_Csbs_Common {
         $result = $wpdb->get_row($query, ARRAY_A);
 
         return $result;
+    }
+
+    /**
+     * Get agent name by ID
+     * 
+     * Returns the name of the agent from the database table tjg_csbs_agents
+     * 
+     * @param int $id
+     * @return string $agent_name
+     */
+    public function get_agent_name($user_id)
+    {
+        $user = get_user_by('id', $user_id);
+        $name['agent_name'] = $user->first_name . ' ' . $user->last_name;
+        return $name;
+    }
+
+    /**
+     * Get all Cornerstone agents
+     * 
+     * Returns all WP Users with Cornerstone in meta tag 'agent_position'
+     * 
+     * @return array $agents
+     */
+    public function get_agents()
+    {
+        $args = array(
+            'meta_key' => 'agent_position',
+            'meta_value' => 'Cornerstone',
+            'meta_compare' => '='
+        );
+        $agents = get_users($args);
+        return $agents;
     }
 
     /*
@@ -564,39 +701,89 @@ class Tjg_Csbs_Common {
     }
 
     /**
+     * Get date updated
+     * 
+     * Returns the date_updated from the database table tjg_csbs_candidates
+     * 
+     * @param int $id
+     * @return string $date_updated
+     */
+    public function get_date_updated($id)
+    {
+        global $wpdb;
+        $table_name = $this->candidate_table;
+
+        $query = "SELECT date_updated FROM $table_name WHERE id = %d";
+        $query = $wpdb->prepare($query, $id);
+        $result = $wpdb->get_var($query);
+
+        return $result;
+    }
+
+    /**
      * Assign candidate to user
      * 
      * Updates a candidate in the database table tjg_csbs_candidates
      * with the user_id of the user who is assigned to the candidate
      * 
-     * @param int $id
      * @param int $user_id
+     * @param array $candidate_ids
      * 
      * @return bool $updated
      */
-    public function assign_candidate($id, $user_id) {
+    public function assign_candidate(int $user_id, array $candidate_ids)
+    {
         global $wpdb;
         $table_name = $this->candidate_table;
+        $candidates_assigned = 0;
+        $error_count = 0;
+    
 
-        $update_query = "UPDATE $table_name
-            SET rep_user_id = %d
-            WHERE id = %d";
-        $update_query = $wpdb->prepare(
-            $update_query,
-            $user_id,
-            $id
-        );
-        $updated = $wpdb->query($update_query);
+        foreach ($candidate_ids as $id) {
 
-        // Update date_updated to current date
-        $this->updated_candidate($id);
+            // // Set up query
+            // $update_query_raw = "UPDATE $table_name
+            //     SET rep_user_id = '%d'
+            //     WHERE id = '%d'";
+            // $update_query = $wpdb->prepare($update_query_raw, $user_id, $id);
 
-        if ($updated) return true;
-        else if (!$updated) {
-            // get query error
-            $error = $wpdb->last_error;
-            return $error;
+            // // Run query
+            // $updated = $wpdb->query($update_query);
+
+            // Update entry using wpdb->update
+            $updated = $wpdb->update(
+                $table_name,
+                array('rep_user_id' => $user_id),
+                array('id' => $id)
+            ); 
+
+            if ($updated == true) {
+                $candidates_assigned++;
+                $fresh_date = $this->updated_candidate($id);
+                $log_entry = $this->tjg_csbs_create_log_entry(
+                    $user_id,
+                    $id,
+                    'assigned_candidate',
+                    $fresh_date
+                );
+                $payload['updated'][] = $updated;
+                $payload['log_entry'][] = $log_entry;
+            } else {
+                $error_count++;
+                // get query error
+                $error = $wpdb->last_error;
+                $payload['error'][] = $user_id . ' ' . $id . ' ' . $error;
+            }
         }
+
+        $payload['candidates_assigned'] = $candidates_assigned;
+        $payload['error_count'] = $error_count;
+        $payload['agent_name'] = $this->get_agent_name($user_id)['agent_name'];
+
+        wp_send_json_success($payload);
+
+        if (in_array(0, $updated)) return wp_send_json_error($updated);
+        else wp_send_json_success($updated);
     }
 
     /**
@@ -607,7 +794,8 @@ class Tjg_Csbs_Common {
      * @param int $id
      * @return bool $updated
      */
-    public function updated_candidate($id) {
+    public function updated_candidate($id)
+    {
         global $wpdb;
         $table_name = $this->candidate_table;
 
@@ -642,7 +830,8 @@ class Tjg_Csbs_Common {
      * @param int $id
      * @return bool $deleted
      */
-    public function delete_candidate($id) {
+    public function delete_candidate($id)
+    {
         global $wpdb;
         $table_name = $this->candidate_table;
 
@@ -661,5 +850,12 @@ class Tjg_Csbs_Common {
 
     #endregion
 
+    #region Helper Functions ##############################################################################
 
+    public function format_phone($phone)
+    {
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        $phone = preg_replace('/([0-9]{3})([0-9]{3})([0-9]{4})/', '($1) $2-$3', $phone);
+        return $phone;
+    }
 }
