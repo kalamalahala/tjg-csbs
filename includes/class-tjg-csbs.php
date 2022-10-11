@@ -59,6 +59,15 @@ class Tjg_Csbs
 	protected $version;
 
 	/**
+	 * CSBS Candidate table name.
+	 * 
+	 * @since 1.0.0
+	 * @access protected
+	 * @var string $table_name The name of the CSBS Candidate table.
+	 */
+	protected $table_name;
+
+	/**
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
@@ -74,6 +83,14 @@ class Tjg_Csbs
 		} else {
 			$this->version = '1.0.0';
 		}
+
+		if (defined('TJG_CSBS_TABLE_NAME')) {
+			$this->table_name = TJG_CSBS_TABLE_NAME;
+		} else {
+			global $wpdb;
+			$this->table_name = $wpdb->prefix . 'tjg_csbs_candidates';
+		}
+
 		$this->plugin_name = 'tjg-csbs';
 
 		$this->load_dependencies();
@@ -124,6 +141,11 @@ class Tjg_Csbs
 		 */
 		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-tjg-csbs-public.php';
 
+		/**
+		 * Include composer vendor/autoload.php
+		 */
+		require_once plugin_dir_path(dirname(__FILE__)) . 'vendor/autoload.php';
+		
 		$this->loader = new Tjg_Csbs_Loader();
 	}
 
@@ -153,11 +175,41 @@ class Tjg_Csbs
 	 */
 	private function define_admin_hooks()
 	{
-
+		// Create new instance of Tjg_Csbs_Admin
 		$plugin_admin = new Tjg_Csbs_Admin($this->get_plugin_name(), $this->get_version());
 
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+		// Action hook array
+		$action_hooks = array(
+			'create_menu' => array( // Main Menu Item
+				'hook' => 'admin_menu',
+				'callback' => 'tjg_csbs_create_admin_menu',
+			),
+			'plugin_settings' => array(
+				'hook' => 'admin_init',
+				'callback' => 'tjg_csbs_register_settings',
+			),
+			'admin_enqueue_styles' => array( // Enqueue scripts and styles
+				'hook' => 'admin_enqueue_scripts',
+				'callback' => 'enqueue_styles',
+			),
+			'admin_enqueue_scripts' => array( // Enqueue scripts and styles
+				'hook' => 'admin_enqueue_scripts',
+				'callback' => 'enqueue_scripts',
+			),
+			'wp_ajax_tjg_csbs_admin' => array( // Ajax handler for admin
+				'hook' => 'wp_ajax_tjg_csbs_admin',
+				'callback' => 'tjg_csbs_admin_ajax_handler',
+			),
+			'wp_ajax_nopriv_tjg_csbs_admin' => array( // Ajax handler for admin
+				'hook' => 'wp_ajax_nopriv_tjg_csbs_admin',
+				'callback' => 'tjg_csbs_admin_ajax_handler_nopriv',
+			),
+		); // End action_hooks array
+
+		// Loop through action hooks and add them to the loader
+		foreach ($action_hooks as $action_hook) {
+			$this->loader->add_action($action_hook['hook'], $plugin_admin, $action_hook['callback']);
+		}
 	}
 
 	/**
@@ -183,17 +235,26 @@ class Tjg_Csbs
 				'hook' => 'wp_enqueue_scripts',
 				'function' => 'enqueue_styles',
 			),
+			'primary_ajax' => array(
+				'hook' => 'wp_ajax_tjg_csbs_primary_ajax',
+				'function' => 'tjg_csbs_ajax_primary',
+			),
+			'nopriv_ajax' => array(
+				'hook' => 'wp_ajax_nopriv_tjg_csbs_primary_ajax',
+				'function' => 'tjg_csbs_ajax_no_priv',
+			),
 		);
 
 		$shortcode_hooks = array(
-			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates_shortcode'
+			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates_shortcode',
+			'csbs_agent_candidates' => 'csbs_show_agent_leads_shortcode'
 		);
 
 		// Loop through action hooks and add them to the loader
 		foreach ($action_hooks as $name => $hook_and_function) {
 			$this->loader->add_action($hook_and_function['hook'], $plugin_public, $hook_and_function['function']);
 		}
-
+		
 		// Loop through shortcode hooks and add them to the loader
 		foreach ($shortcode_hooks as $name => $function) {
 			$this->loader->add_shortcode($name, $plugin_public, $function);

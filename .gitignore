@@ -1,2 +1,5 @@
 /vendor/
 composer.*
+*.zip
+/admin/datatables/**/
+/public/datatables-nobootstrap/**/

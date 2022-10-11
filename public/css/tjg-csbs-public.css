@@ -2,3 +2,37 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+
+ .tjg-csbs-form-wrapper {
+    width: 100%;
+    max-width: 1280px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+ }
+
+ .tjg-csbs-trash-file {
+   display: inline-flex;
+   gap: 10px;
+   align-items: baseline;
+   padding: 10px;
+   border-radius: 12px;
+   background: #6C757D;
+   color: #fff;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   margin-top: 20px;
+   cursor: pointer;
+   font-size: 12pt;
+ }
+
+ .tjg-csbs-trash-file p {
+   margin: 0 !important;
+ }
+
+ .select-checkbox::before,
+ .select-checkbox::after{
+  top: 48% !important;
+}
