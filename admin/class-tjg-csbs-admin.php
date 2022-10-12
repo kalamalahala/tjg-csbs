@@ -13,10 +13,12 @@
 require_once plugin_dir_path(dirname(__FILE__)) . '/includes/class-tjg-csbs-methods.php';
 require_once plugin_dir_path(dirname(__FILE__)) . '/includes/settings/tjg-csbs-settings.php';
 require_once plugin_dir_path(dirname(__FILE__)) . '/includes/settings/tjg-csbs-menu.php';
+require_once plugin_dir_path(dirname(__FILE__)) . '/vendor/autoload.php';
 
 use Tjg_Csbs_Common as Common;
 use Tjg_Csbs_Settings as Settings;
 use Tjg_Csbs_Menu as Menu;
+use Vonage\Client\Credentials\Basic as Basic;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -214,7 +216,9 @@ class Tjg_Csbs_Admin
 	#region Settings and Menu Configuration #######################################
 	public function tjg_csbs_register_settings()
 	{
-		$settings = new Settings($this->plugin_name, $this->version);
+		$vonage_api_key = get_option('tjg_csbs_vonage_api_key');
+		$vonage_api_secret = get_option('tjg_csbs_vonage_api_secret');
+		$settings = new Settings($this->plugin_name, $this->version, $vonage_api_key, $vonage_api_secret);
 	}
 
 	public function tjg_csbs_create_admin_menu()

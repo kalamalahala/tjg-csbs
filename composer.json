@@ -3,5 +3,12 @@
         "twilio/sdk": "^6.42",
         "phpoffice/phpspreadsheet": "1.22.0",
         "vonage/client": "^3.0"
+    },
+
+    "config": {
+        "platform": {
+            "php": "7.1.0"
+        },
+        "platform-check": false
     }
 }

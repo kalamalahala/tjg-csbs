@@ -8,14 +8,23 @@ if ( ! defined( 'WPINC' ) ) {
     die;
 }
 
+use Vonage\Client\Credentials\Basic;
 class Tjg_Csbs_Settings {
 
     private $plugin_name;
     private $version;
 
-    public function __construct( $plugin_name, $version ) {
+	// Vonage settings
+	private $vonage_api_key;
+	private $vonage_api_secret;
+
+    public function __construct( $plugin_name, $version, $vonage_api_key, $vonage_api_secret) {
         $this->plugin_name = $plugin_name;
         $this->version = $version;
+
+		// Assign Vonage settings
+		$this->vonage_api_key = $vonage_api_key;
+		$this->vonage_api_secret = $vonage_api_secret;
 
         // Create settings fields
         $this->do_settings();
@@ -132,6 +141,40 @@ class Tjg_Csbs_Settings {
 		echo '<input type="number" id="tjg_csbs_gravity_forms_id" name="tjg_csbs_gravity_forms_id" value="' . $gravity_forms_id . '">';
 	}
 
+	
+	/**
+	 * Vonage API Settings
+	 * 
+	 * List phone numbers, set keys, etc.
+	 * 
+	 * @since 0.0.1
+	 * 
+	 * @return void
+	 */
+	
+	public function tjg_csbs_settings_field_vonage_API_key()
+	{
+		$api_key = get_option('tjg_csbs_vonage_api_key');
+		echo '<input type="text" id="tjg_csbs_vonage_api_key" name="tjg_csbs_vonage_api_key" value="' . $api_key . '">';
+	}
+
+	public function tjg_csbs_settings_field_vonage_API_secret()
+	{
+		$api_secret = get_option('tjg_csbs_vonage_api_secret');
+		echo '<input type="password" id="tjg_csbs_vonage_api_secret" name="tjg_csbs_vonage_api_secret" value="' . $api_secret . '">';
+		try {
+			$basic = new \Vonage\Client\Credentials\Basic('2eafb344', 'vGscL5cnawRpCx6i');
+			var_dump($basic);
+		}
+		catch (Exception $e) {
+		  error_log('Caught exception: ' . $e->getMessage() . " in line " . $e->getLine() . " of " . $e->getFile());
+		  echo 'Caught exception: ' . $e->getMessage() . " in line " . $e->getLine() . " of " . $e->getFile();
+		}
+	}
+
+	public function tjg_csbs_settings_field_list_vonage_numbers() {
+
+	}
 
 
 }
