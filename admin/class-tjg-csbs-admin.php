@@ -90,6 +90,7 @@ class Tjg_Csbs_Admin
 			wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/tjg-csbs-admin.css', array(), $this->version, 'all');
 			wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), $this->version, 'all');
 			wp_enqueue_style('dataTables', plugin_dir_url(__FILE__) . 'datatables/datatables.min.css', array(), $this->version, 'all');
+			wp_enqueue_style('fontawesome4', plugin_dir_url(__FILE__) . '../includes/css/font-awesome.min.css', array(), $this->version, 'all');
 		}
 	}
 

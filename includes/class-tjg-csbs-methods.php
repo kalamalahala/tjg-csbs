@@ -601,6 +601,33 @@ class Tjg_Csbs_Common
     }
 
     /**
+     * Get number of calls made to candidate
+     * 
+     * Returns the number of calls made to a candidate
+     * from the log table tjg_csbs_log
+     * 
+     * @todo: Create tables for calls, texts, emails, and notes
+     *        with dates and update this function to use 
+     *        those tables
+     * 
+     * @param int $id Candidate ID
+     * @return int $count Number of calls made
+     */
+    public function get_candidate_call_count($id)
+    {
+        global $wpdb;
+        $table_name = $this->log_table;
+
+        $query = "SELECT COUNT(*) FROM $table_name WHERE candidate_id = %d AND action = 'call'";
+        $query = $wpdb->prepare($query, $id);
+        $count = $wpdb->get_var($query);
+
+        // if count is null, return 0
+        $count = (!is_null($count)) ? $count : 0;
+        return $count;
+    }
+
+    /**
      * Get agent name by ID
      * 
      * Returns the name of the agent from the database table tjg_csbs_agents
