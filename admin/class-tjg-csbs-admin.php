@@ -11,8 +11,12 @@
  */
 
 require_once plugin_dir_path(dirname(__FILE__)) . '/includes/class-tjg-csbs-methods.php';
+require_once plugin_dir_path(dirname(__FILE__)) . '/includes/settings/tjg-csbs-settings.php';
+require_once plugin_dir_path(dirname(__FILE__)) . '/includes/settings/tjg-csbs-menu.php';
 
 use Tjg_Csbs_Common as Common;
+use Tjg_Csbs_Settings as Settings;
+use Tjg_Csbs_Menu as Menu;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -209,137 +213,12 @@ class Tjg_Csbs_Admin
 	#region Settings and Menu Configuration #######################################
 	public function tjg_csbs_register_settings()
 	{
-		// Add section
-		add_settings_section(
-			'tjg_csbs_settings',
-			'Cornerstone Settings',
-			array($this, 'tjg_csbs_settings_header'),
-			'tjg-csbs-admin-settings'
-		);
-
-		// Sendgrid API Key
-		add_settings_field(
-			'tjg_csbs_sendgrid_api_key',
-			'SendGrid API Key',
-			array($this, 'tjg_csbs_settings_field_sendgrid_API_key'),
-			'tjg-csbs-admin-settings',
-			'tjg_csbs_settings'
-		);
-
-		// Number of candidates to display on main page
-		add_settings_field(
-			'tjg_csbs_num_candidates',
-			'Number of Candidates to Display',
-			array($this, 'tjg_csbs_settings_field_num_candidates'),
-			'tjg-csbs-admin-settings',
-			'tjg_csbs_settings'
-		);
-
-		// Gravity Forms ID for Candidates
-		add_settings_field(
-			'tjg_csbs_gravity_forms_id',
-			'Gravity Forms ID for Candidates',
-			array($this, 'tjg_csbs_settings_field_gravity_forms_id'),
-			'tjg-csbs-admin-settings',
-			'tjg_csbs_settings'
-		);
-
-		// Register setting
-		register_setting(
-			'tjg_csbs_option_group',
-			'tjg_csbs_sendgrid_api_key'
-		);
-		register_setting(
-			'tjg_csbs_option_group',
-			'tjg_csbs_num_candidates'
-		);
-		register_setting(
-			'tjg_csbs_option_group',
-			'tjg_csbs_gravity_forms_id'
-		);
+		$settings = new Settings($this->plugin_name, $this->version);
 	}
-
-	public function tjg_csbs_settings_header()
-	{
-		if ($_GET['page'] !== 'tjg-csbs-admin-settings') {
-			return;
-		}
-
-		// Handle $_GET requests here
-		if (isset($_GET['settings-updated'])) {
-			echo '<div class="row">';
-			echo '<div class="notice notice-success is-dismissible" col-md-5"><p>Settings updated.</p></div>';
-			echo '</div>';
-		}
-	}
-
-	public function tjg_csbs_settings_field_sendgrid_API_key()
-	{
-		$api_key = get_option('tjg_csbs_sendgrid_api_key');
-		// $sendgrid_api_key = $options['tjg_csbs_sendgrid_api_key'];
-		echo '<input type="text" id="tjg_csbs_sendgrid_api_key" name="tjg_csbs_sendgrid_api_key" value="' . $api_key . '">';
-	}
-
-	public function tjg_csbs_settings_field_num_candidates()
-	{
-		$num_candidates = get_option('tjg_csbs_num_candidates');
-		echo '<input type="number" id="tjg_csbs_num_candidates" name="tjg_csbs_num_candidates" value="' . $num_candidates . '">';
-	}
-
-	public function tjg_csbs_settings_field_gravity_forms_id()
-	{
-		$gravity_forms_id = get_option('tjg_csbs_gravity_forms_id');
-		echo '<input type="number" id="tjg_csbs_gravity_forms_id" name="tjg_csbs_gravity_forms_id" value="' . $gravity_forms_id . '">';
-	}
-
 
 	public function tjg_csbs_create_admin_menu()
 	{
-		add_menu_page(
-			'Cornerstone Business Solutions',
-			'Cornerstone',
-			'manage_options',
-			'tjg-csbs-admin',
-			array($this, 'tjg_csbs_admin_main_page'),
-			'dashicons-menu-alt3',
-			3
-		);
-		add_submenu_page(
-			'tjg-csbs-admin',
-			'Upload Candidates',
-			'Upload Candidates',
-			'manage_options',
-			'tjg-csbs-admin-upload',
-			array($this, 'tjg_csbs_admin_upload_page')
-		);
-		add_submenu_page(
-			'tjg-csbs-admin',
-			'CSBS Settings',
-			'Settings',
-			'manage_options',
-			'tjg-csbs-admin-settings',
-			array($this, 'tjg_csbs_admin_settings_page')
-		);
-	}
-
-	public function tjg_csbs_admin_main_page()
-	{
-		ob_start();
-		include_once plugin_dir_path(__FILE__) . 'partials/tjg-csbs-admin-display.php';
-		echo ob_get_clean();
-	}
-
-	public function tjg_csbs_admin_settings_page()
-	{
-		ob_start();
-		include_once plugin_dir_path(__FILE__) . 'partials/tjg-csbs-admin-settings.php';
-		echo ob_get_clean();
-	}
-
-	public function tjg_csbs_admin_upload_page() {
-		ob_start();
-		include_once plugin_dir_path(__FILE__) . 'partials/layout-new-candidates-upload.php';
-		echo ob_get_clean();
+		$menu = new Menu($this->plugin_name, $this->version);
 	}
 	#endregion Settings and Menu Configuration ###################################
 }
