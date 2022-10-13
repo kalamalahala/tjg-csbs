@@ -216,8 +216,9 @@ class Tjg_Csbs_Admin
 	#region Settings and Menu Configuration #######################################
 	public function tjg_csbs_register_settings()
 	{
-		$vonage_api_key = get_option('tjg_csbs_vonage_api_key');
-		$vonage_api_secret = get_option('tjg_csbs_vonage_api_secret');
+		$handler = new Common();
+		$vonage_api_key = $handler->vonage_api_key();
+		$vonage_api_secret = $handler->vonage_api_secret();
 		$settings = new Settings($this->plugin_name, $this->version, $vonage_api_key, $vonage_api_secret);
 	}
 

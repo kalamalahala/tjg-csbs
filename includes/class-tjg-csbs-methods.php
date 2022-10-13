@@ -885,4 +885,15 @@ class Tjg_Csbs_Common
         $phone = preg_replace('/([0-9]{3})([0-9]{3})([0-9]{4})/', '($1) $2-$3', $phone);
         return $phone;
     }
+
+    // Vonage API Functions
+    public function vonage_api_key() {
+        $key = get_option('tjg_csbs_vonage_api_key');
+        return $key;
+    }
+
+    public function vonage_api_secret() {
+        $secret = get_option('tjg_csbs_vonage_api_secret');
+        return $secret;
+    }
 }

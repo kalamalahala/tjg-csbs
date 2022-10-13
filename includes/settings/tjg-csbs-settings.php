@@ -160,11 +160,18 @@ class Tjg_Csbs_Settings {
 
 	public function tjg_csbs_settings_field_vonage_API_secret()
 	{
-		$api_secret = get_option('tjg_csbs_vonage_api_secret');
+		$api_key = $this->vonage_api_key;
+		$api_secret = $this->vonage_api_secret;
+		$basic = new \Vonage\Client\Credentials\Basic($api_key, $api_secret);
+		$client = new \Vonage\Client($basic);
 		echo '<input type="password" id="tjg_csbs_vonage_api_secret" name="tjg_csbs_vonage_api_secret" value="' . $api_secret . '">';
 		try {
-			$basic = new \Vonage\Client\Credentials\Basic('2eafb344', 'vGscL5cnawRpCx6i');
-			var_dump($basic);
+			$filter = new \Vonage\Numbers\Filter\OwnedNumbers();
+			// $filter->setPattern((int) NUMBER_SEARCH_CRITERIA)
+			// 	->setSearchPattern((int) NUMBER_SEARCH_PATTERN);
+			// $reponse = $client->numbers()-searchOwned($filter);
+			echo '<pre>';
+			// echo count($response) . ' numbers found';
 		}
 		catch (Exception $e) {
 		  error_log('Caught exception: ' . $e->getMessage() . " in line " . $e->getLine() . " of " . $e->getFile());
