@@ -86,6 +86,7 @@ class Tjg_Csbs_Admin
 		 */
 
 		// Check for the page we want to load the styles on
+		if (!isset($_GET['page'])) return;
 		global $pagenow;
 		$csbs_admin = str_contains($_GET['page'], 'tjg-csbs');
 		if ($pagenow == 'admin.php' && $csbs_admin) {
@@ -117,6 +118,7 @@ class Tjg_Csbs_Admin
 		 */
 
 		// Only load resources if in a plugin page containing tjg-csbs
+		if (!isset($_GET['page'])) return;
 		global $pagenow;
 		$csbs_admin = str_contains($_GET['page'], 'tjg-csbs');
 		$upload = str_contains($_GET['page'], 'tjg-csbs-admin-upload');

@@ -189,95 +189,89 @@ class Tjg_Csbs_Public
      */
     public function tjg_csbs_ajax_primary()
     {
-        // Check nonce
-        $verify = check_ajax_referer('tjg_csbs_nonce', 'nonce');
-        if ($verify == false) {
-            wp_send_json_error('Nonce verification failed');
-        }
-        // Check for ajax method
-        $method = $_POST['method'] ?? $_GET['method'] ?? null;
-
-        if (!isset($method)) {
-            wp_send_json_error('No method specified');
-        }
-
         // Instantiate method handler
         $common = new Common();
-
-
-        $output = '';
         
-        // Switch on method
+        // Collect AJAX params
+        $output           = '';
+        $file             = $_FILES['file'] ?? null;
+        $selected_columns = $_POST['selectData'] ?? $_GET['selectData'] ?? null;
+        $mode             = $_POST['mode'] ?? $_GET['mode'] ?? 'db';
+        $method           = $_POST['method'] ?? $_GET['method'] ?? null;
+        $candidate_id     = $_POST['id'] ?? $_GET['id'] ?? null;
+        $candidate_data   = $_POST['data'] ?? $_GET['data'] ?? null;
+        $user_id          = $_POST['user_id'] ?? $_GET['user_id'] ?? null;
+        $selectData       = (!is_null($selected_columns)) ? 
+                            json_decode(stripslashes($selected_columns)) : null;
+        $data             = (!is_null($candidate_data)) ? 
+                            json_decode(stripslashes($candidate_data), true) : null;
+        $verify           = check_ajax_referer('tjg_csbs_nonce', 'nonce');
+
+        // Exit if nonce fails
+        if ($verify == false) wp_send_json_error('Nonce verification failed');
+        
+        // Exit if no method specified
+        if (!isset($method))  wp_send_json_error('No method specified');
+
+        // Switch $method and call Common action handler
         switch ($method) {
+
+            // Returns a list of headers in the provided file
             case 'get_spreadsheet_summary':
-                $file = $_FILES['file'] ?? null;
                 if (is_null($file)) wp_send_json_error('No file specified');
-                // Returns a summary of the spreadsheet to select headers
                 $output = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
                 break;
 
+                /**
+                 * Parses the uploaded spreadsheet using PHPSpreadsheet
+                 * and inserts the candidates into the database
+                 * 
+                 * return a JSON object of each candidate added
+                 */
             case 'upload_new_candidates':
-                $file = $_FILES['file'];
                 if (is_null($file)) wp_send_json_error('No file specified');
-                $mode = $_POST['mode'];
-                if (is_null($mode)) wp_send_json_error('No mode specified');
-                // Uploads new candidates to the database using desired headers
-                $selected_columns = json_decode(stripslashes($_POST['selectData']));
                 $output = $common->tjg_csbs_ajax_parse_spreadsheet(
                     $file,
-                    $selected_columns,
+                    $selectData,
                     $mode
                 );
-
                 break;
 
-            case 'get_candidates':
                 // Returns all candidates from the database
-                // $output = $this->get_candidates();
+            case 'get_candidates':
                 $output = $common->get_candidates();
                 break;
 
-            case 'get_candidate_by_id':
                 // Returns a single candidate by ID
-                $id = $_POST['id'] ?? null;
-                if (is_null($id)) wp_send_json_error('No ID specified');
-                $output = $common->get_candidate_by_id($id);
+            case 'get_candidate_by_id':
+                if (is_null($candidate_id)) wp_send_json_error('No ID specified');
+                $output = $common->get_candidate_by_id($candidate_id);
                 break;
 
-            case 'get_candidates_assigned_to_user':
                 // Returns all candidates assigned to a user
-                $user_id = $_POST['user_id'] ?? $_GET['user_id'] ?? null;
+            case 'get_candidates_assigned_to_user':
                 if (is_null($user_id)) wp_send_json_error('No user ID specified');
                 $output = $common->get_candidates_assigned_to_user($user_id);
                 break;
 
-            case 'update_candidate':
                 // Updates a candidate in the database
-                $id = $_POST['id'] ?? null;
-                if (is_null($id)) wp_send_json_error('No ID specified');
-
-                $data = json_decode(stripslashes($_POST['data']), true) ?? null;
+            case 'update_candidate':
+                if (is_null($candidate_id)) wp_send_json_error('No ID specified');
                 if (is_null($data)) wp_send_json_error('No data specified');
-
-                $output = $common->update_candidate($id, $data);
+                $output = $common->update_candidate($candidate_id, $data);
                 break;
 
-            case 'delete_candidate':
                 // Deletes a candidate from the database
-                $id = $_POST['id'] ?? null;
-                if (is_null($id)) wp_send_json_error('No ID specified');
-                $output = $common->delete_candidate($id);
+            case 'delete_candidate':
+                if (is_null($candidate_id)) wp_send_json_error('No ID specified');
+                $output = $common->delete_candidate($candidate_id);
                 break;
 
-            case 'assign_candidate':
                 // Assigns a candidate to a user
-                $id = $_POST['id'] ?? null;
-                if (is_null($id)) wp_send_json_error('No ID specified');
-
-                $user_id = $_POST['user_id'] ?? null;
+            case 'assign_candidate':
+                if (is_null($candidate_id)) wp_send_json_error('No ID specified');
                 if (is_null($user_id)) wp_send_json_error('No user ID specified');
-
-                $output = $common->assign_candidate($id, $user_id);
+                $output = $common->assign_candidate($candidate_id, $user_id);
                 break;
 
             default:
@@ -287,7 +281,7 @@ class Tjg_Csbs_Public
 
         // Send output
         if ($output) wp_send_json_success($output);
-        else wp_send_json_error('No output');
+        else wp_send_json_error('No output, unknown error');
     }
 
     #region Shortcodes  ######################################################################################
