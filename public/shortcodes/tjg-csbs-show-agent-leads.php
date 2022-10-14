@@ -6,7 +6,6 @@
 
 function get_candidate_layout()
 {
-    do_action('qm/debug', 'show_agent_leads was called');
     // include tjg-csbs-public-display.php
     ob_start();
     include plugin_dir_path(dirname(__FILE__)) . '/partials/tjg-csbs-public-display.php';

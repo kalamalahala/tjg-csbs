@@ -814,6 +814,48 @@ class Tjg_Csbs_Common
     }
 
     /**
+     * Unassign candidate
+     * 
+     * Resets a candidate in the database table tjg_csbs_candidates,
+     * removing the user_id from the rep_user_id field.
+     * 
+     * Add log action 'unassigned_candidate'
+     * 
+     * @param int $user_id
+     * @param int $candidate_id
+     * 
+     * @return bool|string $updated - updated = 1 or error string
+     */
+    public function unassign_candidate(int $user_id, int $candidate_id) {
+
+        global $wpdb;
+        $candidate_table = $this->candidate_table;
+
+        $updated = $wpdb->update(
+            $candidate_table,
+            array('rep_user_id' => null),
+            array('id' => $candidate_id)
+        );
+
+        if ($updated == true) {
+            $fresh_date = $this->updated_candidate($candidate_id);
+            $this->tjg_csbs_create_log_entry(
+                $user_id,
+                $candidate_id,
+                'unassigned_candidate',
+                $fresh_date
+            );
+        }
+
+        if (!$updated) {
+            // get query error
+            $error = $wpdb->last_error;
+            return $error;
+        } else return $updated;     
+
+    }
+
+    /**
      * Update candidate date_updated
      * 
      * Updates a candidate's date_updated in the database table tjg_csbs_candidates

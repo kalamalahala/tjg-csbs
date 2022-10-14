@@ -1,4 +1,4 @@
-(function( $ ) {
+(function ($) {
 	'use strict';
 
 	/**
@@ -29,7 +29,7 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
-	$(document).ready(function() {
+	$(document).ready(function () {
 
 		const form = document.getElementById('tjg-csbs-upload-new-candidates');
 		const submitButton = document.getElementById('tjg-csbs-upload-submit');
@@ -41,7 +41,7 @@
 
 
 		// Collect file information when selected
-		$(fileInput).on('change', function() {
+		$(fileInput).on('change', function () {
 			// If trash icon has hidden attribute, remove it
 			if (trashButton.hasAttribute('hidden')) {
 				trashButton.removeAttribute('hidden');
@@ -50,10 +50,10 @@
 			let file = fileInput.files[0];
 
 			console.log('File selected: ' + file.name);
-			
+
 			// Disable submit until file is parsed
 			$(submitButton).disabled = true;
-			
+
 			// assemble ajax data array
 			let ajaxData = new FormData();
 			ajaxData.append('action', 'tjg_csbs_primary_ajax');
@@ -68,17 +68,17 @@
 				contentType: false,
 				processData: false,
 				data: ajaxData,
-				success: function(response) {
+				success: function (response) {
 					createSelectors(response.data);
 					console.log('Response: ' + response.data)
 					// list object contents to textarea
 					textarea.value = JSON.stringify(response.data, null, 2);
 				},
-				error: function(error) {
+				error: function (error) {
 					console.log('Error: ' + error.responseText);
 					textarea.value = 'Error: ' + error.responseText;
 				},
-				complete: function() {
+				complete: function () {
 					$(submitButton).disabled = false;
 				}
 			}); // End AJAX request
@@ -86,7 +86,7 @@
 		}); // End fileInput change event
 
 		// Clear file input when trash icon is clicked
-		$(trashButton).on('click', function() {
+		$(trashButton).on('click', function () {
 			// Clear file input if it has a file
 			if (fileInput.files.length > 0) {
 				fileInput.value = '';
@@ -103,7 +103,7 @@
 		});
 
 		// Clear form when cancel button is clicked
-		$(cancelButton).on('click', function() {
+		$(cancelButton).on('click', function () {
 			// Clear file input if it has a file
 			if (fileInput.files.length > 0) {
 				fileInput.value = '';
@@ -127,7 +127,7 @@
 		/**
 		 * Candidate Form Submit Handler
 		 */
-		$(form).on('submit', form, function(e) {
+		$(form).on('submit', form, function (e) {
 			// Don't submit the form normally
 			e.preventDefault();
 
@@ -146,7 +146,7 @@
 				$(fileInput).addClass('animate__animated animate__headShake');
 
 				// Remove the animation class after 1 second
-				setTimeout(function() {
+				setTimeout(function () {
 					$(fileInput).removeClass('animate__animated animate__headShake');
 				}, 1000);
 
@@ -201,7 +201,7 @@
 				contentType: false,
 				processData: false,
 				data: formData,
-				success: function(response) {
+				success: function (response) {
 					console.log(response);
 					// Display the returned data in browser
 					textarea.innerHTML = response;
@@ -211,7 +211,7 @@
 					submitButton.disabled = false;
 
 				},
-				error: function(response) {
+				error: function (response) {
 					console.log(response);
 					// Display the returned data in browser
 					textarea.innerHTML = response;
@@ -222,12 +222,12 @@
 				}
 			});
 
-			
+
 		});
 
-		$('#class-test').on('click', function() {
+		$('#class-test').on('click', function () {
 			console.log('class-test clicked');
-	
+
 			$.ajax({
 				url: tjg_csbs_ajax_object.ajax_url,
 				type: 'POST',
@@ -236,16 +236,16 @@
 					method: 'get_candidates',
 					nonce: tjg_csbs_ajax_object.nonce
 				},
-				success: function(response) {
+				success: function (response) {
 					console.log(response);
 					$('#tjg-csbs-ajax-response').html(response.data);
 				},
-				error: function(response) {
+				error: function (response) {
 					console.log(response.responseText);
 				}
 			});
 		});
-		
+
 		const dtAjaxUrl = tjg_csbs_ajax_object.ajax_url;
 		const dtNonce = tjg_csbs_ajax_object.nonce;
 		const currentUser = tjg_csbs_ajax_object.current_user_id;
@@ -265,92 +265,124 @@
 				{ data: 'date_updated' },
 				{ data: 'first_name' },
 				{ data: 'last_name' },
-				{ data: 'phone' },
-				{ data: 'email' },
+				{
+					data: 'phone',
+					render: function (data, type, row, meta) {
+						const phoneNumber = row['phone'];
+						// Format: (000) 000-0000
+						const formattedPhone = '(' + phoneNumber.substr(0, 3)
+							+ ') ' + phoneNumber.substr(3, 3)
+							+ '-' + phoneNumber.substr(6, 4);
+
+						// Display phone number as links to call via Vonage Business
+						return '<i class="fa fa-phone">&nbsp;</i><a href="tel:'
+							+ formattedPhone + '">'
+							+ formattedPhone + '</a>';
+					}
+				},
+				{
+					data: 'email',
+					render: function (data, type, row, meta) {
+						return '<i class="fa fa-envelope">&nbsp;</i><a href="mailto:'
+							+ row['email'] + '">'
+							+ row['email'] + '</a>';
+					}
+				},
 				{ data: 'city' },
 				{ data: 'state' },
 				{ data: 'disposition' },
-				{ defaultContent: '<button class="btn btn-primary tjg-csbs-candidate-table-edit">View</button>' },
+				{ defaultContent: '' }
+				// { defaultContent: '<button class="btn btn-primary btm-sm tjg-csbs-candidate-table-edit">View Candidate</button>'
+				// 	+ '<button class="btn btn-primary btm-sm tjg-csbs-candidate-table-delete" style="margin-left: 8px;">Delete Candidate</button>'
+				// 	+ '<button class="btn btn-primary btm-sm tjg-csbs-candidate-table-update" style="margin-left: 8px;">Update Info</button>' },	
 			],
 			language: {
 				searchPanes: {
-				  clearMessage: "Clear All Filters",
-				  collapse: {
-					0: "Filter Candidates",
-					_: "Filter Candidates (%d)",
-				  },
+					clearMessage: "Clear All Filters",
+					collapse: {
+						0: "Filter Candidates",
+						_: "Filter Candidates (%d)",
+					},
 				},
-			  },
-			  columnDefs: [
+			},
+			columnDefs: [
 				{
-				  targets: -1,
-				  orderable: false,
-				  sortable: false,
-				  data: 'id',
-				  render: function(data, type, row, meta) {
-					return '<button class="btn btn-primary tjg-csbs-candidate-table-edit" data-id="' + data + '">View</button>';
-				  }
-				},
-				{
-				  targets: [0],
-				  orderable: false,
-				  searchable: false,
-				  className: "select-checkbox",
-				},
-				{ 
-				  targets: [1],
-				  visible: false,
-				},
-				{
-				  targets: [2, 3], // Date Added and Date Updated
-				  render: function(data, type, row, meta) { // data is the cell value
-					// if the date is empty, return empty string
-					if (data === null) {
-						return '';
+					targets: -1,
+					orderable: false,
+					sortable: false,
+					// display icons inline
+					className: "dt-nowrap",
+					data: 'id',
+					render: function (data, type, row, meta) {
+						return '<button class="btn btn-primary btn-sm tjg-csbs-candidate-interview" data-id="' + data + '" title="Start Interview"><i class="fa fa-comments"></i></button>'
+							+ '<button class="btn btn-info btn-sm tjg-csbs-candidate-update" data-id="' + data +'" style="margin-left: 8px;" title="View Info"><i class="fa fa-search"></i></button>'
+							+ '<button class="btn btn-danger btn-sm tjg-csbs-candidate-delete" data-id="' + data +'" style="margin-left: 8px;" title="Delete Candidate"><i class="fa fa-trash"></i></button>';
 					}
-					let date = new Date(data);
-					let format = date.toLocaleString();
-					let formattedDate = format.split(',')[0];
-					let formattedTime = format.split(',')[1];
-					return formattedDate + '<br />' + formattedTime;
-				  }
-				}
-			  ],
-			  buttons: {
+				},
+				{
+					targets: [0],
+					orderable: false,
+					searchable: false,
+					className: "select-checkbox",
+				},
+				{
+					targets: [1, 2],
+					visible: false,
+				},
+				{
+					targets: [3], // Date Added and Date Updated
+					render: function (data, type, row, meta) { // data is the cell value
+						// if the date is empty, return empty string
+						if (data === null) {
+							return '';
+						}
+						let date = new Date(data);
+						let format = date.toLocaleString();
+						let formattedDate = format.split(',')[0];
+						let formattedTime = format.split(',')[1];
+						return formattedDate + '<br />' + formattedTime;
+					}
+				},
+				{
+					targets: [6, 7], // Phone and Email columns
+					className: "text-nowrap",
+				},
+			],
+			buttons: {
 				dom: {
-				  button: {
-					className: "btn mb-2",
-				  },
+					button: {
+						className: "btn mb-2",
+					},
 				},
 				buttons: [
-				  {
-					text: "Select Visible",
-					action: function (e, dt, node, config) {
-					  dt.rows({ search: "applied" }).select();
+					{
+						text: "Select Visible",
+						action: function (e, dt, node, config) {
+							dt.rows({ search: "applied" }).select();
+						},
 					},
-				  },
-				  {
-					extend: "selectNone",
-					className: "btn-secondary",
-					text: "De-select All",
-				  },
-				  {
-					extend: "searchPanes",
-					config: {
-					  cascadePanes: true,
+					{
+						extend: "selectNone",
+						className: "btn-secondary",
+						text: "De-select All",
 					},
-				  },
+					{
+						extend: "searchPanes",
+						config: {
+							cascadePanes: true,
+						},
+					},
 				],
-			  },
-			  select: {
+			},
+			select: {
 				style: "multi",
 				selector: "td:first-child",
-			  },
-			  order: [[1, "desc"]],
-			  pageLength: 10,
-			  lengthMenu: [10, 25, 50, 100, 250, 500],
-			  responsive: true,
-			  dom: 'Bflrtip',
+			},
+			order: [[1, "desc"]],
+			pageLength: 10,
+			lengthMenu: [10, 25, 50, 100, 250, 500],
+			responsive: true,
+			dom: 'Bflrtip',
 		});
 
 	});
@@ -393,7 +425,7 @@
 			citySelect.appendChild(option.cloneNode(true));
 			stateSelect.appendChild(option.cloneNode(true));
 		}
-		
+
 	}
 
-})( jQuery );
+})(jQuery);

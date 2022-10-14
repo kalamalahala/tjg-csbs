@@ -19,6 +19,7 @@
 
 // require_once plugin_dir_path(__FILE__) . '../vendor/autoload.php';
 require_once plugin_dir_path(__FILE__) . '../includes/class-tjg-csbs-methods.php';
+
 use Tjg_Csbs_Common as Common;
 
 // use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -39,7 +40,7 @@ use Tjg_Csbs_Common as Common;
  */
 class Tjg_Csbs_Public
 {
-    #region Properties, Construct, and enqueue_scripts and styles ######################################
+    #region Properties, Construct, and enqueue_scripts and styles ############################################
     /**
      * The ID of this plugin.
      *
@@ -109,8 +110,12 @@ class Tjg_Csbs_Public
         $current_URI = $_SERVER['REQUEST_URI'];
         $URI = explode('/', $current_URI);
         $csb = in_array('csb', $URI);
+        $uid =  get_current_user_id();
+
+        do_action('qm/debug', 'my user id is ' . $uid . '.');
 
         if ($csb) {
+            // Primary stylesheet
             wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__)
                 . 'css/tjg-csbs-public.css', array(), $this->version, 'all');
             // Add bootstrap CSS
@@ -122,6 +127,9 @@ class Tjg_Csbs_Public
             // Add Datatables CSS
             wp_enqueue_style('datatables-nobootstrap', plugin_dir_url(__FILE__)
                 . 'datatables-nobootstrap/datatables.min.css', array(), $this->version, 'all');
+            // FontAwesome
+            wp_enqueue_style('fa4', plugin_dir_url(__FILE__) 
+                . '../includes/css/font-awesome.css', array(), $this->version, 'all');
         } else {
             // do nothing
         }
@@ -158,6 +166,8 @@ class Tjg_Csbs_Public
                 . 'js/bootstrap.bundle.min.js', array('jquery'), $this->version, false);
             wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__)
                 . 'js/tjg-csbs-public.js', array('jquery'), $this->version, false);
+            wp_enqueue_script('candidate-methods', plugin_dir_url(__FILE__)
+                . 'js/tjg-csbs-candidate-methods.js', array('jquery'), $this->version, false);
 
             // Datatables
             wp_enqueue_script('datatables-nobootstrap', plugin_dir_url(__FILE__)
@@ -173,11 +183,25 @@ class Tjg_Csbs_Public
                     'current_user_id' => get_current_user_id(),
                 )
             );
+
+            // AJAX for Candidate Methods
+            wp_localize_script(
+                'candidate-methods',
+                'tjg_csbs_candidates_ajax_object',
+                array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('tjg_csbs_nonce'),
+                    'current_user_id' => get_current_user_id(),
+                )
+            );
+
         } else {
             // do nothing
         }
     }
     #endregion Properties, Construct, and enqueue_scripts and styles ##########################################
+
+    #region AJAX Handlers for New Candidates by CSV Upload ###################################################
 
     /**
      * AJAX handler/router for the TJG CSBS Plugin
@@ -191,7 +215,7 @@ class Tjg_Csbs_Public
     {
         // Instantiate method handler
         $common = new Common();
-        
+
         // Collect AJAX params
         $output           = '';
         $file             = $_FILES['file'] ?? null;
@@ -201,22 +225,20 @@ class Tjg_Csbs_Public
         $candidate_id     = $_POST['id'] ?? $_GET['id'] ?? null;
         $candidate_data   = $_POST['data'] ?? $_GET['data'] ?? null;
         $user_id          = $_POST['user_id'] ?? $_GET['user_id'] ?? null;
-        $selectData       = (!is_null($selected_columns)) ? 
-                            json_decode(stripslashes($selected_columns)) : null;
-        $data             = (!is_null($candidate_data)) ? 
-                            json_decode(stripslashes($candidate_data), true) : null;
+        $selectData       = (!is_null($selected_columns)) ? json_decode(stripslashes($selected_columns)) : null;
+        $data             = (!is_null($candidate_data)) ? json_decode(stripslashes($candidate_data), true) : null;
         $verify           = check_ajax_referer('tjg_csbs_nonce', 'nonce');
 
         // Exit if nonce fails
         if ($verify == false) wp_send_json_error('Nonce verification failed');
-        
+
         // Exit if no method specified
         if (!isset($method))  wp_send_json_error('No method specified');
 
         // Switch $method and call Common action handler
         switch ($method) {
 
-            // Returns a list of headers in the provided file
+                // Returns a list of headers in the provided file
             case 'get_spreadsheet_summary':
                 if (is_null($file)) wp_send_json_error('No file specified');
                 $output = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
@@ -274,6 +296,13 @@ class Tjg_Csbs_Public
                 $output = $common->assign_candidate($candidate_id, $user_id);
                 break;
 
+                // Unassigns a candidate from a user
+            case 'unassign_candidate':
+                if (is_null($candidate_id)) wp_send_json_error('No ID specified');
+                if (is_null($user_id)) wp_send_json_error('No user ID specified');
+                $output = $common->unassign_candidate($candidate_id, $user_id);
+                break;
+
             default:
                 wp_send_json_error('Invalid method');
                 die();
@@ -283,6 +312,38 @@ class Tjg_Csbs_Public
         if ($output) wp_send_json_success($output);
         else wp_send_json_error('No output, unknown error');
     }
+
+    #endregion tjg_csbs_ajax_primary #########################################################################
+
+    #region Handle Gravity Forms submission of Interview form ################################################
+
+    /**
+     * Update candidate information based on form data
+     * 
+     * Parses the Gravity Form data and performs the following:
+     *  - Updates database record using data provided (if any)
+     *  - Assigns candidate to the user that created the form (if not already assigned)
+     *  - Dispositions candidate based on selected options
+     * 
+     * @since  1.0.0
+     * @return void
+     * 
+     * @see  https://docs.gravityforms.com/gform_after_submission/ Gravity Form Docs
+     */
+    public function tjg_csbs_gform_submission($entry, $form)
+    {
+        // Instantiate method handler
+        $common = new Common();
+
+        echo '<pre>';
+        echo '<h2>Entry object</h2>';
+        print_r($entry);
+        echo '<hr><h2>Form object</h2>';
+        print_r($form);
+        echo '</pre>';
+        die();
+    }
+    #endregion Handle Gravity Forms submission of Interview form #############################################
 
     #region Shortcodes  ######################################################################################
 
