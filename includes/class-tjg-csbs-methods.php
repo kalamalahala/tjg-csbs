@@ -2,6 +2,10 @@
 
 /**
  * Methods to include in the Public and Admin classes
+ * 
+ * Create, Read, Update, and Delete methods for the TJG_CSBS plugin
+ * 
+ * @since      1.0.0
  */
 
 require_once plugin_dir_path(dirname(__FILE__)) . '/vendor/autoload.php';
@@ -11,35 +15,32 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Tjg_Csbs_Common
 {
+    #region Properties and Constructor ####################################
 
     private $candidate_table;
+    private $log_table;
+    private $notes_table;
+    private $call_log_table;
 
     public function __construct()
     {
+        global $wpdb;
+        $this->candidate_table = (defined('TJG_CSBS_TABLE_NAME'))
+            ? TJG_CSBS_TABLE_NAME : $wpdb->prefix . 'tjg_csbs_candidates';
 
-        if (defined('TJG_CSBS_TABLE_NAME')) {
-            $this->candidate_table = TJG_CSBS_TABLE_NAME;
-        } else {
-            global $wpdb;
-            $this->candidate_table = $wpdb->prefix . 'tjg_csbs_candidates';
-        }
+        $this->log_table       = (defined('TJG_CSBS_LOG_TABLE_NAME'))
+            ? TJG_CSBS_LOG_TABLE_NAME : $wpdb->prefix . 'tjg_csbs_log';
 
-        if (defined('TJG_CSBS_LOG_TABLE_NAME')) {
-            $this->log_table = TJG_CSBS_LOG_TABLE_NAME;
-        } else {
-            global $wpdb;
-            $this->log_table = $wpdb->prefix . 'tjg_csbs_log';
-        }
+        $this->notes_table     = (defined('TJG_CSBS_NOTES_TABLE_NAME'))
+            ? TJG_CSBS_NOTES_TABLE_NAME : $wpdb->prefix . 'tjg_csbs_notes';
 
+        $this->call_log_table  = (defined('TJG_CSBS_CALL_LOG_TABLE_NAME'))
+            ? TJG_CSBS_CALL_LOG_TABLE_NAME : $wpdb->prefix . 'tjg_csbs_call_log';
     }
 
-    public function get_candidate_table()
-    {
-        $table = $this->candidate_table;
-        return $this->candidate_table;
-    }
+    #endregion // Properties and Constructor ###############################
 
-    #region Spreadsheet Handlers #############################################################################
+    #region Spreadsheet Handlers ##########################################
 
     /**
      * AJAX handler for parsing spreadsheet
@@ -257,9 +258,11 @@ class Tjg_Csbs_Common
         wp_send_json_error('Error loading file');
         die();
     }
-    #endregion Spreadsheet
+    #endregion Spreadsheet methods
 
-    #region CRUD Operations for Candidates ###################################################################
+    #region CRUD Operations for Candidates ################################
+
+    #region CRUD Create Functions
 
     /*
     * Create ##########################################################################################
@@ -286,7 +289,7 @@ class Tjg_Csbs_Common
     ) {
         global $wpdb;
         $log_table = $this->log_table;
-        if (empty($date)) $date = date('Y-m-d H:i:s'); 
+        if (empty($date)) $date = date('Y-m-d H:i:s');
 
         $log_query_raw = "INSERT INTO $log_table
         (wp_user_id, candidate_id, action, date)
@@ -449,7 +452,9 @@ class Tjg_Csbs_Common
         if ($inserted) return true;
         else return false;
     }
+    #endregion CRUD Create Functions
 
+    #region CRUD Read Functions
     /*
     * Read  ##########################################################################################
     */
@@ -512,7 +517,8 @@ class Tjg_Csbs_Common
      * @param int $user_id
      * @return array $candidates
      */
-    public function get_candidates_assigned_to_user($user_id) {
+    public function get_candidates_assigned_to_user($user_id)
+    {
         global $wpdb;
         $table_name = $this->candidate_table;
 
@@ -659,9 +665,11 @@ class Tjg_Csbs_Common
         $agents = get_users($args);
         return $agents;
     }
+    #endregion CRUD Read Functions
 
+    #region CRUD Update Functions
     /*
-    * Update  ##########################################################################################
+    * Update  ############################################################
     */
 
     /**
@@ -764,7 +772,7 @@ class Tjg_Csbs_Common
         $table_name = $this->candidate_table;
         $candidates_assigned = 0;
         $error_count = 0;
-    
+
 
         foreach ($candidate_ids as $id) {
 
@@ -782,7 +790,7 @@ class Tjg_Csbs_Common
                 $table_name,
                 array('rep_user_id' => $user_id),
                 array('id' => $id)
-            ); 
+            );
 
             if ($updated == true) {
                 $candidates_assigned++;
@@ -826,7 +834,8 @@ class Tjg_Csbs_Common
      * 
      * @return bool|string $updated - updated = 1 or error string
      */
-    public function unassign_candidate(int $candidate_id, int $user_id) {
+    public function unassign_candidate(int $candidate_id, int $user_id)
+    {
 
         global $wpdb;
         $candidate_table = $this->candidate_table;
@@ -851,7 +860,6 @@ class Tjg_Csbs_Common
             $error = $wpdb->last_error;
             return $error;
         }
-
     }
 
     /**
@@ -886,6 +894,145 @@ class Tjg_Csbs_Common
         }
     }
 
+    /**
+     * Worked candidate
+     * 
+     * Adds timestamp to 'date_worked' column of candidate table
+     * for a given candidate ID
+     * 
+     * @param int $id
+     * 
+     * @return bool|string true or error string
+     */
+    public function worked_candidate($id) {
+        global $wpdb;
+        $table_name = $this->candidate_table;
+        
+        $today = date("Y-m-d H:i:s");
+        $updated_worked = $wpdb->update(
+            $table_name,
+            array('date_worked' => $today),
+            array('id' => $id)
+        );
+                
+        if ($updated_worked == true) return true;
+        else if (!$updated_worked) {
+            $error = $wpdb->last_error;
+            return $error;
+        }
+    }
+
+    /**
+     * Begin interview
+     * 
+     * Logs an interview start time and updates date_updated in
+     * the database table tjg_csbs_candidates for the specified candidate
+     * 
+     * Return the ID of the call log entry created
+     * 
+     * @param int $candidate_id
+     * @param int $user_id
+     * 
+     * @return int|string $last_log_id - int or error string
+     */
+    public function begin_interview(int $candidate_id, int $user_id)
+    {
+        global $wpdb;
+        $table = $this->get_call_log_table();
+
+        $candidate_id = intval($candidate_id);
+        $rep_user_id = intval($user_id);
+        $timestamp = date('Y-m-d H:i:s');
+        $direction = 'outbound';
+
+        $logged = $wpdb->insert(
+            $table,
+            array(
+                'candidate_id' => $candidate_id,
+                'rep_user_id' => $rep_user_id,
+                'direction' => $direction,
+                'start_time' => $timestamp
+            )
+        );
+
+        $last_log_id = $wpdb->insert_id;
+
+        if ($logged == true) {
+            $fresh_date = $this->updated_candidate($candidate_id);
+            $this->tjg_csbs_create_log_entry(
+                $user_id,
+                $candidate_id,
+                'begin_interview',
+                $fresh_date
+            );
+
+            return $last_log_id;
+        } else {
+            // get query error
+            $error = $wpdb->last_error;
+            return $error;
+        }
+    }
+
+    /**
+     * End interview
+     * 
+     * Adds an end_time to an interview in the database 
+     * table tjg_csbs_call_log, then updates date_updated in
+     * the database table tjg_csbs_candidates for the specified candidate
+     * 
+     * @param int $call_log_id
+     * @param int $candidate_id
+     * @param int $user_id
+     * 
+     * @return bool|string $updated - updated = 1 or error string
+     */
+    public function end_interview(int $call_log_id, int $candidate_id, int $user_id) {
+        global $wpdb;
+        $table = $this->get_call_log_table();
+
+        // force types
+        $call_log_id = intval($call_log_id);
+        $candidate_id = intval($candidate_id);
+        $rep_user_id = intval($user_id);
+
+        // get current date/time
+        $timestamp = date('Y-m-d H:i:s');
+
+        // update call - set end_time
+        $updated = $wpdb->update(
+            $table,
+            array('end_time' => $timestamp),
+            array('id' => $call_log_id)
+        );
+
+        // update candidate date_updated
+        $fresh_date = $this->updated_candidate($candidate_id);
+
+        // Add log entry
+        $this->tjg_csbs_create_log_entry(
+            $rep_user_id,
+            $candidate_id,
+            'end_interview',
+            $fresh_date
+        );
+
+        // Update candidate's date_worked column
+        $this->worked_candidate($candidate_id);
+
+        if ($updated == true) return $updated;
+        else {
+            // get query error
+            $error = $wpdb->last_error;
+            return $error;
+        }
+
+    }
+
+    #endregion CRUD Update Functions
+
+    #region CRUD Delete Functions
+
     /*
     * Delete  ##########################################################################################
     */
@@ -916,9 +1063,11 @@ class Tjg_Csbs_Common
         }
     }
 
-    #endregion
+    #endregion CRUD Delete Functions
 
-    #region Helper Functions ##############################################################################
+    #endregion CRUD Functions
+
+    #region Helper Functions ##############################################
 
     public function format_phone($phone)
     {
@@ -928,13 +1077,42 @@ class Tjg_Csbs_Common
     }
 
     // Vonage API Functions
-    public function vonage_api_key() {
+    public function vonage_api_key()
+    {
         $key = get_option('tjg_csbs_vonage_api_key');
         return $key;
     }
 
-    public function vonage_api_secret() {
+    public function vonage_api_secret()
+    {
         $secret = get_option('tjg_csbs_vonage_api_secret');
         return $secret;
     }
+
+    // Table Names
+    public function get_candidate_table()
+    {
+        $table = $this->candidate_table;
+        return $this->candidate_table;
+    }
+
+    public function get_log_table()
+    {
+        $table = $this->log_table;
+        return $this->log_table;
+    }
+
+    public function get_notes_table()
+    {
+        $table = $this->notes_table;
+        return $this->notes_table;
+    }
+
+    public function get_call_log_table()
+    {
+        $table = $this->call_log_table;
+        return $this->call_log_table;
+    }
+
+    #endregion Helper Functions
 }

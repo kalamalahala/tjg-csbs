@@ -42,6 +42,8 @@ $prefix = $wpdb->prefix;
 define( 'TJG_CSBS_VERSION', '1.0.0' );
 define( 'TJG_CSBS_TABLE_NAME', $prefix . 'tjg_csbs_candidates' );
 define( 'TJG_CSBS_LOG_TABLE_NAME', $prefix . 'tjg_csbs_log' );
+define( 'TJG_CSBS_NOTES_TABLE_NAME', $prefix . 'tjg_csbs_notes' );
+define( 'TJG_CSBS_CALL_LOG_TABLE_NAME', $prefix . 'tjg_csbs_call_log' );
 
 /**
  * The code that runs during plugin activation.

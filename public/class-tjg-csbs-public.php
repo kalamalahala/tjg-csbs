@@ -303,6 +303,14 @@ class Tjg_Csbs_Public
                 $output = $common->unassign_candidate($candidate_id, $user_id);
                 break;
 
+                // Start interview and phone call timer
+            case 'begin_interview':
+                if (is_null($candidate_id)) wp_send_json_error('No ID specified');
+                if (is_null($user_id)) wp_send_json_error('No user ID specified');
+                $output = [];
+                $output['call_id'] = $common->begin_interview($candidate_id, $user_id);
+                break; // handle end of interview with GF submission handler
+
             default:
                 wp_send_json_error('Invalid method');
                 die();
@@ -340,12 +348,12 @@ class Tjg_Csbs_Public
          */
         $candidate_id   = $entry['28'] ?? null;
         $user_id        = $entry['created_by'];
+        $call_id        = $entry['30'] ?? null;
         $date_created   = $entry['date_created'];
         $fresh_date     = date('Y-m-d H:i:s', strtotime($date_created));
 
-
-        // Update date updated
-        $common->updated_candidate($candidate_id);
+        // End interview timer
+        $common->end_interview($call_id, $candidate_id, $user_id);
 
 
 

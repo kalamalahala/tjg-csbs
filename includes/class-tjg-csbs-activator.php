@@ -47,6 +47,8 @@ class Tjg_Csbs_Activator
         $charset_collate = $wpdb->get_charset_collate();
         $candidate_table_name = $wpdb->prefix . 'tjg_csbs_candidates';
         $log_table_name = $wpdb->prefix . 'tjg_csbs_log';
+        $candidate_notes_table_name = $wpdb->prefix . 'tjg_csbs_notes';
+        $call_log_table_name = $wpdb->prefix . 'tjg_csbs_call_log';
 
         // Check if the table exists
         if ($wpdb->get_var("SHOW TABLES LIKE '$candidate_table_name'") != $candidate_table_name) {
@@ -86,9 +88,36 @@ class Tjg_Csbs_Activator
                 ) $charset_collate;";
         }
 
+        if ($wpdb->get_var("SHOW TABLES LIKE '$candidate_notes_table_name'") != $candidate_notes_table_name) {
+            // Create CSBS Candidate Notes table
+            $candidate_notes_table = "CREATE TABLE $candidate_notes_table_name (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                rep_user_id mediumint(9) NOT NULL,
+                candidate_id mediumint(9) NOT NULL,
+                notes TEXT DEFAULT NULL,
+                date DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                PRIMARY KEY  (id)
+                ) $charset_collate;";
+        }
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '$call_log_table_name'") != $call_log_table_name) {
+            // Create CSBS Candidate Call Log table
+            $call_log_table = "CREATE TABLE $call_log_table_name (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                candidate_id mediumint(9) NOT NULL,
+                rep_user_id mediumint(9) NOT NULL,
+                direction VARCHAR(255) NOT NULL,
+                start_time DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                end_time DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                PRIMARY KEY  (id)
+                ) $charset_collate;";
+        }
+
         // Create the table
         if (isset($candidate_table_query)) dbDelta($candidate_table_query);
         if (isset($log_table)) dbDelta($log_table);
+        if (isset($candidate_notes_table)) dbDelta($candidate_notes_table);
+        if (isset($call_log_table)) dbDelta($call_log_table);
 
         // do_action('qm/debug', 'Tjg_Csbs_Activator::activate()');
     }
