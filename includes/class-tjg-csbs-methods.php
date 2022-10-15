@@ -821,12 +821,12 @@ class Tjg_Csbs_Common
      * 
      * Add log action 'unassigned_candidate'
      * 
-     * @param int $user_id
      * @param int $candidate_id
+     * @param int $user_id
      * 
      * @return bool|string $updated - updated = 1 or error string
      */
-    public function unassign_candidate(int $user_id, int $candidate_id) {
+    public function unassign_candidate(int $candidate_id, int $user_id) {
 
         global $wpdb;
         $candidate_table = $this->candidate_table;
@@ -845,13 +845,12 @@ class Tjg_Csbs_Common
                 'unassigned_candidate',
                 $fresh_date
             );
-        }
-
-        if (!$updated) {
+            return $updated;
+        } else {
             // get query error
             $error = $wpdb->last_error;
             return $error;
-        } else return $updated;     
+        }
 
     }
 

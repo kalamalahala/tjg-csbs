@@ -330,18 +330,28 @@ class Tjg_Csbs_Public
      * 
      * @see  https://docs.gravityforms.com/gform_after_submission/ Gravity Form Docs
      */
-    public function tjg_csbs_gform_submission($entry, $form)
+    public function tjg_csbs_gform_submission($entry = null, $form = null)
     {
         // Instantiate method handler
         $common = new Common();
 
-        echo '<pre>';
-        echo '<h2>Entry object</h2>';
-        print_r($entry);
-        echo '<hr><h2>Form object</h2>';
-        print_r($form);
-        echo '</pre>';
-        die();
+        /** 
+         * Collect gravity form field data
+         */
+        $candidate_id   = $entry['28'] ?? null;
+        $user_id        = $entry['created_by'];
+        $date_created   = $entry['date_created'];
+        $fresh_date     = date('Y-m-d H:i:s', strtotime($date_created));
+
+
+        // Update date updated
+        $common->updated_candidate($candidate_id);
+
+
+
+
+        error_log('tjg_csbs_gform_submission()');
+        error_log(print_r($entry, true));
     }
     #endregion Handle Gravity Forms submission of Interview form #############################################
 

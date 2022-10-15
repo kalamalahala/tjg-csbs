@@ -206,17 +206,6 @@ class Tjg_Csbs
 			),
 		); // End action_hooks array
 
-		// If the Gravity Forms form ID is specified in the plugin settings,
-		// Add 'gform_after_submission_<form id>' action hook
-		$form_id = get_option("tjg_csbs_gravity_forms_id", false);
-		if ($form_id) {
-			$action_hooks['gform_after_submission'] = array(
-				'hook' => 'gform_after_submission_' . $form_id,
-				'callback' => 'tjg_csbs_gform_submission',
-			);
-			do_action('qm/debug', 'gform submission added in admin');
-		}
-
 		// Loop through action hooks and add them to the loader
 		foreach ($action_hooks as $action_hook) {
 			$this->loader->add_action($action_hook['hook'], $plugin_admin, $action_hook['callback']);
