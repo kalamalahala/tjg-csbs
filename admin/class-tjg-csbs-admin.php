@@ -202,7 +202,7 @@ class Tjg_Csbs_Admin
 			case 'send_bulk_sms':
 				$numbers = $_POST['numbers'] ?? null;
 				$message = $_POST['message'] ?? null;
-				$payload['numbers'] = $numbers;
+				$payload['numbers'] = count($numbers);
 				$payload['message'] = $message;
 				break;
 			default:
