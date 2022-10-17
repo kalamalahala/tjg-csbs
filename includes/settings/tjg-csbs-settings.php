@@ -84,6 +84,33 @@ class Tjg_Csbs_Settings {
 			'tjg_csbs_settings'
 		);
 
+		// Twilio SID
+		add_settings_field(
+			'tjg_csbs_twilio_sid',
+			'Twilio SID',
+			array($this, 'tjg_csbs_settings_field_twilio_SID'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
+
+		// Twilio Auth Token
+		add_settings_field(
+			'tjg_csbs_twilio_token',
+			'Twilio Auth Token',
+			array($this, 'tjg_csbs_settings_field_twilio_auth_token'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
+
+		// Twilio Messaging Service SID
+		add_settings_field(
+			'tjg_csbs_twilio_msid',
+			'Twilio Messaging Service SID',
+			array($this, 'tjg_csbs_settings_field_twilio_messaging_service_sid'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
+
 		// Register setting
 		register_setting(
 			'tjg_csbs_option_group',
@@ -104,6 +131,18 @@ class Tjg_Csbs_Settings {
 		register_setting(
 			'tjg_csbs_option_group',
 			'tjg_csbs_vonage_api_secret'
+		);
+		register_setting(
+			'tjg_csbs_option_group',
+			'tjg_csbs_twilio_sid'
+		);
+		register_setting(
+			'tjg_csbs_option_group',
+			'tjg_csbs_twilio_token'
+		);
+		register_setting(
+			'tjg_csbs_option_group',
+			'tjg_csbs_twilio_msid'
 		);
 
     }
@@ -181,6 +220,21 @@ class Tjg_Csbs_Settings {
 
 	public function tjg_csbs_settings_field_list_vonage_numbers() {
 		// @todo: dead code for now
+	}
+
+	public function tjg_csbs_settings_field_twilio_SID() {
+		$twilio_sid = get_option('tjg_csbs_twilio_sid');
+		echo '<input type="text" id="tjg_csbs_twilio_sid" name="tjg_csbs_twilio_sid" value="' . $twilio_sid . '">';
+	}
+
+	public function tjg_csbs_settings_field_twilio_auth_token() {
+		$twilio_token = get_option('tjg_csbs_twilio_token');
+		echo '<input type="password" id="tjg_csbs_twilio_token" name="tjg_csbs_twilio_token" value="' . $twilio_token . '">';
+	}
+
+	public function tjg_csbs_settings_field_twilio_messaging_service_sid() {
+		$twilio_msid = get_option('tjg_csbs_twilio_msid');
+		echo '<input type="text" id="tjg_csbs_twilio_msid" name="tjg_csbs_twilio_msid" value="' . $twilio_msid . '">';
 	}
 
 

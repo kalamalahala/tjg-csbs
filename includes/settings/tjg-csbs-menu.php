@@ -71,6 +71,14 @@ class Tjg_Csbs_Menu
             'tjg-csbs-scratch', 
             array($this, 'scratch_pad')
         );
+        add_submenu_page(
+            'tjg-csbs-admin',
+            'Bulk Message',
+            'Bulk Message',
+            'manage_options',
+            'tjg-csbs-admin-bulk-message',
+            array($this, 'tjg_csbs_admin_bulk_message_page')
+        );
         $submenu['tjg-csbs-admin'][0][0] = 'View Candidates';
     }
 
@@ -98,6 +106,12 @@ class Tjg_Csbs_Menu
     public function scratch_pad() {
         ob_start();
         include_once plugin_dir_path(__FILE__) . 'layouts/layout-data-scratch.php';
+        echo ob_get_clean();
+    }
+
+    public function tjg_csbs_admin_bulk_message_page() {
+        ob_start();
+        include_once plugin_dir_path(__FILE__) . 'layouts/bulk-message.php';
         echo ob_get_clean();
     }
 }
