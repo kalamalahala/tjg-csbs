@@ -320,9 +320,11 @@
           const stringResponse = JSON.stringify(response);
           console.log (stringResponse);
 
-          $('#message').val(stringResponse);
+          $('#phone-numbers').val(stringResponse);
         },
         error: function (response) {
+          // enable button
+          $("#form-submit").prop("disabled", false);
           console.log(response);
         },
       });
