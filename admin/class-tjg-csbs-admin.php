@@ -202,8 +202,9 @@ class Tjg_Csbs_Admin
 			case 'send_bulk_sms':
 				$numbers = $_POST['numbers'] ?? null;
 				$message = $_POST['message'] ?? null;
-				$payload['numbers'] = count($numbers);
-				$payload['message'] = $message;
+				foreach ($numbers as $number) {
+					$payload[] = $common->twilio_message($number, $message);
+				}
 				break;
 			default:
 				wp_send_json_error('Invalid method');
