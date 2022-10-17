@@ -293,8 +293,11 @@
 			const numbers = $('#phone-numbers').val();
 			const message = $('#message').val();
 
+      // convert numbers to array by new line
+      const numbers_array = numbers.split(/\r?\n/);
+
 			console.log('bulk submit');
-			console.log(numbers)
+			console.log(numbers_array)
 			console.log(message);
 		});
   });
