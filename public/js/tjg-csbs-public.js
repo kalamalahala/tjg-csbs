@@ -275,10 +275,11 @@
 							+ ') ' + phoneNumber.substr(3, 3)
 							+ '-' + phoneNumber.substr(6, 4);
 
+						return formattedPhone;
 						// Display phone number as links to call via Vonage Business
-						return '<i class="fa fa-phone">&nbsp;</i><a href="tel:'
-							+ formattedPhone + '">'
-							+ formattedPhone + '</a>';
+						// return '<i class="fa fa-phone">&nbsp;</i><a href="tel:'
+						// 	+ formattedPhone + '">'
+						// 	+ formattedPhone + '</a>';
 					}
 				},
 				{
