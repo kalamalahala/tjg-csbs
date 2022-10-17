@@ -70,11 +70,11 @@ div .vonageWrap {
 }
 
 p .vonageCandidate{
-  margin-bottom: 0px;
+  margin-bottom: 0px !important;
 }
 
 p .candidatePhone {
-  margin-bottom: 0px;
+  margin-bottom: 0px !important;
   font-weight: 500;
   font-size: 0.6em;
 }
