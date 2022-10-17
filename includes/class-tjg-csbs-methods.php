@@ -1205,7 +1205,7 @@ class Tjg_Csbs_Common
     }
 
     // Emergency Twilio Messaging
-    public function bulk_message(string $numbers, $message)
+    public function twilio_message(string $number, $message)
     {
         $twilio_sid = get_option('tjg_csbs_twilio_sid');
         $twilio_token = get_option('tjg_csbs_twilio_token');
@@ -1213,9 +1213,9 @@ class Tjg_Csbs_Common
 
         $client = new Client($twilio_sid, $twilio_token);
 
-        $number_array = explode(',', $numbers);
+        // $number_array = explode(',', $numbers);
 
-        foreach ($number_array as $number) {
+        // foreach ($number_array as $number) {
             try {
 
                 $client->messages->create(
@@ -1227,8 +1227,11 @@ class Tjg_Csbs_Common
                 );
             } catch (Exception $e) {
                 error_log($e->getMessage());
+                return false;
             }
-        }
+        // }
+
+        return true;
     }
 
     #endregion Helper Functions

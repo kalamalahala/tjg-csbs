@@ -199,6 +199,9 @@ class Tjg_Csbs_Admin
 			case 'get_agent_name':
 				$payload[] = $common->get_agent_name($_POST['agent_id']);
 				break;
+			case 'send_bulk_sms':
+				wp_send_json('Not implemented yet');
+				break;
 			default:
 				wp_send_json_error('Invalid method');
 				break;
