@@ -40,8 +40,8 @@
 		const selectGroupWrapper = document.getElementById('select-group-wrapper');
 
 		// Listen for gu-sc element to be clicked
-		$(document).on('click', 'gu-sc-img', function (e) {
-			console.log ('gu-sc-img clicked');
+		$(document).on('click', 'gu-sc', function (e) {
+			console.log ('gu-sc clicked');
 		});
 
 
@@ -280,11 +280,11 @@
 							+ ') ' + phoneNumber.substr(3, 3)
 							+ '-' + phoneNumber.substr(6, 4);
 
-						return formattedPhone;
+						// return formattedPhone;
 						// Display phone number as links to call via Vonage Business
-						// return '<i class="fa fa-phone">&nbsp;</i><a href="tel:'
-						// 	+ formattedPhone + '">'
-						// 	+ formattedPhone + '</a>';
+						return '<a href="tel:'
+							+ formattedPhone + '">'
+							+ formattedPhone + '</a>';
 					}
 				},
 				{
