@@ -126,7 +126,7 @@ class Tjg_Csbs_Settings {
 	{
 		$api_key = get_option('tjg_csbs_sendgrid_api_key');
 		// $sendgrid_api_key = $options['tjg_csbs_sendgrid_api_key'];
-		echo '<input type="text" id="tjg_csbs_sendgrid_api_key" name="tjg_csbs_sendgrid_api_key" value="' . $api_key . '">';
+		echo '<input type="password" id="tjg_csbs_sendgrid_api_key" name="tjg_csbs_sendgrid_api_key" value="' . $api_key . '">';
 	}
 
 	public function tjg_csbs_settings_field_num_candidates()
@@ -162,25 +162,25 @@ class Tjg_Csbs_Settings {
 	{
 		$api_key = $this->vonage_api_key;
 		$api_secret = $this->vonage_api_secret;
-		$basic = new \Vonage\Client\Credentials\Basic($api_key, $api_secret);
-		$client = new \Vonage\Client($basic);
+		// $basic = new \Vonage\Client\Credentials\Basic($api_key, $api_secret);
+		// $client = new \Vonage\Client($basic);
 		echo '<input type="password" id="tjg_csbs_vonage_api_secret" name="tjg_csbs_vonage_api_secret" value="' . $api_secret . '">';
-		try {
-			$filter = new \Vonage\Numbers\Filter\OwnedNumbers();
-			// $filter->setPattern((int) NUMBER_SEARCH_CRITERIA)
-			// 	->setSearchPattern((int) NUMBER_SEARCH_PATTERN);
-			// $reponse = $client->numbers()-searchOwned($filter);
-			echo '<pre>';
-			// echo count($response) . ' numbers found';
-		}
-		catch (Exception $e) {
-		  error_log('Caught exception: ' . $e->getMessage() . " in line " . $e->getLine() . " of " . $e->getFile());
-		  echo 'Caught exception: ' . $e->getMessage() . " in line " . $e->getLine() . " of " . $e->getFile();
-		}
+		// try {
+		// 	$filter = new \Vonage\Numbers\Filter\OwnedNumbers();
+		// 	// $filter->setPattern((int) NUMBER_SEARCH_CRITERIA)
+		// 	// 	->setSearchPattern((int) NUMBER_SEARCH_PATTERN);
+		// 	// $reponse = $client->numbers()-searchOwned($filter);
+		// 	echo '<pre>';
+		// 	// echo count($response) . ' numbers found';
+		// }
+		// catch (Exception $e) {
+		//   error_log('Caught exception: ' . $e->getMessage() . " in line " . $e->getLine() . " of " . $e->getFile());
+		//   echo 'Caught exception: ' . $e->getMessage() . " in line " . $e->getLine() . " of " . $e->getFile();
+		// }
 	}
 
 	public function tjg_csbs_settings_field_list_vonage_numbers() {
-
+		// @todo: dead code for now
 	}
 
 
