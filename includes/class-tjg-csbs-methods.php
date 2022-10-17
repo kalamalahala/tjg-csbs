@@ -13,6 +13,7 @@ require_once plugin_dir_path(dirname(__FILE__)) . '/vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Sendgrid\Mail\Mail as Mail;
+use Twilio\Rest\Client as Client;
 
 class Tjg_Csbs_Common
 {
