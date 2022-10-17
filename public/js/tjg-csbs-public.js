@@ -39,10 +39,9 @@
 		const cancelButton = document.getElementById('tjg-csbs-upload-cancel');
 		const selectGroupWrapper = document.getElementById('select-group-wrapper');
 
-		const vonageConnectIcon = $('gu-sc-img');
-
-		vonageConnectIcon.on('click', function () {
-			console.log ('clicked');
+		// Listen for gu-sc element to be clicked
+		$(document).on('click', 'gu-sc', function (e) {
+			console.log ('gu-sc clicked');
 		});
 
 
