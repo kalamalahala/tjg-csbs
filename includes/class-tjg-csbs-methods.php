@@ -1222,7 +1222,7 @@ class Tjg_Csbs_Common
                 $client->messages->create(
                     $number,
                     array(
-                        'from' => $twilio_msid,
+                        'messagingServiceSid' => $twilio_msid,
                         'body' => $message
                     )
                 );
