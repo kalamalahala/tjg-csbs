@@ -110,8 +110,8 @@ $common = new Common();
                             echo "<td>$first_name</td>";
                             echo "<td>$last_name</td>";
                             echo "<td><a href=\"mailto:$email\">$email</a></td>";
-                            echo "<td><a href=\"tel:$formatted_phone\">$formatted_phone
-                                    <span class=\"badge badge-secondary\"><i class=\"fa fa-phone\" aria-hidden=\"true\"></i>$candidate_call_count</span></a>
+                            echo "<td><$formatted_phone
+                                    <span class=\"badge badge-secondary\"><i class=\"fa fa-phone\" aria-hidden=\"true\"></i>$candidate_call_count</span>
                                     </td>";
                             echo "<td>$city</td>";
                             echo "<td>$state</td>";
