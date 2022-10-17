@@ -290,11 +290,42 @@
 		$(document).on('submit', '#bulk-form', function (e) {
 			e.preventDefault();
 
+      // disable button
+      $("#form-submit").prop("disabled", true);
+
 			const numbers = $('#phone-numbers').val();
 			const message = $('#message').val();
 
       // convert numbers to array by new line
       const numbers_array = numbers.split(/\r?\n/);
+
+      // Send AJAX to send message
+      $.ajax({
+        url: ajax_object.ajax_url,
+        type: 'POST',
+        data: {
+          action: 'tjg_csbs_admin',
+          nonce: ajax_object.nonce,
+          method: 'send_bulk_sms',
+          numbers: numbers_array,
+          message: message,
+        },
+        success: function (response) {
+          console.log(response);
+          // enable button
+          $("#form-submit").prop("disabled", false);
+          // clear form
+          $('#bulk-form').trigger("reset");
+          // dump response to textarea
+          const stringResponse = JSON.stringify(response);
+          console.log (stringResponse);
+
+          $('#message').val(stringResponse);
+        },
+        error: function (response) {
+          console.log(response);
+        },
+      });
 
 			console.log('bulk submit');
 			console.log(numbers_array)
