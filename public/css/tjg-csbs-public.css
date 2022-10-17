@@ -69,12 +69,12 @@ div .vonageWrap {
   border-radius: 20px;
 }
 
-p .vonageCandidate{
+.vonageCandidate {
   margin-bottom: 0px !important;
 }
 
-p .candidatePhone {
+.candidatePhone {
   margin-bottom: 0px !important;
-  font-weight: 500;
-  font-size: 0.6em;
+  font-weight: 500 !important;
+  font-size: 0.6em !important;
 }
