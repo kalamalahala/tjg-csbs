@@ -36,3 +36,18 @@
  .select-checkbox::after{
   top: 48% !important;
 }
+
+/* gf form readonly inputs */
+
+.csbs_readonly_first_last input[readonly] {
+  background-color: #c2c2c2;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-style: italic;
+}
+
+
+.csbs_readonly_email input[readonly] {
+  background-color: #c2c2c2;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-style: italic;
+}

@@ -343,23 +343,21 @@ class Tjg_Csbs_Public
         // Instantiate method handler
         $common = new Common();
 
-        /** 
-         * Collect gravity form field data
-         */
+        // User, Candidate, Call, and Date information
         $candidate_id   = $entry['28'] ?? null;
         $user_id        = $entry['created_by'];
         $call_id        = $entry['30'] ?? null;
         $date_created   = $entry['date_created'];
-        $fresh_date     = date('Y-m-d H:i:s', strtotime($date_created));
+        $date_format    = date('Y-m-d H:i:s', strtotime($date_created));
+
+        // Logic fields
+        $call_answered  = $entry['8'] ?? null;
+        $job_seeker     = $entry['11'] ?? null;
+        $can_zoom       = $entry['18'] ?? null;
+        $do_not_call    = $entry['22'] ?? null;
 
         // End interview timer
         $common->end_interview($call_id, $candidate_id, $user_id);
-
-
-
-
-        error_log('tjg_csbs_gform_submission()');
-        error_log(print_r($entry, true));
     }
     #endregion Handle Gravity Forms submission of Interview form #############################################
 

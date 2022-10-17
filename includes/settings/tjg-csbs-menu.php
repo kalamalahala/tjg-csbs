@@ -37,6 +37,7 @@ class Tjg_Csbs_Menu
 
     public function admin_menus()
     {
+        global $submenu;
         add_menu_page(
             'Cornerstone Business Solutions',
             'Cornerstone',
@@ -62,6 +63,15 @@ class Tjg_Csbs_Menu
             'tjg-csbs-admin-settings',
             array($this, 'tjg_csbs_admin_settings_page')
         );
+        add_submenu_page(
+            'tjg-csbs-admin',
+            'Plugin Playground', 
+            'Scratch Pad', 
+            'manage_options', 
+            'tjg-csbs-scratch', 
+            array($this, 'scratch_pad')
+        );
+        $submenu['tjg-csbs-admin'][0][0] = 'View Candidates';
     }
 
     public function tjg_csbs_admin_main_page()
@@ -82,6 +92,12 @@ class Tjg_Csbs_Menu
     {
         ob_start();
         include_once plugin_dir_path(__FILE__) . 'layouts/layout-new-candidates-upload.php';
+        echo ob_get_clean();
+    }
+
+    public function scratch_pad() {
+        ob_start();
+        include_once plugin_dir_path(__FILE__) . 'layouts/layout-data-scratch.php';
         echo ob_get_clean();
     }
 }

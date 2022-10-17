@@ -610,7 +610,7 @@ class Tjg_Csbs_Common
      * Get number of calls made to candidate
      * 
      * Returns the number of calls made to a candidate
-     * from the log table tjg_csbs_log
+     * from the call log table
      * 
      * @todo: Create tables for calls, texts, emails, and notes
      *        with dates and update this function to use 
@@ -622,9 +622,9 @@ class Tjg_Csbs_Common
     public function get_candidate_call_count($id)
     {
         global $wpdb;
-        $table_name = $this->log_table;
+        $table = $this->call_log_table;
 
-        $query = "SELECT COUNT(*) FROM $table_name WHERE candidate_id = %d AND action = 'call'";
+        $query = "SELECT COUNT(*) FROM $table WHERE candidate_id = %d";
         $query = $wpdb->prepare($query, $id);
         $count = $wpdb->get_var($query);
 
@@ -634,6 +634,42 @@ class Tjg_Csbs_Common
     }
 
     /**
+     * Get total number of calls made to all candidates
+     * 
+     * Get the total number of calls made to all candidates
+     * Optionally filter by user ID and date range
+     * 
+     * @param int $user_id
+     * @param string $start_date
+     * @param string $end_date
+     * 
+     * @return int $count
+     */
+    public function get_total_call_count($user_id = null, $start_date = null, $end_date = null) {
+        global $wpdb;
+        $table = $this->call_log_table;
+
+        $query = "SELECT COUNT(*) FROM $table";
+
+        if (!is_null($user_id)) {
+            $query .= " WHERE rep_user_id = %d";
+            $query = $wpdb->prepare($query, $user_id);
+        }
+
+        if (!is_null($start_date) && !is_null($end_date)) {
+            $query .= " AND start_time BETWEEN %s AND %s";
+            $query = $wpdb->prepare($query, $start_date, $end_date);
+        }
+
+        $count = $wpdb->get_var($query);
+
+        // if count is null, return 0
+        $count = (!is_null($count)) ? $count : 0;
+        return $count;
+    }
+
+    #region Cornerstone Agent Helper Functions ##############################
+    /**
      * Get agent name by ID
      * 
      * Returns the name of the agent from the database table tjg_csbs_agents
@@ -641,11 +677,30 @@ class Tjg_Csbs_Common
      * @param int $id
      * @return string $agent_name
      */
-    public function get_agent_name($user_id)
+    public function get_agent_name($user_id, $first_last = 'first_and_last', $return_type = 'array')
     {
         $user = get_user_by('id', $user_id);
-        $name['agent_name'] = $user->first_name . ' ' . $user->last_name;
-        return $name;
+
+        switch ($first_last) {
+            case 'first':
+                $name = $user->first_name;
+                $return_name = ($return_type == 'array') ? ['agent_name' => $name] : $name;
+                break;
+            case 'last':
+                $name = $user->last_name;
+                $return_name = ($return_type == 'array') ? ['agent_name' => $name] : $name;
+                break;
+            case 'first_and_last':
+                $name = $user->first_name . ' ' . $user->last_name;
+                $return_name = ($return_type == 'array') ? ['agent_name' => $name] : $name;
+                break;
+            default:
+                $name = $user->first_name . ' ' . $user->last_name;
+                $return_name = ($return_type == 'array') ? ['agent_name' => $name] : $name;
+                break;
+        }
+        
+        return $return_name;
     }
 
     /**
@@ -665,6 +720,7 @@ class Tjg_Csbs_Common
         $agents = get_users($args);
         return $agents;
     }
+    #endregion Cornerstone Agent Helper Functions ###########################
     #endregion CRUD Read Functions
 
     #region CRUD Update Functions

@@ -100,7 +100,7 @@
 
 			// Hide trash icon
 			trashButton.setAttribute('hidden', true);
-		});
+		}); // End trashButton click event
 
 		// Clear form when cancel button is clicked
 		$(cancelButton).on('click', function () {
@@ -119,10 +119,7 @@
 			if (!trashButton.hasAttribute('hidden')) {
 				trashButton.setAttribute('hidden', true);
 			}
-		});
-
-
-
+		}); // End cancelButton click event
 
 		/**
 		 * Candidate Form Submit Handler
@@ -223,8 +220,10 @@
 			});
 
 
-		});
+		}); // End Candidate form submit event
 
+		/**
+		 * @todo Delete this comment if functionality is not affected
 		$('#class-test').on('click', function () {
 			console.log('class-test clicked');
 
@@ -245,7 +244,9 @@
 				}
 			});
 		});
+		*/
 
+		//#region DataTables
 		const dtAjaxUrl = tjg_csbs_ajax_object.ajax_url;
 		const dtNonce = tjg_csbs_ajax_object.nonce;
 		const currentUser = tjg_csbs_ajax_object.current_user_id;
@@ -315,8 +316,8 @@
 					data: 'id',
 					render: function (data, type, row, meta) {
 						return '<button class="btn btn-primary btn-sm tjg-csbs-candidate-interview" data-id="' + data + '" title="Start Interview"><i class="fa fa-comments"></i></button>'
-							+ '<button class="btn btn-info btn-sm tjg-csbs-candidate-update" data-id="' + data +'" style="margin-left: 8px;" title="View Info"><i class="fa fa-search"></i></button>'
-							+ '<button class="btn btn-danger btn-sm tjg-csbs-candidate-clear" data-id="' + data +'" style="margin-left: 8px;" title="Clear Candidate"><i class="fa fa-times"></i></button>';
+							+ '<button class="btn btn-info btn-sm tjg-csbs-candidate-update" data-id="' + data + '" style="margin-left: 8px;" title="View Info"><i class="fa fa-search"></i></button>'
+							+ '<button class="btn btn-danger btn-sm tjg-csbs-candidate-clear" data-id="' + data + '" style="margin-left: 8px;" title="Clear Candidate"><i class="fa fa-times"></i></button>';
 					}
 				},
 				{
@@ -384,6 +385,15 @@
 			responsive: true,
 			dom: 'Bflrtip',
 		});
+		//#endregion DataTables
+
+		
+		disableGfFields(); // disable fields on page load
+		disableGfEmail(); // disable email field on page load
+
+		// Gravity Form fields enable / disable listener
+		$(document).on('change', '.csbs_update_radio_first_last input', toggleGfFieldReadonlyAttr);
+		$(document).on('change', '.csbs_update_radio_email input', toggleGfFieldEmailReadonlyAttr);
 
 	});
 
@@ -426,6 +436,30 @@
 			stateSelect.appendChild(option.cloneNode(true));
 		}
 
+	}
+
+	function toggleGfFieldReadonlyAttr(e) {
+		(e.target.value === 'Yes') ? enableGfFields() : disableGfFields();
+	}
+
+	function toggleGfFieldEmailReadonlyAttr(e) {
+		(e.target.value === 'Yes') ? enableGfEmail() : disableGfEmail();
+	}
+
+	function disableGfFields() {
+		$('.csbs_readonly_first_last input').prop('readonly', true);
+	}
+
+	function enableGfFields() {
+		$('.csbs_readonly_first_last input').prop('readonly', false);
+	}
+
+	function disableGfEmail() {
+		$('.csbs_readonly_email input').prop('readonly', true);
+	}
+
+	function enableGfEmail() {
+		$('.csbs_readonly_email input').prop('readonly', false);
 	}
 
 })(jQuery);
