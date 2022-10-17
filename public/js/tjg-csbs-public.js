@@ -39,6 +39,12 @@
 		const cancelButton = document.getElementById('tjg-csbs-upload-cancel');
 		const selectGroupWrapper = document.getElementById('select-group-wrapper');
 
+		const vonageConnectIcon = $('gu-sc-img');
+
+		vonageConnectIcon.on('click', function () {
+			console.log ('clicked');
+		});
+
 
 		// Collect file information when selected
 		$(fileInput).on('change', function () {
