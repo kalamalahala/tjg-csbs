@@ -646,7 +646,8 @@ class Tjg_Csbs_Common
      * 
      * @return int $count
      */
-    public function get_total_call_count($user_id = null, $start_date = null, $end_date = null) {
+    public function get_total_call_count($user_id = null, $start_date = null, $end_date = null)
+    {
         global $wpdb;
         $table = $this->call_log_table;
 
@@ -700,7 +701,7 @@ class Tjg_Csbs_Common
                 $return_name = ($return_type == 'array') ? ['agent_name' => $name] : $name;
                 break;
         }
-        
+
         return $return_name;
     }
 
@@ -961,17 +962,18 @@ class Tjg_Csbs_Common
      * 
      * @return bool|string true or error string
      */
-    public function worked_candidate($id) {
+    public function worked_candidate($id)
+    {
         global $wpdb;
         $table_name = $this->candidate_table;
-        
+
         $today = date("Y-m-d H:i:s");
         $updated_worked = $wpdb->update(
             $table_name,
             array('date_worked' => $today),
             array('id' => $id)
         );
-                
+
         if ($updated_worked == true) return true;
         else if (!$updated_worked) {
             $error = $wpdb->last_error;
@@ -1044,7 +1046,8 @@ class Tjg_Csbs_Common
      * 
      * @return bool|string $updated - updated = 1 or error string
      */
-    public function end_interview(int $call_log_id, int $candidate_id, int $user_id) {
+    public function end_interview(int $call_log_id, int $candidate_id, int $user_id)
+    {
         global $wpdb;
         $table = $this->get_call_log_table();
 
@@ -1083,7 +1086,6 @@ class Tjg_Csbs_Common
             $error = $wpdb->last_error;
             return $error;
         }
-
     }
 
     #endregion CRUD Update Functions
@@ -1200,6 +1202,33 @@ class Tjg_Csbs_Common
     {
         $table = $this->call_log_table;
         return $this->call_log_table;
+    }
+
+    // Emergency Twilio Messaging
+    public function bulk_message(string $numbers, $message)
+    {
+        $twilio_sid = get_option('tjg_csbs_twilio_sid');
+        $twilio_token = get_option('tjg_csbs_twilio_token');
+        $twilio_msid = get_option('tjg_csbs_twilio_msid');
+
+        $client = new Client($twilio_sid, $twilio_token);
+
+        $number_array = explode(',', $numbers);
+
+        foreach ($number_array as $number) {
+            try {
+
+                $client->messages->create(
+                    $number,
+                    array(
+                        'from' => $twilio_msid,
+                        'body' => $message
+                    )
+                );
+            } catch (Exception $e) {
+                error_log($e->getMessage());
+            }
+        }
     }
 
     #endregion Helper Functions
