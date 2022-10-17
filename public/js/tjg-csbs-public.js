@@ -40,8 +40,8 @@
 		const selectGroupWrapper = document.getElementById('select-group-wrapper');
 
 		// Listen for gu-sc element to be clicked
-		$(document).on('click', 'gu-sc', function (e) {
-			console.log ('gu-sc clicked');
+		$(document).on('click', 'gu-sc-img', function (e) {
+			console.log ('gu-sc-img clicked');
 		});
 
 
