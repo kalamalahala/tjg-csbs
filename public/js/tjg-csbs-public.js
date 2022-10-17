@@ -40,8 +40,11 @@
 		const selectGroupWrapper = document.getElementById('select-group-wrapper');
 
 		// Listen for gu-sc element to be clicked
-		$(document).on('click', 'gu-sc', function (e) {
-			console.log ('gu-sc clicked');
+		$(document).on('click', '.gu-button', function (e) {
+			console.log ('vonage call button clicked');
+			console.log (e);
+			console.log (this);
+			console.log (e.target);
 		});
 
 
