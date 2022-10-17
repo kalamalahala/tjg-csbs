@@ -28,7 +28,8 @@ $user_id = get_current_user_id();
             <li><strong>Assigned Candidates:</strong>
                 <?php
                 $candidates = $common->get_candidates_assigned_to_user($user_id);
-                echo count($candidates);
+
+                echo (is_array($candidates)) ? count($candidates) : '0';
                 ?>
             </li>
             <li></li>

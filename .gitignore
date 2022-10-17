@@ -3,3 +3,4 @@
 *.zip
 # /admin/datatables/**/
 # /public/datatables-nobootstrap/**/
+.ssh
