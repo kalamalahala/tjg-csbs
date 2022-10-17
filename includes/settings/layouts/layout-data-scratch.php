@@ -14,6 +14,7 @@ $user_id = get_current_user_id();
 <div class="card">
     <div class="card-header">
         <?php echo $common->get_agent_name($user_id, 'first_and_last', 'string'); ?>
+        Symlink is functioning
     </div>
     <div class="card-body">
         <h5 class="card-title">Call Statistics</h5>
