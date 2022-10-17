@@ -37,7 +37,10 @@ $user_id = get_current_user_id();
                 echo (is_array($candidates)) ? count($candidates) : '0';
                 ?>
             </li>
-            <li></li>
+            <li>
+                <strong>API Key: </strong>
+                <?php echo $sendgrid->get_api_key(); ?>
+            </li>
             <li></li>
         </ul>
         </p>
