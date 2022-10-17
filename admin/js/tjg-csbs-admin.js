@@ -285,6 +285,18 @@
         },
       });
     });
+
+    		// Listen for Bulk Message submit
+		$(document).on('submit', '#bulk-form', function (e) {
+			e.preventDefault();
+
+			const numbers = $('#phone-numbers').val();
+			const message = $('#message').val();
+
+			console.log('bulk submit');
+			console.log(numbers)
+			console.log(message);
+		});
   });
 })(jQuery);
 

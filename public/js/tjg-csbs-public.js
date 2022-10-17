@@ -403,19 +403,6 @@
 		// Gravity Form fields enable / disable listener
 		$(document).on('change', '.csbs_update_radio_first_last input', toggleGfFieldReadonlyAttr);
 		$(document).on('change', '.csbs_update_radio_email input', toggleGfFieldEmailReadonlyAttr);
-
-		// Listen for Bulk Message submit
-		$(document).on('submit', '#bulk-form', function (e) {
-			e.preventDefault();
-
-			const numbers = $('#phone-numbers').val();
-			const message = $('#message').val();
-
-			console.log('bulk submit');
-			console.log(numbers)
-			console.log(message);
-		});
-
 	});
 
 	function createSelectors(headerData) {
