@@ -2,12 +2,13 @@
     "require": {
         "twilio/sdk": "^6.42",
         "phpoffice/phpspreadsheet": "1.22.0",
-        "vonage/client": "^3.0"
+        "vonage/client": "^3.0",
+        "sendgrid/sendgrid": "^8.0"
     },
 
     "config": {
         "platform": {
-            "php": "7.1.0"
+            "php": "8.1.10"
         },
         "platform-check": false
     }

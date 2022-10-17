@@ -19,8 +19,10 @@
 
 // require_once plugin_dir_path(__FILE__) . '../vendor/autoload.php';
 require_once plugin_dir_path(__FILE__) . '../includes/class-tjg-csbs-methods.php';
+require_once plugin_dir_path(__FILE__) . '../includes/class-tjg-csbs-sendgrid.php';
 
 use Tjg_Csbs_Common as Common;
+use Tjg_Csbs_Sendgrid as Sendgrid;
 
 // use PhpOffice\PhpSpreadsheet\IOFactory;
 // use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -128,7 +130,7 @@ class Tjg_Csbs_Public
             wp_enqueue_style('datatables-nobootstrap', plugin_dir_url(__FILE__)
                 . 'datatables-nobootstrap/datatables.min.css', array(), $this->version, 'all');
             // FontAwesome
-            wp_enqueue_style('fa4', plugin_dir_url(__FILE__) 
+            wp_enqueue_style('fa4', plugin_dir_url(__FILE__)
                 . '../includes/css/font-awesome.css', array(), $this->version, 'all');
         } else {
             // do nothing
@@ -194,7 +196,6 @@ class Tjg_Csbs_Public
                     'current_user_id' => get_current_user_id(),
                 )
             );
-
         } else {
             // do nothing
         }
@@ -342,6 +343,7 @@ class Tjg_Csbs_Public
     {
         // Instantiate method handler
         $common = new Common();
+        // $sendgrid = new SendGrid();
 
         // User, Candidate, Call, and Date information
         $candidate_id   = $entry['28'] ?? null;
@@ -350,11 +352,17 @@ class Tjg_Csbs_Public
         $date_created   = $entry['date_created'];
         $date_format    = date('Y-m-d H:i:s', strtotime($date_created));
 
-        // Logic fields
-        $call_answered  = $entry['8'] ?? null;
-        $job_seeker     = $entry['11'] ?? null;
-        $can_zoom       = $entry['18'] ?? null;
-        $do_not_call    = $entry['22'] ?? null;
+        // Disposition fields
+        $call_answered  = $common->gf_yes_no_bool($entry['8']);
+        $job_seeker     = $common->gf_yes_no_bool($entry['11']);
+        $can_zoom       = $common->gf_yes_no_bool($entry['18']);
+        $dnc_field      = $entry['22'] ?? null;
+        $dnc            = $common->gf_dnc_bool($dnc_field);
+
+        // Update Logic Fields
+        $update_name_phone    = $common->gf_yes_no_bool($entry['31']);
+        $update_email         = $common->gf_yes_no_bool($entry['33']);
+
 
         // End interview timer
         $common->end_interview($call_id, $candidate_id, $user_id);

@@ -12,6 +12,7 @@ require_once plugin_dir_path(dirname(__FILE__)) . '/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Sendgrid\Mail\Mail as Mail;
 
 class Tjg_Csbs_Common
 {
@@ -1143,6 +1144,37 @@ class Tjg_Csbs_Common
     {
         $secret = get_option('tjg_csbs_vonage_api_secret');
         return $secret;
+    }
+
+    // Misc Functions
+
+    /**
+     * gf_yes_no_bool
+     * 
+     * Converts a Gravity Forms Yes/No field value to a boolean,
+     * or returns null if the value is not a Yes or No
+     *
+     * @param  string|null $value - 'Yes' or 'No'
+     * @return bool|null
+     */
+    public function gf_yes_no_bool(string $value = null)
+    {
+        if (is_null($value)) return null;
+        return $value == 'Yes' ? true : false;
+    }
+
+    /**
+     * gf_dnc_bool
+     * 
+     * Converts a Gravity Forms Do Not Call field value to a boolean
+     *
+     * @param  string|null $value
+     * @return bool|null
+     */
+    public function gf_dnc_bool(string $value = null)
+    {
+        if (is_null($value)) return null;
+        return ($value == 'Remove Candidate') ? true : false;
     }
 
     // Table Names
