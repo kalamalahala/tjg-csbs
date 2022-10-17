@@ -5,8 +5,12 @@
  */
 
 use Tjg_Csbs_Common as Common;
+use Tjg_Csbs_Sendgrid as Sendgrid;
+
+$sendgrid_api_key = 'SG.1q2w3e4r5t6y7u8i9o0p-1q2w3e4r5t6y7u8i9o0p';
 
 $common = new Common();
+$sendgrid = new Sendgrid( $sendgrid_api_key );
 $user_id = get_current_user_id();
 
 ?>
