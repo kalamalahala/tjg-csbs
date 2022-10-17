@@ -364,6 +364,21 @@ class Tjg_Csbs_Public
         $update_email         = $common->gf_yes_no_bool($entry['33']);
 
 
+        $fields = array(
+            'candidate_id'      => $candidate_id,
+            'user_id'           => $user_id,
+            'call_id'           => $call_id,
+            'date_created'      => $date_format,
+            'call_answered'     => $call_answered,
+            'job_seeker'        => $job_seeker,
+            'can_zoom'          => $can_zoom,
+            'dnc'               => $dnc,
+            'update_name_phone' => $update_name_phone,
+            'update_email'      => $update_email,
+        );
+        
+        error_log(print_r($fields, true));
+
         // End interview timer
         $common->end_interview($call_id, $candidate_id, $user_id);
     }
