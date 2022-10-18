@@ -255,7 +255,8 @@ class Tjg_Csbs
 
 		$shortcode_hooks = array(
 			'csbs_upload_new_candidates' => 'csbs_upload_new_candidates_shortcode',
-			'csbs_agent_candidates' => 'csbs_show_agent_leads_shortcode'
+			'csbs_agent_candidates' => 'csbs_show_agent_leads_shortcode',
+			'csbs_admin_link' => 'csbs_admin_link_shortcode',
 		);
 
 		// If the Gravity Forms form ID is specified in the plugin settings,

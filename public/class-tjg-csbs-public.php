@@ -416,5 +416,18 @@ class Tjg_Csbs_Public
         return $output;
     }
 
+    function csbs_admin_link_shortcode() {
+        $user = wp_get_current_user();
+        $role = ( array ) $user->roles;
+        $allowed = array('administrator', 'tjg_csbs_admin');
+        if (array_intersect($allowed, $role)) {
+            $output = '<a href="/wp-admin/admin.php?page=tjg-csbs-admin">Admin Panel</a>';
+        } else {
+            return false;
+        }
+
+        return $output;
+    }
+
     #endregion
 }
