@@ -399,7 +399,8 @@
 		
 		// disableGfFields(); // disable fields on page load
 		// disableGfEmail(); // disable email field on page load
-		hideGfEmail(); // hide email field on page load
+		// hideGfEmail(); // hide email field on page load
+		// console.log('hideGfEmail() called');
 
 		// Gravity Form fields enable / disable listener
 		// $(document).on('change', '.csbs_update_radio_first_last input', toggleGfFieldReadonlyAttr);
@@ -456,7 +457,7 @@
 	}
 
 	function toggleGfFieldHiddenAttr(e) {
-		(e.target.value === 'Yes') ? showGfEmail() : hideGfEmail();
+		(e.target.value === 'No') ? showGfEmail() : hideGfEmail();
 	}
 
 	function disableGfFields() {
