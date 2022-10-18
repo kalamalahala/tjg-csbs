@@ -204,6 +204,14 @@ class Tjg_Csbs
 				'hook' => 'wp_ajax_nopriv_tjg_csbs_admin',
 				'callback' => 'tjg_csbs_admin_ajax_handler_nopriv',
 			),
+			'csbs_admin_roles' => array( // Add custom roles
+				'hook' => 'admin_init',
+				'callback' => 'tjg_csbs_add_roles',
+			),
+			'csbs_admin_capabilities' => array( // Add custom capabilities
+				'hook' => 'admin_init',
+				'callback' => 'tjg_csbs_add_capabilities',
+			),
 		); // End action_hooks array
 
 		// Loop through action hooks and add them to the loader

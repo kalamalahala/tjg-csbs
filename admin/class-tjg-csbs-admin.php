@@ -236,4 +236,35 @@ class Tjg_Csbs_Admin
 		$menu = new Menu($this->plugin_name, $this->version);
 	}
 	#endregion Settings and Menu Configuration ###################################
+
+	#region Roles and Capabilities ################################################
+
+	/**
+	 * Adds the necessary roles
+	 * 
+	 * @since 1.0.0
+	 */
+	public function tjg_csbs_add_roles() {
+		add_role(
+			'tjg_csbs_admin',
+			'CSBS Admin',
+			array(
+				'read' => true,
+				'upload_files' => true,
+			)
+			);
+	}
+
+	/**
+	 * Adds the necessary capabilities
+	 * 
+	 * @since 1.0.0
+	 */
+
+	public function tjg_csbs_add_capabilities() {
+		$role = get_role('tjg_csbs_admin');
+		$role->add_cap('tjg_csbs_admin', true);
+	}
+	 
+	#endregion Roles and Capabilities #############################################
 }
