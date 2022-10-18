@@ -336,7 +336,7 @@
 					className: "select-checkbox",
 				},
 				{
-					targets: [1, 2],
+					targets: [1, 2, 6, 7],
 					visible: false,
 				},
 				{
@@ -399,7 +399,7 @@
 		
 		// disableGfFields(); // disable fields on page load
 		// disableGfEmail(); // disable email field on page load
-		// hideGfEmail(); // hide email field on page load
+		hideGfEmail(); // hide email field on page load
 		// console.log('hideGfEmail() called');
 
 		// Gravity Form fields enable / disable listener
