@@ -151,8 +151,10 @@ class Tjg_Csbs_Admin
 			wp_send_json_error('Invalid nonce');
 		}
 
+		// $manage_options = current_user_can('manage_options');
+		$tjg_csbs_admin = current_user_can('tjg_csbs_admin');
 		// Check for user permissions
-		if (!current_user_can('manage_options')) {
+		if (!$tjg_csbs_admin) {
 			wp_send_json_error('You do not have permission to do this');
 		}
 
