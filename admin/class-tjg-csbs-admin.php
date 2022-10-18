@@ -152,7 +152,7 @@ class Tjg_Csbs_Admin
 		}
 
 		// $manage_options = current_user_can('manage_options');
-		$tjg_csbs_admin = current_user_can('tjg_csbs_admin');
+		$tjg_csbs_admin = (current_user_can('tjg_csbs_admin') || current_user_can('tjg_csbs_agent'));
 		// Check for user permissions
 		if (!$tjg_csbs_admin) {
 			wp_send_json_error('You do not have permission to do this');
@@ -255,6 +255,13 @@ class Tjg_Csbs_Admin
 				'upload_files' => true,
 			)
 			);
+		add_role(
+			'tjg_csbs_agent',
+			'CSBS Agent',
+			array(
+				'read' => true,
+			)
+			);
 	}
 
 	/**
@@ -269,6 +276,9 @@ class Tjg_Csbs_Admin
 
 		$role = get_role('administrator');
 		$role->add_cap('tjg_csbs_admin', true);
+
+		$role = get_role('tjg_csbs_agent');
+		$role->add_cap('tjg_csbs_agent', true);
 	}
 	 
 	#endregion Roles and Capabilities #############################################
