@@ -324,7 +324,7 @@
 					className: "dt-nowrap",
 					data: 'id',
 					render: function (data, type, row, meta) {
-						return '<button class="btn btn-primary btn-sm tjg-csbs-candidate-interview" data-id="' + data + '" title="Start Interview"><i class="fa fa-comments"></i></button>'
+						return '<button class="btn btn-primary btn-sm tjg-csbs-candidate-interview" data-id="' + data + '" title="Start Interview"><i class="fa fa-phone"></i></button>'
 							+ '<button class="btn btn-info btn-sm tjg-csbs-candidate-update" data-id="' + data + '" style="margin-left: 8px;" title="View Info"><i class="fa fa-search"></i></button>'
 							+ '<button class="btn btn-danger btn-sm tjg-csbs-candidate-clear" data-id="' + data + '" style="margin-left: 8px;" title="Clear Candidate"><i class="fa fa-times"></i></button>';
 					}
