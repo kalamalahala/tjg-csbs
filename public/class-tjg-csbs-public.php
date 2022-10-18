@@ -111,12 +111,12 @@ class Tjg_Csbs_Public
 
         $current_URI = $_SERVER['REQUEST_URI'];
         $URI = explode('/', $current_URI);
-        $csb = in_array('csb', $URI);
+        $vertical = in_array('vertical', $URI);
         $uid =  get_current_user_id();
 
         do_action('qm/debug', 'my user id is ' . $uid . '.');
 
-        if ($csb) {
+        if ($vertical) {
             // Primary stylesheet
             wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__)
                 . 'css/tjg-csbs-public.css', array(), $this->version, 'all');
@@ -160,9 +160,9 @@ class Tjg_Csbs_Public
         // Exit script loading unless csb is inside the URL
         $uri = $_SERVER['REQUEST_URI'];
         $uri = explode('/', $uri);
-        $csb = in_array('csb', $uri);
+        $vertical = in_array('vertical', $uri);
 
-        if ($csb == true) {
+        if ($vertical == true) {
             // Add boostrap JS bundle
             wp_enqueue_script('tjg-csbs-bootstrap-js', plugin_dir_url(__FILE__)
                 . 'js/bootstrap.bundle.min.js', array('jquery'), $this->version, false);
