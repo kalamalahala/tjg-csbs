@@ -373,7 +373,7 @@ class Tjg_Csbs_Common
         if (empty($result)) {
             $candidate_query_raw = "INSERT INTO $candidate_table
             (first_name, last_name, phone, email, city, state, date_added, lead_source)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)";
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)";
             $candidate_query = $wpdb->prepare(
                 $candidate_query_raw,
                 $first_name,
