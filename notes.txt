@@ -1,0 +1,35 @@
+Lead Source selector for uploads
+Indeed
+ZipRecruiter
+Facebook
+CareerBuilder
+RMS
+Personal Recruiting
+Add that to DB Column
+
+add selectable source
+
+modify GF wiz date output
+
+admin datatables ajax request for load speed
+
+Filter Candidates:
+    Set for future date
+
+        Client Answer NO -> Left Voicemail -> "Hey you recently applied" email
+
+        Greetings "Name",
+
+        I recently called you and left a voicemail
+
+
+
+
+
+Mentorship Question
+
+Keep in Database -> not populating script
+
+Remove Candidate, but allow to reapply
+
+Call Back -> Notes Field and Datetime Picker

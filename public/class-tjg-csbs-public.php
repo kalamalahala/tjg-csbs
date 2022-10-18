@@ -200,7 +200,7 @@ class Tjg_Csbs_Public
             // do nothing
         }
     }
-    #endregion Properties, Construct, and enqueue_scripts and styles ##########################################
+    #endregion Properties, Construct, and enqueue_scripts and styles #########################################
 
     #region AJAX Handlers for New Candidates by CSV Upload ###################################################
 
