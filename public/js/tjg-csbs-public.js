@@ -397,12 +397,13 @@
 		//#endregion DataTables
 
 		
-		disableGfFields(); // disable fields on page load
-		disableGfEmail(); // disable email field on page load
+		// disableGfFields(); // disable fields on page load
+		// disableGfEmail(); // disable email field on page load
+		hideGfEmail(); // hide email field on page load
 
 		// Gravity Form fields enable / disable listener
-		$(document).on('change', '.csbs_update_radio_first_last input', toggleGfFieldReadonlyAttr);
-		$(document).on('change', '.csbs_update_radio_email input', toggleGfFieldEmailReadonlyAttr);
+		// $(document).on('change', '.csbs_update_radio_first_last input', toggleGfFieldReadonlyAttr);
+		$(document).on('change', '.csbs_update_radio_email input', toggleGfFieldHiddenAttr);
 	});
 
 	function createSelectors(headerData) {
@@ -454,6 +455,10 @@
 		(e.target.value === 'Yes') ? enableGfEmail() : disableGfEmail();
 	}
 
+	function toggleGfFieldHiddenAttr(e) {
+		(e.target.value === 'Yes') ? showGfEmail() : hideGfEmail();
+	}
+
 	function disableGfFields() {
 		$('.csbs_readonly_first_last input').prop('readonly', true);
 	}
@@ -468,6 +473,14 @@
 
 	function enableGfEmail() {
 		$('.csbs_readonly_email input').prop('readonly', false);
+	}
+
+	function hideGfEmail() {
+		$('.csbs_readonly_email').prop('hidden', true);
+	}
+
+	function showGfEmail() {
+		$('.csbs_readonly_email').prop('hidden', false);
 	}
 
 })(jQuery);
