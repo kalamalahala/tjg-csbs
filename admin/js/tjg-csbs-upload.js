@@ -169,6 +169,7 @@
 			const phoneColumn = document.getElementById('tjg-csbs-upload-new-candidates-phone');
 			const cityColumn = document.getElementById('tjg-csbs-upload-new-candidates-city');
 			const stateColumn = document.getElementById('tjg-csbs-upload-new-candidates-state');
+			const sourceColumn = document.getElementById('tjg-csbs-upload-new-candidates-source');
 
 			const selectData = {
 				firstNameColumn: firstNameColumn.value,
@@ -176,7 +177,8 @@
 				emailColumn: emailColumn.value,
 				phoneColumn: phoneColumn.value,
 				cityColumn: cityColumn.value,
-				stateColumn: stateColumn.value
+				stateColumn: stateColumn.value,
+				sourceColumn: sourceColumn.value
 			};
 
 
@@ -249,6 +251,7 @@
 		const emailSelect = document.getElementById('tjg-csbs-upload-new-candidates-email');
 		const citySelect = document.getElementById('tjg-csbs-upload-new-candidates-city');
 		const stateSelect = document.getElementById('tjg-csbs-upload-new-candidates-state');
+		const sourceSelect = document.getElementById('tjg-csbs-upload-new-candidates-source');
 
 		/* Apend options to select elements
 		 * headerData.column
@@ -265,6 +268,7 @@
 			emailSelect.appendChild(option.cloneNode(true));
 			citySelect.appendChild(option.cloneNode(true));
 			stateSelect.appendChild(option.cloneNode(true));
+			sourceSelect.appendChild(option.cloneNode(true));
 		}
 		
 	}

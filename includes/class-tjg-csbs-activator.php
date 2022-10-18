@@ -71,6 +71,7 @@ class Tjg_Csbs_Activator
                 rep_user_id mediumint(9) DEFAULT NULL,
                 interview_date DATETIME DEFAULT NULL,
                 merge_status VARCHAR(255) DEFAULT NULL,
+                lead_source VARCHAR(255) DEFAULT NULL,
                 PRIMARY KEY  (id)
                 ) $charset_collate;";
         }

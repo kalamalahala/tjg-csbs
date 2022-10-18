@@ -135,6 +135,7 @@ class Tjg_Csbs_Common
         $email_column = $selected_columns->emailColumn;
         $city_column = $selected_columns->cityColumn;
         $state_column = $selected_columns->stateColumn;
+        $source_column = $selected_columns->sourceColumn;
 
         // Pass file to wp_handle_upload
         $upload = wp_handle_upload($candidate_file, array('test_form' => false));
@@ -169,6 +170,7 @@ class Tjg_Csbs_Common
                 $email = $row_data[$email_column] ?? '';
                 $city = $row_data[$city_column] ?? '';
                 $state = $row_data[$state_column] ?? '';
+                $source = $row_data[$source_column] ?? '';
 
                 // Format phone number
                 $phone = preg_replace('/[^0-9]/', '', $phone);
@@ -190,7 +192,8 @@ class Tjg_Csbs_Common
                             $email,
                             $city,
                             $state,
-                            $date
+                            $date,
+                            $source
                         );
                         break;
                     case 'gf':
@@ -340,7 +343,8 @@ class Tjg_Csbs_Common
         string $email,
         string $city,
         string $state,
-        string $date
+        string $date,
+        string $source
     ) {
         /*
         * $payload = array(
@@ -368,7 +372,7 @@ class Tjg_Csbs_Common
         // If no results, insert candidate
         if (empty($result)) {
             $candidate_query_raw = "INSERT INTO $candidate_table
-            (first_name, last_name, phone, email, city, state, date_added)
+            (first_name, last_name, phone, email, city, lead_source state, date_added)
             VALUES (%s, %s, %s, %s, %s, %s, %s)";
             $candidate_query = $wpdb->prepare(
                 $candidate_query_raw,
@@ -378,7 +382,8 @@ class Tjg_Csbs_Common
                 $email,
                 $city,
                 $state,
-                $date
+                $date,
+                $source
             );
             $inserted = $wpdb->query($candidate_query);
 

@@ -88,6 +88,14 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group row column-select-group">
+                        <label for="tjg-csbs-upload-new-candidates-source" class="col-sm-2 col-form-label">Recruit Source</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" id="tjg-csbs-upload-new-candidates-source" name="tjg-csbs-upload-new-candidates-source">
+                                <option value="0">Select Column</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                     <button type="submit" class="btn btn-primary" id="tjg-csbs-upload-submit">Submit Candidate File</button>
                     <button type="button" class="btn btn-secondary" id="tjg-csbs-upload-cancel" >Cancel</button>
