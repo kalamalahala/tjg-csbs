@@ -41,7 +41,7 @@ class Tjg_Csbs_Menu
         add_menu_page(
             'Cornerstone Business Solutions',
             'Cornerstone',
-            'manage_options',
+            'tjg_csbs_admin',
             'tjg-csbs-admin',
             array($this, 'tjg_csbs_admin_main_page'),
             'dashicons-menu-alt3',
@@ -51,7 +51,7 @@ class Tjg_Csbs_Menu
             'tjg-csbs-admin',
             'Upload Candidates',
             'Upload Candidates',
-            'manage_options',
+            'tjg_csbs_admin',
             'tjg-csbs-admin-upload',
             array($this, 'tjg_csbs_admin_upload_page')
         );
@@ -59,7 +59,7 @@ class Tjg_Csbs_Menu
             'tjg-csbs-admin',
             'CSBS Settings',
             'Settings',
-            'manage_options',
+            'tjg_csbs_admin',
             'tjg-csbs-admin-settings',
             array($this, 'tjg_csbs_admin_settings_page')
         );
@@ -67,7 +67,7 @@ class Tjg_Csbs_Menu
             'tjg-csbs-admin',
             'Plugin Playground', 
             'Scratch Pad', 
-            'manage_options', 
+            'tjg_csbs_admin', 
             'tjg-csbs-scratch', 
             array($this, 'scratch_pad')
         );
@@ -75,7 +75,7 @@ class Tjg_Csbs_Menu
             'tjg-csbs-admin',
             'Bulk Message',
             'Bulk Message',
-            'manage_options',
+            'tjg_csbs_admin',
             'tjg-csbs-admin-bulk-message',
             array($this, 'tjg_csbs_admin_bulk_message_page')
         );

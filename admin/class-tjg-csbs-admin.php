@@ -264,6 +264,9 @@ class Tjg_Csbs_Admin
 	public function tjg_csbs_add_capabilities() {
 		$role = get_role('tjg_csbs_admin');
 		$role->add_cap('tjg_csbs_admin', true);
+
+		$role = get_role('administrator');
+		$role->add_cap('tjg_csbs_admin', true);
 	}
 	 
 	#endregion Roles and Capabilities #############################################
