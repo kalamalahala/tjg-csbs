@@ -65,6 +65,7 @@ $common = new Common();
                         <th>Phone</th>
                         <th>City</th>
                         <th>State</th>
+                        <th>Lead Source</th>
                         <th>Assigned Agent</th>
                         <th>Actions</th>
                     </tr>
@@ -88,6 +89,7 @@ $common = new Common();
                             $state = $candidate['state'];
                             $id = $candidate['id'];
                             $assigned_agent_id = $candidate['rep_user_id'];
+                            $lead_source = $candidate['lead_source'];
                             $candidate_call_count = $common->get_candidate_call_count($id);
 
                             $date_updated = $common->get_date_updated($id);
@@ -115,6 +117,7 @@ $common = new Common();
                                     </td>";
                             echo "<td>$city</td>";
                             echo "<td>$state</td>";
+                            echo "<td>$lead_source</td>";
                             echo "<td>$agent_name</td>";
                             echo '<td><button type="button" class="btn btn-primary tjg-csbs-delete" data-id="' . $id . '">Delete</button></td>';
                             echo '</tr>';
