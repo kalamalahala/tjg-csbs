@@ -33,7 +33,7 @@ $common = new Common();
                             <a class="nav-link" href="admin.php?page=tjg-csbs-admin">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="https://thejohnson.group/csb/">Agent Portal</a>
+                            <a class="nav-link" href="https://thejohnson.group/vertical/">Agent Portal</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin Menu</a>
