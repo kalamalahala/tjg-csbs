@@ -74,7 +74,7 @@
         { data: "state" },
         { data: "disposition" },
         { data: "lead_source" },
-        { data: "rep_first_last" },
+        { data: "rep_user_id" },
         { defaultContent: "" },
       ],
       language: {
