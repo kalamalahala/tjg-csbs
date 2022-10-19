@@ -132,6 +132,9 @@ class Tjg_Csbs_Public
             // FontAwesome
             wp_enqueue_style('fa4', plugin_dir_url(__FILE__)
                 . '../includes/css/font-awesome.css', array(), $this->version, 'all');
+            // busy-app
+            wp_enqueue_style('busy-app', plugin_dir_url(__FILE__)
+                . 'css/busy-app.css', array(), $this->version, 'all');
         } else {
             // do nothing
         }
@@ -174,6 +177,10 @@ class Tjg_Csbs_Public
             // Datatables
             wp_enqueue_script('datatables-nobootstrap', plugin_dir_url(__FILE__)
                 . 'datatables-nobootstrap/datatables.min.js', array('jquery'), $this->version, false);
+
+            // Add busy-app
+            wp_enqueue_script('busy-app', plugin_dir_url(__FILE__)
+                . 'js/busy-app.js', array('jquery'), $this->version, false);
 
             // AJAX for New Candidates Upload
             wp_localize_script(

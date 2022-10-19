@@ -38,7 +38,7 @@
   $(document).ready(function () {
     console.log("Datatables loading...");
     console.log("Getting list of agent IDs and names...");
-    
+
     // const agentList = ajax_object.agent_list;
     const ajax_url = ajax_object.ajax_url;
     const ajax_nonce = ajax_object.nonce;
@@ -54,7 +54,7 @@
       "&nonce=" +
       ajax_nonce;
 
-      console.log(agentList);
+    console.log(agentList);
 
     // DataTables AJAX init
     $("#tjg-csbs-candidates").DataTable({
@@ -94,6 +94,7 @@
         $(row).attr("data-lead-source", lead_source);
       },
       processing: true,
+      serverSide: true,
       language: {
         searchPanes: {
           clearMessage: "Clear All Filters",
@@ -130,7 +131,6 @@
             let dateArray = dateString.split(",");
             let dateFormatted = dateArray[0] + "<br>" + dateArray[1];
             return dateFormatted;
-            
           },
         },
         {
@@ -181,7 +181,7 @@
             }
             /* Render rep name from agentList */
             return agentList[data].agent_name;
-          }
+          },
         },
         {
           targets: [-1], // Column: Actions
@@ -234,6 +234,19 @@
       responsive: true,
       dom: 'Bfl<"select-agent">rtip',
     });
+
+    // Listen for DT processing
+    $("#tjg-csbs-candidates").on(
+      "processing.dt",
+      function (e, settings, processing) {
+        $("#processingIndicator").css("display", "none");
+        if (processing) {
+          $(e.currentTarget).LoadingOverlay("show");
+        } else {
+          $(e.currentTarget).LoadingOverlay("hide", true);
+        }
+      }
+    );
 
     // Add Select Agent dropdown
     $("div.select-agent").html(
@@ -345,9 +358,7 @@
       $(this).prop("disabled", true);
 
       // Add rotating spinner
-      $(this).html(
-        'Assigning...'
-      );
+      $(this).html("Assigning...");
 
       // Get selected agent ID
       const agent_id = $("#tjg-csbs-select-agent").val();
