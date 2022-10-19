@@ -367,49 +367,19 @@ class Tjg_Csbs_Public
         $dnc_field      = $entry['22'] ?? null;
         $dnc            = $common->gf_dnc_bool($dnc_field);
         $briefing_date  = $entry['29'] ?? null;
-
+        
         // Update Logic Fields
         $update_name_phone    = $common->gf_yes_no_bool($entry['31']);
+        
+        // New Email
         $update_email         = $common->gf_yes_no_bool($entry['33']);
-
         $new_email_address    = ($update_email) ? $entry['3'] : null;
         if (!is_null($new_email_address)) {
             $lower_email = strtolower($new_email_address);
             $common->update_candidate_email($candidate_id, $lower_email);
         }
-        
-        // Do Not Call
-        if ($dnc) { // DNC
-            $worked_candidate = $common->disposition_candidate($candidate_id, 'DNC', $user_id);
-            $common->end_interview($call_id, $candidate_id, $user_id);
-            return $worked_candidate;
-        }
 
-        // Begin disposition logic
-        if (!$call_answered) { // Call was not answered
-            switch ($no_answer) {
-                case 'Call Back':
-                    $worked_candidate = $common->disposition_candidate($candidate_id, 'Call Back', $user_id);
-                    break;
-                default:
-                    $worked_candidate = $common->disposition_candidate($candidate_id, $no_answer, $user_id);
-                    break;
-            }
-            $common->end_interview($call_id, $candidate_id, $user_id);
-            return $worked_candidate;
-        } else if (!$job_seeker) { // Call answered, but not a job seeker
-            $worked_candidate = $common->disposition_candidate($candidate_id, 'Not Looking', $user_id);
-            $common->end_interview($call_id, $candidate_id, $user_id);
-            return $worked_candidate;
-        } else if (!$can_zoom) { // Call answered, job seeker, but can't use Zoom
-            $worked_candidate = $common->disposition_candidate($candidate_id, 'Reschedule Zoom', $user_id);
-            $common->end_interview($call_id, $candidate_id, $user_id);
-            return $worked_candidate;
-        } else { // Zoom Scheduled! 
-            $worked_candidate = $common->disposition_candidate($candidate_id, 'Scheduled', $user_id);
-            $interview = $common->schedule_candidate($candidate_id, $user_id, $briefing_date);
-        }
-
+        // Gather fields for error logging        
         $fields = array(
             'candidate_id'      => $candidate_id,
             'user_id'           => $user_id,
@@ -421,17 +391,59 @@ class Tjg_Csbs_Public
             'can_zoom'          => $can_zoom,
             'briefing_date'     => $briefing_date,
             'dnc'               => $dnc,
-            'worked_candidate'  => $worked_candidate,
-            'interview'         => $interview,
             'update_name_phone' => $update_name_phone,
             'update_email'      => $update_email,
             'new_email_address' => $new_email_address,
         );
+        // Do Not Call
+        if ($dnc) { // DNC
+            $worked_candidate = $common->disposition_candidate($candidate_id, 'DNC', $user_id);
+            $common->end_interview($call_id, $candidate_id, $user_id);
+            return $worked_candidate;
+        }
+
+        // Begin disposition logic
+        if (!$call_answered) { // Call was not answered
+            error_log('Call was not answered');
+            switch ($no_answer) {
+                case 'Call Back':
+                    error_log('Call Back');
+                    error_log(print_r($fields, true));
+                    $worked_candidate = $common->disposition_candidate($candidate_id, 'Call Back', $user_id);
+                    break;
+                default:
+                    error_log('No Answer');
+                    error_log(print_r($fields, true));
+                    $worked_candidate = $common->disposition_candidate($candidate_id, $no_answer, $user_id);
+                    break;
+            }
+            $common->end_interview($call_id, $candidate_id, $user_id);
+            return $worked_candidate;
+        } else if (!$job_seeker) { // Call answered, but not a job seeker
+            error_log('Call answered, but not a job seeker');
+            error_log(print_r($fields, true));
+            $worked_candidate = $common->disposition_candidate($candidate_id, 'Not Looking', $user_id);
+            $common->end_interview($call_id, $candidate_id, $user_id);
+            return $worked_candidate;
+        } else if (!$can_zoom) { // Call answered, job seeker, but can't use Zoom
+            error_log('Call answered, job seeker, but can\'t use Zoom');
+            error_log(print_r($fields, true));
+            $worked_candidate = $common->disposition_candidate($candidate_id, 'Reschedule Zoom', $user_id);
+            $common->end_interview($call_id, $candidate_id, $user_id);
+            return $worked_candidate;
+        } else { // Zoom Scheduled! 
+            error_log('Zoom Scheduled!');
+            error_log(print_r($fields, true));
+            $worked_candidate = $common->disposition_candidate($candidate_id, 'Scheduled', $user_id);
+            $interview = $common->schedule_candidate($candidate_id, $user_id, $briefing_date);
+        }
+
 
         error_log(print_r($fields, true));
 
         // End interview timer
         $common->end_interview($call_id, $candidate_id, $user_id);
+        return ['worked_candidate' => $worked_candidate, 'interview' => $interview];
     }
     #endregion Handle Gravity Forms submission of Interview form #############################################
 
