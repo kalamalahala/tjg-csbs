@@ -122,8 +122,12 @@
             }
             // parse Unix epoch timestamp to date string
             let date = new Date(data * 1000);
-            let dateStr = date.toLocaleString();
-            return dateStr;
+            // MM/DD/YYYY <br> HH:MM:SS AM/PM
+            let dateString = date.toLocaleString();
+            let dateArray = dateString.split(",");
+            let dateFormatted = dateArray[0] + "<br>" + dateArray[1];
+            return dateFormatted;
+            
           },
         },
         {
