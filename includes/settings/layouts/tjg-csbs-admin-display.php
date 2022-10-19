@@ -56,7 +56,7 @@ $common = new Common();
             <table id="tjg-csbs-candidates" class="table table-striped table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th></th> <!-- Checkbox -->
+                        <th>Select</th> <!-- Checkbox -->
                         <th>Date Added</th>
                         <th>Date Updated</th>
                         <th>First Name</th>
