@@ -65,8 +65,8 @@
       columns: [
         { defaultContent: "" },
         { data: "id" },
-        { data: "date_added" },
-        { data: "date_updated" },
+        { data: "date_added_local" },
+        { data: "date_updated_local" },
         { data: "first_name" },
         { data: "last_name" },
         { data: "email" },
