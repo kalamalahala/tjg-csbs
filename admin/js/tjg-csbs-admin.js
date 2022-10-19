@@ -78,6 +78,21 @@
         { data: "rep_user_id" },
         { defaultContent: "" },
       ],
+      createdRow: function (row, data, dataIndex) {
+        let id = data.id ? data.id : "";
+        let rep_id = data.rep_user_id ? data.rep_user_id : "";
+        let disposition = data.disposition ? data.disposition : "";
+        let lead_source = data.lead_source ? data.lead_source : "";
+
+        // add data-id attribute to row
+        $(row).attr("data-id", id);
+        // add data-agent attribute to row
+        $(row).attr("data-agent", rep_id);
+        // add data-disposition attribute to row
+        $(row).attr("data-disposition", disposition);
+        // add data-lead-source attribute to row
+        $(row).attr("data-lead-source", lead_source);
+      },
       language: {
         searchPanes: {
           clearMessage: "Clear All Filters",
@@ -97,9 +112,6 @@
         {
           targets: [1], // Column: ID
           visible: false,
-          createdCell: function (td, cellData, rowData, row, col) {
-            $(td).attr("data-id", cellData);
-          },
         },
         {
           targets: [2, 3], // Column: Date Added, Date Updated
