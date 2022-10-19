@@ -227,7 +227,7 @@
         selector: "td:first-child",
       },
       order: [[1, "desc"]],
-      pageLength: 50,
+      pageLength: 10,
       lengthMenu: [10, 25, 50, 100, 250, 500],
       responsive: true,
       dom: 'Bfl<"select-agent">rtip',
