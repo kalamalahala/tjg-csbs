@@ -180,7 +180,7 @@ class Tjg_Csbs_Common
                 $last_name = preg_replace('/[^A-Za-z]/', '', $last_name);
 
                 // Add current date and time
-                $date = date('Y-m-d H:i:s');
+                $date = $this->create_timestamp_utc();
 
                 // Insert candidate based on mode
                 switch ($mode) {
@@ -939,7 +939,9 @@ class Tjg_Csbs_Common
         global $wpdb;
         $table_name = $this->candidate_table;
 
-        $date = date('Y-m-d H:i:s');
+        // new date with utc timezone
+        $date = new DateTime('now', new DateTimeZone('UTC'));
+        
         $update_query = "UPDATE $table_name
             SET date_updated = %s
             WHERE id = %d";
@@ -1007,7 +1009,7 @@ class Tjg_Csbs_Common
 
         $candidate_id = intval($candidate_id);
         $rep_user_id = intval($user_id);
-        $timestamp = date('Y-m-d H:i:s');
+        $timestamp = $this->create_timestamp_utc();
         $direction = 'outbound';
 
         $logged = $wpdb->insert(
@@ -1063,7 +1065,7 @@ class Tjg_Csbs_Common
         $rep_user_id = intval($user_id);
 
         // get current date/time
-        $timestamp = date('Y-m-d H:i:s');
+        $timestamp = $this->create_timestamp_utc();
 
         // update call - set end_time
         $updated = $wpdb->update(
@@ -1238,6 +1240,13 @@ class Tjg_Csbs_Common
         // }
 
         return true;
+    }
+
+    public function create_timestamp_utc() {
+        $date = new DateTime('now', new DateTimeZone('UTC'));
+        // Format to ISO 8601
+        $timestamp = $date->format('Y-m-d\TH:i:s\Z');
+        return $timestamp;
     }
 
     #endregion Helper Functions
