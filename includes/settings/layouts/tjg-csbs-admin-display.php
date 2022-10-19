@@ -65,6 +65,7 @@ $common = new Common();
                         <th>Phone</th>
                         <th>City</th>
                         <th>State</th>
+                        <th>Disposition</th>
                         <th>Lead Source</th>
                         <th>Assigned Agent</th>
                         <th>Actions</th>
