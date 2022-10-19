@@ -162,10 +162,12 @@
                 agent_id: data,
               },
               success: function (response) {
+                console.log(response);
                 const agent_name = response.data[0].agent_name;
-                return agent_name
+                return agent_name;
               },
               error: function (response) {
+                console.log(response);
                 return "Error";
               } 
             });
