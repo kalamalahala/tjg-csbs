@@ -969,8 +969,7 @@ class Tjg_Csbs_Common
         global $wpdb;
         $table_name = $this->candidate_table;
 
-        // new date with utc timezone
-        $date = new DateTime('now', new DateTimeZone('UTC'));
+        $date = date('Y-m-d H:i:s');
         
         $update_query = "UPDATE $table_name
             SET date_updated = %s
