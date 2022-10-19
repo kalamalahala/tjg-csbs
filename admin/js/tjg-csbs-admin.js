@@ -152,10 +152,24 @@
               return "";
             }
             // Get user name via AJAX request
-            const user_id = data;
-            const user_name = getCsbsUserName(user_id);
-            console.log(user_name);
-            return 'tbd';
+            $.ajax({
+              url: ajax_object.ajax_url,
+              type: "POST",
+              data: {
+                action: "tjg_csbs_admin",
+                nonce: ajax_object.nonce,
+                method: "get_agent_name",
+                agent_id: data,
+              },
+              success: function (response) {
+                const agent_name = response.data[0].agent_name;
+                return agent_name
+              },
+              error: function (response) {
+                return "Error";
+              } 
+            });
+            return 'Error';
           },
         },
         {
@@ -449,26 +463,6 @@
       console.log(message);
     });
   });
-
-  function getCsbsUserName(userId) {
-    $.ajax({
-      url: ajax_object.ajax_url,
-      type: "POST",
-      data: {
-        action: "tjg_csbs_admin",
-        nonce: ajax_object.nonce,
-        method: "get_agent_name",
-        agent_id: userId,
-      },
-      success: function (response) {
-        console.log(response.data[0].agent_name);
-        return 'Tyler Karle';
-      },
-      error: function (response) {
-        console.log(response);
-      },
-    });
-  }
 })(jQuery);
 
 /*
