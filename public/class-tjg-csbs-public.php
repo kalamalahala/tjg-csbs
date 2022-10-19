@@ -381,6 +381,7 @@ class Tjg_Csbs_Public
         // Do Not Call
         if ($dnc) { // DNC
             $worked_candidate = $common->disposition_candidate($candidate_id, 'DNC', $user_id);
+            $common->end_interview($call_id, $candidate_id, $user_id);
             return $worked_candidate;
         }
 
@@ -394,12 +395,15 @@ class Tjg_Csbs_Public
                     $worked_candidate = $common->disposition_candidate($candidate_id, $no_answer, $user_id);
                     break;
             }
+            $common->end_interview($call_id, $candidate_id, $user_id);
             return $worked_candidate;
         } else if (!$job_seeker) { // Call answered, but not a job seeker
             $worked_candidate = $common->disposition_candidate($candidate_id, 'Not Looking', $user_id);
+            $common->end_interview($call_id, $candidate_id, $user_id);
             return $worked_candidate;
         } else if (!$can_zoom) { // Call answered, job seeker, but can't use Zoom
             $worked_candidate = $common->disposition_candidate($candidate_id, 'Reschedule Zoom', $user_id);
+            $common->end_interview($call_id, $candidate_id, $user_id);
             return $worked_candidate;
         } else { // Zoom Scheduled! 
             $worked_candidate = $common->disposition_candidate($candidate_id, 'Scheduled', $user_id);
