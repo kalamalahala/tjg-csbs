@@ -1,29 +1,29 @@
 modify GF wiz date output
-
-admin datatables ajax request for load speed
-
-Filter Candidates:
-    Set for future date
-
-        Client Answer NO -> Left Voicemail -> "Hey you recently applied" email
-
-        Greetings "Name",
-
-        I recently called you and left a voicemail
-
-
-
-
-
-Mentorship Question
-
-Keep in Database -> not populating script
-
-Remove Candidate, but allow to reapply
+Filter by phone number, complete final interview
 
 Call Back -> Notes Field and Datetime Picker
 
-# TOMORROW ###
 
+# TOMORROW ###
 People will say yes on the phone
-Filter by phone number, complete final interview
+
+
+#NEXT WEEK
+Portal Page
+
+Agents are registered in phases Licensed -> Training -> Agent
+Licensed Agents:
+    Access to Zoom Room
+    Link to XCEL
+    DICE.fldfs.com
+    Identigo
+    Upload when they pass?
+        - certificates of completion, receipts, etc
+
+For Melissa
+    Access to TMKOnline to send employment documentation
+
+
+Two Menu Items
+    - Social Media
+    - Recruiting
