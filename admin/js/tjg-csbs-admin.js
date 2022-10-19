@@ -150,7 +150,10 @@
         {
           // Skip City, State, Disposition, Lead Source
           targets: [11], // Column: Rep User ID
-          
+          render: function (data, type, row) {
+            /* Render rep name from agentList */
+            return agentList[data].agent_name;
+          }
         },
         {
           targets: [12], // Column: Actions
