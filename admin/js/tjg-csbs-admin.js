@@ -123,9 +123,9 @@
             /* Render date formatted as:
              *  MM/DD/YYYY<br>HH:MM:SS
               */
-            const date = new Date(data);
-            const dateStr = date.toLocaleDateString()
-            const timeStr = date.toLocaleTimeString();
+            // const date = new Date(data);
+            const dateStr = data.toLocaleDateString()
+            const timeStr = data.toLocaleTimeString();
             return dateStr + "<br>" + timeStr;
           },
         },
