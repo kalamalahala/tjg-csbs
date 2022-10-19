@@ -147,6 +147,12 @@
           // Skip City, State, Disposition, Lead Source
           targets: [11], // Column: Rep User ID
           render: function (data, type, row) {
+            // return '' if data is null or undefined
+            if (!data) {
+              return "";
+            }
+
+            return 'beep';
             // Get user name via AJAX request
             const user_id = data;
             const user_name = getCsbsUserName(user_id);
