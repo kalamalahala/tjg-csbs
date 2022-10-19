@@ -64,6 +64,7 @@
       },
       columns: [
         { defaultContent: "" },
+        { data: "id" },
         { data: "date_added" },
         { data: "date_updated" },
         { data: "first_name" },
@@ -94,7 +95,11 @@
           className: "select-checkbox",
         },
         {
-          targets: [1, 2], // Column: Date Added, Date Updated
+          targets: [1], // Column: ID
+          visible: false,
+        },
+        {
+          targets: [2, 3], // Column: Date Added, Date Updated
           render: function (data, type, row) {
             // return '' if data is null or undefined
             if (!data) {
@@ -110,7 +115,7 @@
           },
         },
         {
-          targets: [5], // Column: Email
+          targets: [6], // Column: Email
           render: function (data, type, row) {
             /* Render email as a mailto link */
             return (
@@ -128,7 +133,7 @@
           },
         },
         {
-          targets: [6], // Column: Phone
+          targets: [7], // Column: Phone
           render: function (data, type, row) {
             /* Render phone as a tel link
              *  title="Call {first_name} {last_name}"
@@ -149,7 +154,7 @@
         },
         {
           // Skip City, State, Disposition, Lead Source
-          targets: [11], // Column: Rep User ID
+          targets: [12], // Column: Rep User ID
           render: function (data, type, row) {
             // return '' if data is null or undefined
             if (!data) {
@@ -160,7 +165,7 @@
           }
         },
         {
-          targets: [12], // Column: Actions
+          targets: [-1], // Column: Actions
           orderable: false,
           searchable: false,
           render: function (data, type, row) {
@@ -322,7 +327,7 @@
 
       // Add rotating spinner
       $(this).html(
-        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Assigning...'
+        'Assigning...'
       );
 
       // Get selected agent ID

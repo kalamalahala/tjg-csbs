@@ -57,6 +57,7 @@ $common = new Common();
                 <thead>
                     <tr>
                         <th>Select</th> <!-- Checkbox -->
+                        <th>ID</th>
                         <th>Date Added</th>
                         <th>Date Updated</th>
                         <th>First Name</th>
