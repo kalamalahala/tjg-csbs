@@ -44,6 +44,7 @@
     const dtMethod = 'get_candidates';
     const dtUrlString = ajax_url + '?action=' + ajax_action + '&method=' + dtMethod + '&nonce=' + ajax_nonce;
 
+    console.log("DT AJAX URL: " + dtUrlString);
     // DataTables AJAX init
     $("#tjg-csbs-candidates").DataTable({
       ajax: {
