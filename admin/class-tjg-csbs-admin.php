@@ -94,7 +94,7 @@ class Tjg_Csbs_Admin
 			wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), $this->version, 'all');
 			wp_enqueue_style('dataTables', plugin_dir_url(__FILE__) . 'datatables/datatables.min.css', array(), $this->version, 'all');
 			wp_enqueue_style('fontawesome4', plugin_dir_url(__FILE__) . '../includes/css/font-awesome.min.css', array(), $this->version, 'all');
-			wp_enqueue_style('busy-app', plugin_dir_url(__FILE__) . 'css/busy-app.css', array(), $this->version, 'all');
+			wp_enqueue_style('busy-app', plugin_dir_url(__FILE__) . 'css/busy-app.min.css', array(), $this->version, 'all');
 		}
 	}
 
@@ -126,7 +126,7 @@ class Tjg_Csbs_Admin
 		if ($pagenow == 'admin.php' && $csbs_admin) {
 			wp_enqueue_script('bootstrap', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.min.js', array('jquery'), $this->version, false);
 			wp_enqueue_script('dataTables', plugin_dir_url(__FILE__) . 'datatables/datatables.min.js', array('jquery'), $this->version, false);
-			wp_enqueue_script('busy-app', plugin_dir_url(__FILE__) . 'js/busy-app.js', array('jquery'), $this->version, false);
+			wp_enqueue_script('busy-app', plugin_dir_url(__FILE__) . 'js/busy-app.min.js', array('jquery'), $this->version, false);
 			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/tjg-csbs-admin.js', array('jquery'), $this->version, false);
 			($upload) ? wp_enqueue_script('upload', plugin_dir_url(__FILE__) . 'js/tjg-csbs-upload.js', array('jquery'), $this->version, false) : null;
 
