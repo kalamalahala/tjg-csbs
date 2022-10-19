@@ -451,6 +451,16 @@
     );
   });
 
+  // If job_seeker is set to 'Still Looking', show .briefing_select
+  // If job_seeker is set to 'Not Looking', hide .briefing_select
+  $(document).on("change", ".job_seeker input", function () {
+	if ($(this).val() === "Still Looking") {
+		$(".briefing_select").show();
+	} else {
+		$(".briefing_select").hide();
+	}
+	  });
+
   function createSelectors(headerData) {
     /*
      * Add Select / Option groups to form for these columns:
