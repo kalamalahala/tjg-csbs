@@ -147,8 +147,11 @@ class Tjg_Csbs_Admin
 	 */
 	public function tjg_csbs_admin_ajax_handler()
 	{
+		// Collect nonce
+		$nonce = $_POST['nonce'] ?? $_GET['nonce'] ?? null;
+
 		// Check for nonce
-		if (!wp_verify_nonce($_POST['nonce'], 'tjg_csbs_nonce')) {
+		if (!wp_verify_nonce($nonce, 'tjg_csbs_nonce')) {
 			wp_send_json_error('Invalid nonce');
 		}
 
