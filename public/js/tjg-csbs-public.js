@@ -455,9 +455,12 @@
   // If job_seeker is set to 'Still Looking', show .briefing_select
   // If job_seeker is set to 'Not Looking', hide .briefing_select
   $(document).on("change", ".job_seeker input", function () {
+	console.log('job_seeker input change');
 	if ($(this).val() === "Still Looking") {
+		console.log('Still Looking');
 		$(".briefing_select").prop('hidden', false);
 	} else {
+		console.log('Not Looking');
 		$(".briefing_select").prop('hidden', true);
 	}
 	  });
