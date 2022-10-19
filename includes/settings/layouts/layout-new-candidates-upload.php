@@ -8,6 +8,9 @@
  * Use bootstrap 4 classes to create the form.
  */
 
+ // PHP Date: Monday, March 30, 2020 at 10:00 AM
+//  $date = date('? \a\t g:i A', strtotime('now'));
+
 ?>
 
 <div class="tjg-csbs-form-wrapper">
