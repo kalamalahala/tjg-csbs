@@ -97,6 +97,9 @@
         {
           targets: [1], // Column: ID
           visible: false,
+          createdCell: function (td, cellData, rowData, row, col) {
+            $(td).attr("data-id", cellData);
+          },
         },
         {
           targets: [2, 3], // Column: Date Added, Date Updated
