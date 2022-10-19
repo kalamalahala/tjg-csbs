@@ -151,6 +151,10 @@
           // Skip City, State, Disposition, Lead Source
           targets: [11], // Column: Rep User ID
           render: function (data, type, row) {
+            // return '' if data is null or undefined
+            if (!data) {
+              return "";
+            }
             /* Render rep name from agentList */
             return agentList[data].agent_name;
           }
