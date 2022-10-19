@@ -233,19 +233,6 @@
       dom: 'Bfl<"select-agent">rtip',
     });
 
-    // Listen for DT processing
-    $("#tjg-csbs-candidates").on(
-      "processing.dt",
-      function (e, settings, processing) {
-        $("#processingIndicator").css("display", "none");
-        if (processing) {
-          $(e.currentTarget).busyLoad("show");
-        } else {
-          $(e.currentTarget).busyLoad("hide");
-        }
-      }
-    );
-
     // Add Select Agent dropdown
     $("div.select-agent").html(
       '<form id="tjg-csbs-select-agent-form">' +
