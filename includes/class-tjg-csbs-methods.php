@@ -180,7 +180,7 @@ class Tjg_Csbs_Common
                 $last_name = preg_replace('/[^A-Za-z]/', '', $last_name);
 
                 // Add current date and time
-                $date = $this->create_timestamp_utc();
+                $date = date("Y-m-d H:i:s");
 
                 // Insert candidate based on mode
                 switch ($mode) {
@@ -495,7 +495,14 @@ class Tjg_Csbs_Common
         global $wpdb;
         $table_name = $this->candidate_table;
 
-        $query = "SELECT * FROM $table_name";
+        $query = "SELECT *,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_added`, '+00:00', @@session.time_zone)) AS `date_added_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_updated`, '+00:00', @@session.time_zone)) AS `date_updated_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_worked`, '+00:00', @@session.time_zone)) AS `date_worked_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_scheduled`, '+00:00', @@session.time_zone)) AS `date_scheduled_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`confirmed_date`, '+00:00', @@session.time_zone)) AS `confirmed_date_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`interview_date`, '+00:00', @@session.time_zone)) AS `interview_date_local`
+         FROM $table_name";
         $results = $wpdb->get_results($query, ARRAY_A);
 
         if ($results) {
@@ -529,7 +536,14 @@ class Tjg_Csbs_Common
         global $wpdb;
         $table_name = $this->candidate_table;
 
-        $query = "SELECT * FROM $table_name WHERE rep_user_id = %d";
+        $query = "SELECT *,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_added`, '+00:00', @@session.time_zone)) AS `date_added_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_updated`, '+00:00', @@session.time_zone)) AS `date_updated_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_worked`, '+00:00', @@session.time_zone)) AS `date_worked_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_scheduled`, '+00:00', @@session.time_zone)) AS `date_scheduled_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`confirmed_date`, '+00:00', @@session.time_zone)) AS `confirmed_date_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`interview_date`, '+00:00', @@session.time_zone)) AS `interview_date_local`
+        FROM $table_name WHERE rep_user_id = %d";
         $query = $wpdb->prepare($query, $user_id);
         $results = $wpdb->get_results($query, ARRAY_A);
 
@@ -586,7 +600,14 @@ class Tjg_Csbs_Common
         global $wpdb;
         $table_name = $this->candidate_table;
 
-        $query = "SELECT * FROM $table_name WHERE id = %d";
+        $query = "SELECT *,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_added`, '+00:00', @@session.time_zone)) AS `date_added_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_updated`, '+00:00', @@session.time_zone)) AS `date_updated_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_worked`, '+00:00', @@session.time_zone)) AS `date_worked_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_scheduled`, '+00:00', @@session.time_zone)) AS `date_scheduled_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`confirmed_date`, '+00:00', @@session.time_zone)) AS `confirmed_date_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`interview_date`, '+00:00', @@session.time_zone)) AS `interview_date_local`
+         FROM $table_name WHERE id = %d";
         $query = $wpdb->prepare($query, $id);
         $result = $wpdb->get_row($query, ARRAY_A);
 
@@ -606,7 +627,14 @@ class Tjg_Csbs_Common
         global $wpdb;
         $table_name = $this->candidate_table;
 
-        $query = "SELECT * FROM $table_name WHERE phone = %s";
+        $query = "SELECT *,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_added`, '+00:00', @@session.time_zone)) AS `date_added_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_updated`, '+00:00', @@session.time_zone)) AS `date_updated_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_worked`, '+00:00', @@session.time_zone)) AS `date_worked_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`date_scheduled`, '+00:00', @@session.time_zone)) AS `date_scheduled_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`confirmed_date`, '+00:00', @@session.time_zone)) AS `confirmed_date_local`,
+        UNIX_TIMESTAMP(CONVERT_TZ(`interview_date`, '+00:00', @@session.time_zone)) AS `interview_date_local`
+         FROM $table_name WHERE phone = %s";
         $query = $wpdb->prepare($query, $phone);
         $result = $wpdb->get_row($query, ARRAY_A);
 
@@ -812,12 +840,14 @@ class Tjg_Csbs_Common
         global $wpdb;
         $table_name = $this->candidate_table;
 
-        $query = "SELECT date_updated FROM $table_name WHERE id = %d";
+        $query = "SELECT UNIX_TIMESTAMP(CONVERT_TZ(`date_updated`, '+00:00', @@session.time_zone)) AS `date_updated` FROM $table_name WHERE id = %d";
         $query = $wpdb->prepare($query, $id);
         $result = $wpdb->get_var($query);
 
         return $result;
     }
+
+
 
     /**
      * Assign candidate to user
@@ -1009,7 +1039,7 @@ class Tjg_Csbs_Common
 
         $candidate_id = intval($candidate_id);
         $rep_user_id = intval($user_id);
-        $timestamp = $this->create_timestamp_utc();
+        $timestamp = date("Y-m-d H:i:s");
         $direction = 'outbound';
 
         $logged = $wpdb->insert(
@@ -1065,7 +1095,7 @@ class Tjg_Csbs_Common
         $rep_user_id = intval($user_id);
 
         // get current date/time
-        $timestamp = $this->create_timestamp_utc();
+        $timestamp = date("Y-m-d H:i:s");
 
         // update call - set end_time
         $updated = $wpdb->update(
@@ -1240,13 +1270,6 @@ class Tjg_Csbs_Common
         // }
 
         return true;
-    }
-
-    public function create_timestamp_utc() {
-        $date = new DateTime('now', new DateTimeZone('UTC'));
-        // Format to ISO 8601
-        $timestamp = $date->format('Y-m-d\TH:i:s\Z');
-        return $timestamp;
     }
 
     #endregion Helper Functions
