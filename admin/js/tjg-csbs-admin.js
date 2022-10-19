@@ -241,9 +241,9 @@
       function (e, settings, processing) {
         $("#processingIndicator").css("display", "none");
         if (processing) {
-          $(e.currentTarget).LoadingOverlay("show");
+          $(e.currentTarget).busyLoad("show");
         } else {
-          $(e.currentTarget).LoadingOverlay("hide", true);
+          $(e.currentTarget).busyLoad("hide");
         }
       }
     );
