@@ -39,7 +39,7 @@
     console.log("Loading DT AJAX");
 
     const ajax_url = ajax_object.ajax_url;
-    const ajax_nonce = ajax_object.tjg_csbs_nonce;
+    const ajax_nonce = ajax_object.nonce;
     const ajax_action = ajax_object.action;
     const dtMethod = 'get_candidates';
     const dtUrlString = ajax_url + '?action=' + ajax_action + '&method=' + dtMethod + '&nonce=' + ajax_nonce;
