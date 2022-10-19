@@ -558,7 +558,7 @@ class Tjg_Csbs_Common
                 'columns' => $this->get_columns(),
                 'last_query' => $wpdb->last_query
             ];
-            error_log(print_r($error, true));
+            // error_log(print_r($error, true));
             return false;
         }
 
