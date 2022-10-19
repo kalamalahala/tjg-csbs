@@ -36,12 +36,15 @@
    */
 
   $(document).ready(function () {
-    console.log("Loading DT AJAX");
-
+    console.log("Datatables loading...");
+    console.log("Getting list of agent IDs and names...");
+    
+    var agentList = []; // Array to hold agent IDs and names
     const ajax_url = ajax_object.ajax_url;
     const ajax_nonce = ajax_object.nonce;
     const ajax_action = ajax_object.action;
     const dtMethod = "get_candidates";
+    const agentLookupMethod = "get_agents";
     const dtUrlString =
       ajax_url +
       "?action=" +
@@ -51,7 +54,34 @@
       "&nonce=" +
       ajax_nonce;
 
-    console.log("DT AJAX URL: " + dtUrlString);
+    const agentLookupUrlString =
+      ajax_url +
+      "?action=" +
+      ajax_action +
+      "&method=" +
+      agentLookupMethod +
+      "&nonce=" +
+      ajax_nonce;
+
+    // Get list of agents
+    $.ajax({
+      url: agentLookupUrlString,
+      type: "GET",
+      dataType: "json",
+      success: function (data) {
+        console.log("Agent list received.");
+        console.log(data);
+        agentList = data;
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log("Error getting agent list.");
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+
+
     // DataTables AJAX init
     $("#tjg-csbs-candidates").DataTable({
       ajax: {
@@ -70,7 +100,7 @@
         { data: "state" },
         { data: "disposition" },
         { data: "lead_source" },
-        { data: "rep_user_id" },
+        { data: "rep_first_last" },
         { defaultContent: "" },
       ],
       language: {
@@ -146,33 +176,7 @@
         {
           // Skip City, State, Disposition, Lead Source
           targets: [11], // Column: Rep User ID
-          render: function (data, type, row) {
-            // return '' if data is null or undefined
-            if (!data) {
-              return "";
-            }
-            // Get user name via AJAX request
-            $.ajax({
-              url: ajax_object.ajax_url,
-              type: "POST",
-              data: {
-                action: "tjg_csbs_admin",
-                nonce: ajax_object.nonce,
-                method: "get_agent_name",
-                agent_id: data,
-              },
-              success: function (response) {
-                console.log(response);
-                const agent_name = response.data[0].agent_name;
-                return agent_name;
-              },
-              error: function (response) {
-                console.log(response);
-                return "Error";
-              } 
-            });
-            return 'Error';
-          },
+          
         },
         {
           targets: [12], // Column: Actions
