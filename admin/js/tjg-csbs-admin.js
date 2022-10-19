@@ -41,31 +41,37 @@
     const ajax_url = ajax_object.ajax_url;
     const ajax_nonce = ajax_object.nonce;
     const ajax_action = ajax_object.action;
-    const dtMethod = 'get_candidates';
-    const dtUrlString = ajax_url + '?action=' + ajax_action + '&method=' + dtMethod + '&nonce=' + ajax_nonce;
+    const dtMethod = "get_candidates";
+    const dtUrlString =
+      ajax_url +
+      "?action=" +
+      ajax_action +
+      "&method=" +
+      dtMethod +
+      "&nonce=" +
+      ajax_nonce;
 
     console.log("DT AJAX URL: " + dtUrlString);
     // DataTables AJAX init
     $("#tjg-csbs-candidates").DataTable({
       ajax: {
         url: dtUrlString,
-        dataSrc: 'data',
+        dataSrc: "data",
       },
       columns: [
-        { defaultContent: '' },
-        { data: 'date_added' },
-        { data: 'date_updated' },
-        { data: 'first_name' },
-        { data: 'last_name' },
-        { data: 'email'},
-        { data: 'phone' },
-        { data: 'city' },
-        { data: 'state' },
-        { data: 'disposition' },
-        { data: 'lead_source' },
-        { data: 'rep_user_id' },
-        { defaultContent: '' },
-
+        { defaultContent: "" },
+        { data: "date_added" },
+        { data: "date_updated" },
+        { data: "first_name" },
+        { data: "last_name" },
+        { data: "email" },
+        { data: "phone" },
+        { data: "city" },
+        { data: "state" },
+        { data: "disposition" },
+        { data: "lead_source" },
+        { data: "rep_user_id" },
+        { defaultContent: "" },
       ],
       language: {
         searchPanes: {
@@ -78,10 +84,79 @@
       },
       columnDefs: [
         {
-          targets: [0],
+          targets: [0], // Column: Select
           orderable: false,
           searchable: false,
           className: "select-checkbox",
+        },
+        {
+          targets: [1, 2], // Column: Date Added, Date Updated
+          render: function (data, type, row) {
+            /* Render date formatted as:
+             *  MM/DD/YYYY<br>HH:MM:SS
+             */
+            const date = new Date(data);
+            const dateStr = date.toLocaleDateString();
+            const timeStr = date.toLocaleTimeString();
+            return dateStr + "<br>" + timeStr;
+          },
+        },
+        {
+          targets: [5], // Column: Email
+          render: function (data, type, row) {
+            /* Render email as a mailto link */
+            return (
+              '<a href="mailto:' +
+              data +
+              '"' +
+              'target="_blank" title="Email ' +
+              row.first_name +
+              " " +
+              row.last_name +
+              '">' +
+              data +
+              "</a>"
+            );
+          },
+        },
+        {
+          targets: [6], // Column: Phone
+          render: function (data, type, row) {
+            /* Render phone as a tel link
+             *  title="Call {first_name} {last_name}"
+             */
+            return (
+              '<a href="tel:' +
+              data +
+              '"' +
+              'target="_blank" title="Call ' +
+              row.first_name +
+              " " +
+              row.last_name +
+              '">' +
+              data +
+              "</a>"
+            );
+          },
+        },
+        {
+          // Skip City, State, Disposition, Lead Source
+          targets: [11], // Column: Rep User ID
+          render: function (data, type, row) {
+            // Get user name via AJAX request
+            const user_id = data;
+            const user_name = getCsbsUserName(user_id);
+            return user_name;
+          },
+        },
+        {
+          targets: [12], // Column: Actions
+          orderable: false,
+          searchable: false,
+          render: function (data, type, row) {
+            /* Render actions as a button group */
+            return "TODO";
+          },
         },
       ],
       buttons: {
@@ -290,11 +365,13 @@
 
           // show success message for 5 seconds, then hide, include number of candidates assigned
           let success_message = $(document.createElement("div"));
-          success_message.addClass("alert alert-success alert-dismissible fade show");
+          success_message.addClass(
+            "alert alert-success alert-dismissible fade show"
+          );
           success_message.attr("id", "tjg-csbs-assign-agent-success");
           success_message.attr("role", "alert");
           success_message.html(
-             'Successfully assigned ' +
+            "Successfully assigned " +
               response.data[0].candidates_assigned +
               " candidates to " +
               response.data[0].agent_name +
@@ -315,15 +392,15 @@
       });
     });
 
-    		// Listen for Bulk Message submit
-		$(document).on('submit', '#bulk-form', function (e) {
-			e.preventDefault();
+    // Listen for Bulk Message submit
+    $(document).on("submit", "#bulk-form", function (e) {
+      e.preventDefault();
 
       // disable button
       $("#form-submit").prop("disabled", true);
 
-			const numbers = $('#phone-numbers').val();
-			const message = $('#message').val();
+      const numbers = $("#phone-numbers").val();
+      const message = $("#message").val();
 
       // convert numbers to array by new line
       const numbers_array = numbers.split(/\r?\n/);
@@ -331,11 +408,11 @@
       // Send AJAX to send message
       $.ajax({
         url: ajax_object.ajax_url,
-        type: 'POST',
+        type: "POST",
         data: {
-          action: 'tjg_csbs_admin',
+          action: "tjg_csbs_admin",
           nonce: ajax_object.nonce,
-          method: 'send_bulk_sms',
+          method: "send_bulk_sms",
           numbers: numbers_array,
           message: message,
         },
@@ -344,12 +421,12 @@
           // enable button
           $("#form-submit").prop("disabled", false);
           // clear form
-          $('#bulk-form').trigger("reset");
+          $("#bulk-form").trigger("reset");
           // dump response to textarea
           const stringResponse = JSON.stringify(response);
-          console.log (stringResponse);
+          console.log(stringResponse);
 
-          $('#phone-numbers').val(stringResponse);
+          $("#phone-numbers").val(stringResponse);
         },
         error: function (response) {
           // enable button
@@ -358,11 +435,31 @@
         },
       });
 
-			console.log('bulk submit');
-			console.log(numbers_array)
-			console.log(message);
-		});
+      console.log("bulk submit");
+      console.log(numbers_array);
+      console.log(message);
+    });
   });
+
+  function getCsbsUserName(userId) {
+    $.ajax({
+      url: ajax_object.ajax_url,
+      type: "POST",
+      data: {
+        action: "tjg_csbs_admin",
+        nonce: ajax_object.nonce,
+        method: "get_agent_name",
+        agent_id: userId,
+      },
+      success: function (response) {
+        console.log(response);
+        return response.data[0].display_name;
+      },
+      error: function (response) {
+        console.log(response);
+      },
+    });
+  }
 })(jQuery);
 
 /*

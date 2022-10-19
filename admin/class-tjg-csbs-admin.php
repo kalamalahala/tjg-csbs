@@ -166,8 +166,9 @@ class Tjg_Csbs_Admin
 		
 		
 		
-		// Collect method from POST or GET
+		// Collect variables from POST or GET
 		$method = $_POST['method'] ?? $_GET['method'] ?? null;
+		$agent_id = $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
 		
 		// Check for method
 		if (!isset($method)) {
@@ -206,7 +207,7 @@ class Tjg_Csbs_Admin
 				$payload[] = $common->get_agents();
 				break;
 			case 'get_agent_name':
-				$payload[] = $common->get_agent_name($_POST['agent_id']);
+				$payload = $common->get_agent_name($agent_id);
 				break;
 			case 'send_bulk_sms':
 				$numbers = $_POST['numbers'] ?? null;
