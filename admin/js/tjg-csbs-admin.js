@@ -120,15 +120,10 @@
             if (!data) {
               return "";
             }
-            console.log(data);
-            return data;
-            /* Render date formatted as:
-             *  MM/DD/YYYY<br>HH:MM:SS
-              */
-            // const date = new Date(data);
-            // const dateStr = data.toLocaleDateString()
-            // const timeStr = data.toLocaleTimeString();
-            // return dateStr + "<br>" + timeStr;
+            // parse Unix epoch timestamp to date string
+            let date = new Date(data * 1000);
+            let dateStr = date.toLocaleString();
+            return dateStr;
           },
         },
         {
