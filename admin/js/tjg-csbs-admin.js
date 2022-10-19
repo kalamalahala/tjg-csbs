@@ -346,6 +346,7 @@
       // If no candidates are selected, or no agent is selected, show error message
       if (selected_rows.length == 0) {
         alert("Please select at least one candidate.");
+        console.log(selected_rows);
         $(this).prop("disabled", false);
         $(this).html("Assign");
         return;
