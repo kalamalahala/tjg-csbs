@@ -154,7 +154,8 @@
             // Get user name via AJAX request
             const user_id = data;
             const user_name = getCsbsUserName(user_id);
-            return user_name;
+            console.log("ID: " + user_id + " Name: " + user_name);
+            return 'tbd';
           },
         },
         {
