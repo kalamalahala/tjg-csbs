@@ -133,6 +133,7 @@ class Tjg_Csbs_Admin
 			}
 			wp_localize_script($this->plugin_name, 'ajax_object', array(
 				'ajax_url' => admin_url('admin-ajax.php'),
+				'action' => 'tjg_csbs_admin',
 				'nonce' => wp_create_nonce('tjg_csbs_nonce')
 			));
 		}

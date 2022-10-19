@@ -36,8 +36,52 @@
    */
 
   $(document).ready(function () {
-    console.log("DataTable loaded");
+    console.log("Loading DT AJAX");
+
+    const ajax_url = ajax_object.ajax_url;
+    const ajax_nonce = ajax_object.tjg_csbs_nonce;
+    const ajax_action = ajax_object.action;
+    const dtMethod = 'get_candidates';
+    const dtUrlString = ajax_url + '?action=' + ajax_action + '&method=' + dtMethod + '&nonce=' + ajax_nonce;
+
+    // DataTables AJAX init
     $("#tjg-csbs-candidates").DataTable({
+      ajax: {
+        url: dtUrlString,
+        dataSrc: 'data',
+      },
+      columns: [
+        { defaultContent: '' },
+        { data: 'date_added' },
+        { data: 'date_updated' },
+        { data: 'first_name' },
+        { data: 'last_name' },
+        { data: 'phone',
+          render: function (data, type, row) {
+            // Format (123) 456-7890
+            const phoneNumber = data;
+            const formattedNumber = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+            const hrefOpen = '<a href="tel:' + phoneNumber + '">';
+            const hrefClose = '</a>';
+            return hrefOpen + formattedNumber + hrefClose;
+          }
+        },
+        { data: 'email',
+          render: function (data, type, row) {
+            const email = data;
+            const hrefOpen = '<a href="mailto:' + email + '">';
+            const hrefClose = '</a>';
+            return hrefOpen + email + hrefClose;
+          }
+        },
+        { data: 'city' },
+        { data: 'state' },
+        { data: 'disposition' },
+        { data: 'lead_source' },
+        { data: 'rep_user_id' },
+        { defaultContent: '' },
+
+      ],
       language: {
         searchPanes: {
           clearMessage: "Clear All Filters",

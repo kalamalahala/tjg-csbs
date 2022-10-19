@@ -73,62 +73,62 @@ $common = new Common();
                 <tbody>
                     <?php
 
-                    $candidate_results = $common->get_candidates();
+                    // $candidate_results = $common->get_candidates();
 
 
-                    if (is_array($candidate_results)) {
-                        // Loop through results and display in table
-                        foreach ($candidate_results as $candidate) {
-                            $date_added = $candidate['date_added'];
-                            $formatted_date = date('m/d/Y', strtotime($date_added));
-                            $first_name = $candidate['first_name'];
-                            $last_name = $candidate['last_name'];
-                            $email = $candidate['email'];
-                            $phone = $candidate['phone'];
-                            $city = $candidate['city'];
-                            $state = $candidate['state'];
-                            $id = $candidate['id'];
-                            $assigned_agent_id = $candidate['rep_user_id'];
-                            $lead_source = $candidate['lead_source'];
-                            $candidate_call_count = $common->get_candidate_call_count($id);
+                    // if (is_array($candidate_results)) {
+                    //     // Loop through results and display in table
+                    //     foreach ($candidate_results as $candidate) {
+                    //         $date_added = $candidate['date_added'];
+                    //         $formatted_date = date('m/d/Y', strtotime($date_added));
+                    //         $first_name = $candidate['first_name'];
+                    //         $last_name = $candidate['last_name'];
+                    //         $email = $candidate['email'];
+                    //         $phone = $candidate['phone'];
+                    //         $city = $candidate['city'];
+                    //         $state = $candidate['state'];
+                    //         $id = $candidate['id'];
+                    //         $assigned_agent_id = $candidate['rep_user_id'];
+                    //         $lead_source = $candidate['lead_source'];
+                    //         $candidate_call_count = $common->get_candidate_call_count($id);
 
-                            $date_updated = $common->get_date_updated($id);
-                            $formatted_date_updated = (empty($date_updated)) ? 'N/A' : date('m/d/Y', strtotime($date_updated));
+                    //         $date_updated = $common->get_date_updated($id);
+                    //         $formatted_date_updated = (empty($date_updated)) ? 'N/A' : date('m/d/Y', strtotime($date_updated));
 
-                            if (is_null($assigned_agent_id)) {
-                                $agent_name = 'Unassigned';
-                            } else {
-                                $assigned_agent_name = $common->get_agent_name($assigned_agent_id);
-                                $agent_name = $assigned_agent_name['agent_name'];
-                            }
+                    //         if (is_null($assigned_agent_id)) {
+                    //             $agent_name = 'Unassigned';
+                    //         } else {
+                    //             $assigned_agent_name = $common->get_agent_name($assigned_agent_id);
+                    //             $agent_name = $assigned_agent_name['agent_name'];
+                    //         }
 
-                            // format phone to (xxx) xxx-xxxx
-                            $formatted_phone = $common->format_phone($phone);
+                    //         // format phone to (xxx) xxx-xxxx
+                    //         $formatted_phone = $common->format_phone($phone);
 
-                            echo '<tr id="tjg-csbs-candidate-row-' . $id . '" data-id="' . $id . '">';
-                            echo '<td></td>';
-                            echo "<td>$formatted_date</td>";
-                            echo "<td>$formatted_date_updated</td>";
-                            echo "<td>$first_name</td>";
-                            echo "<td>$last_name</td>";
-                            echo "<td><a href=\"mailto:$email\">$email</a></td>";
-                            echo "<td>$formatted_phone
-                                    <span class=\"badge badge-secondary\"><i class=\"fa fa-phone\" aria-hidden=\"true\"></i>$candidate_call_count</span>
-                                    </td>";
-                            echo "<td>$city</td>";
-                            echo "<td>$state</td>";
-                            echo "<td>$lead_source</td>";
-                            echo "<td>$agent_name</td>";
-                            echo '<td><button type="button" class="btn btn-primary tjg-csbs-delete" data-id="' . $id . '">Delete</button></td>';
-                            echo '</tr>';
-                        }
-                    } else {
-                        echo '<tr>';
-                        echo '<td></td>';
-                        echo '<td colspan="8">No candidates found.</td>';
-                        echo '</tr>';
-                    }
-                    ?>
+                    //         echo '<tr id="tjg-csbs-candidate-row-' . $id . '" data-id="' . $id . '">';
+                    //         echo '<td></td>';
+                    //         echo "<td>$formatted_date</td>";
+                    //         echo "<td>$formatted_date_updated</td>";
+                    //         echo "<td>$first_name</td>";
+                    //         echo "<td>$last_name</td>";
+                    //         echo "<td><a href=\"mailto:$email\">$email</a></td>";
+                    //         echo "<td>$formatted_phone
+                    //                 <span class=\"badge badge-secondary\"><i class=\"fa fa-phone\" aria-hidden=\"true\"></i>$candidate_call_count</span>
+                    //                 </td>";
+                    //         echo "<td>$city</td>";
+                    //         echo "<td>$state</td>";
+                    //         echo "<td>$lead_source</td>";
+                    //         echo "<td>$agent_name</td>";
+                    //         echo '<td><button type="button" class="btn btn-primary tjg-csbs-delete" data-id="' . $id . '">Delete</button></td>';
+                    //         echo '</tr>';
+                    //     }
+                    // } else {
+                    //     echo '<tr>';
+                    //     echo '<td></td>';
+                    //     echo '<td colspan="8">No candidates found.</td>';
+                    //     echo '</tr>';
+                    // }
+                     ?>
                 </tbody>
             </table>
         </div>
