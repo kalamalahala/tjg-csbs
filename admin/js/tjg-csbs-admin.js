@@ -93,6 +93,7 @@
         // add data-lead-source attribute to row
         $(row).attr("data-lead-source", lead_source);
       },
+      processing: true,
       language: {
         searchPanes: {
           clearMessage: "Clear All Filters",
@@ -101,6 +102,8 @@
             _: "Filter Candidates (%d)",
           },
         },
+        loadingRecords: "Loading Candidates...",
+        processing: "<div class='spinner'></div>Loading Candidates...",
       },
       columnDefs: [
         {
