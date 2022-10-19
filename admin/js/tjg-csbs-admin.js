@@ -151,8 +151,6 @@
             if (!data) {
               return "";
             }
-
-            return 'beep';
             // Get user name via AJAX request
             const user_id = data;
             const user_name = getCsbsUserName(user_id);
