@@ -94,7 +94,6 @@
         $(row).attr("data-lead-source", lead_source);
       },
       processing: true,
-      serverSide: true,
       language: {
         searchPanes: {
           clearMessage: "Clear All Filters",
@@ -104,7 +103,6 @@
           },
         },
         loadingRecords: "Loading Candidates...",
-        processing: "<div class='spinner'></div>Loading Candidates...",
       },
       columnDefs: [
         {
