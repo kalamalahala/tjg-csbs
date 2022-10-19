@@ -149,30 +149,33 @@ class Tjg_Csbs_Admin
 	{
 		// Collect nonce
 		$nonce = $_POST['nonce'] ?? $_GET['nonce'] ?? null;
-
-		// Check for nonce
 		if (!wp_verify_nonce($nonce, 'tjg_csbs_nonce')) {
 			wp_send_json_error('Invalid nonce');
 		}
 
-		// $manage_options = current_user_can('manage_options');
-		$tjg_csbs_admin = (current_user_can('tjg_csbs_admin') || current_user_can('tjg_csbs_agent'));
 		// Check for user permissions
+		$tjg_csbs_admin = (current_user_can('tjg_csbs_admin') || current_user_can('tjg_csbs_agent'));
 		if (!$tjg_csbs_admin) {
 			wp_send_json_error('You do not have permission to do this');
 		}
-
+		
 		// Load method handler
 		$common = new Common();
 		$payload = [];
-
+		
+		
+		
+		
+		// Collect method from POST or GET
+		$method = $_POST['method'] ?? $_GET['method'] ?? null;
+		
 		// Check for method
-		if (!isset($_POST['method'])) {
+		if (!isset($method)) {
 			wp_send_json_error('No method specified');
 		}
 
 		// Handle method
-		switch ($_POST['method']) {
+		switch ($method) {
 			case 'get_candidates':
 				$payload[] = $common->get_candidates();
 				break;
