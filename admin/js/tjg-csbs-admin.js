@@ -39,12 +39,12 @@
     console.log("Datatables loading...");
     console.log("Getting list of agent IDs and names...");
     
-    var agentList = []; // Array to hold agent IDs and names
+    // const agentList = ajax_object.agent_list;
     const ajax_url = ajax_object.ajax_url;
     const ajax_nonce = ajax_object.nonce;
     const ajax_action = ajax_object.action;
+    const agentList = ajax_object.agent_list;
     const dtMethod = "get_candidates";
-    const agentLookupMethod = "get_agents";
     const dtUrlString =
       ajax_url +
       "?action=" +
@@ -54,33 +54,7 @@
       "&nonce=" +
       ajax_nonce;
 
-    const agentLookupUrlString =
-      ajax_url +
-      "?action=" +
-      ajax_action +
-      "&method=" +
-      agentLookupMethod +
-      "&nonce=" +
-      ajax_nonce;
-
-    // Get list of agents
-    $.ajax({
-      url: agentLookupUrlString,
-      type: "GET",
-      dataType: "json",
-      success: function (data) {
-        console.log("Agent list received.");
-        console.log(data);
-        agentList = data;
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Error getting agent list.");
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(errorThrown);
-      }
-    });
-
+      console.log(agentList);
 
     // DataTables AJAX init
     $("#tjg-csbs-candidates").DataTable({

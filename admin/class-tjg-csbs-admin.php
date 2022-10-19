@@ -125,16 +125,25 @@ class Tjg_Csbs_Admin
 		if ($pagenow == 'admin.php' && $csbs_admin) {
 			wp_enqueue_script('bootstrap', plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.min.js', array('jquery'), $this->version, false);
 			wp_enqueue_script('dataTables', plugin_dir_url(__FILE__) . 'datatables/datatables.min.js', array('jquery'), $this->version, false);
-
 			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/tjg-csbs-admin.js', array('jquery'), $this->version, false);
+			($upload) ? wp_enqueue_script('upload', plugin_dir_url(__FILE__) . 'js/tjg-csbs-upload.js', array('jquery'), $this->version, false) : null;
 
-			if ($upload) {
-				wp_enqueue_script('upload', plugin_dir_url(__FILE__) . 'js/tjg-csbs-upload.js', array('jquery'), $this->version, false);
+			// Collect CSBS Agent IDs and Names to pass to JS
+			$common = new Common();
+			$agents = $common->get_agents();
+			// Lookup each agent's name and map to $agent->id
+			$agent_names = array();
+			foreach ($agents as $agent) {
+				$name = $common->get_agent_name($agent->id);
+				$agent_names[$agent->id] = $name;
 			}
+
+			// Pass to JS
 			wp_localize_script($this->plugin_name, 'ajax_object', array(
 				'ajax_url' => admin_url('admin-ajax.php'),
 				'action' => 'tjg_csbs_admin',
-				'nonce' => wp_create_nonce('tjg_csbs_nonce')
+				'nonce' => wp_create_nonce('tjg_csbs_nonce'),
+				'agent_list' => $agent_names
 			));
 		}
 	}
