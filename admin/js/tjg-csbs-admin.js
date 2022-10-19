@@ -393,7 +393,7 @@
           // clear selected agent
           $("#tjg-csbs-select-agent").val(0);
           // reload table
-          // $("#tjg-csbs-candidates").DataTable().ajax.reload();
+          $("#tjg-csbs-candidates").DataTable().ajax.reload();
 
           // show success message for 5 seconds, then hide, include number of candidates assigned
           let success_message = $(document.createElement("div"));
