@@ -161,7 +161,7 @@ class Tjg_Csbs_Admin
 		
 		// Load method handler
 		$common = new Common();
-		$payload = [];
+		// $payload = [];
 		
 		
 		
@@ -177,7 +177,7 @@ class Tjg_Csbs_Admin
 		// Handle method
 		switch ($method) {
 			case 'get_candidates':
-				$payload[] = $common->get_candidates();
+				$payload = $common->get_candidates();
 				break;
 			case 'delete_candidate':
 				$payload[] = $common->delete_candidate($_POST['id']);
