@@ -440,6 +440,7 @@
     // disableGfFields(); // disable fields on page load
     // disableGfEmail(); // disable email field on page load
     hideGfEmail(); // hide email field on page load
+	$(".briefing_select").parent('.gfield').attr('hidden', true);
     // console.log('hideGfEmail() called');
 
     // Gravity Form fields enable / disable listener
@@ -455,9 +456,9 @@
   // If job_seeker is set to 'Not Looking', hide .briefing_select
   $(document).on("change", ".job_seeker input", function () {
 	if ($(this).val() === "Still Looking") {
-		$(".briefing_select").show();
+		$(".briefing_select").parent('.gfield').attr('hidden', false);
 	} else {
-		$(".briefing_select").hide();
+		$(".briefing_select").parent('.gfield').attr('hidden', true);
 	}
 	  });
 

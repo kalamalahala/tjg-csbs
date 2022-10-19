@@ -22,3 +22,8 @@ Keep in Database -> not populating script
 Remove Candidate, but allow to reapply
 
 Call Back -> Notes Field and Datetime Picker
+
+# TOMORROW ###
+
+People will say yes on the phone
+Filter by phone number, complete final interview
