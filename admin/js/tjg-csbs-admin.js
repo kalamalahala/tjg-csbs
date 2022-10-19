@@ -92,6 +92,10 @@
         {
           targets: [1, 2], // Column: Date Added, Date Updated
           render: function (data, type, row) {
+            // return '' if data is null or undefined
+            if (!data) {
+              return "";
+            }
             /* Render date formatted as:
              *  MM/DD/YYYY<br>HH:MM:SS
              */
