@@ -361,15 +361,50 @@ class Tjg_Csbs_Public
 
         // Disposition fields
         $call_answered  = $common->gf_yes_no_bool($entry['8']);
-        $job_seeker     = $common->gf_yes_no_bool($entry['11']);
+        $no_answer      = $entry['35'] ?? null;
+        $job_seeker     = $common->gf_job_seeker_bool($entry['11']);
         $can_zoom       = $common->gf_yes_no_bool($entry['18']);
         $dnc_field      = $entry['22'] ?? null;
         $dnc            = $common->gf_dnc_bool($dnc_field);
+        $briefing_date  = $entry['29'] ?? null;
 
         // Update Logic Fields
         $update_name_phone    = $common->gf_yes_no_bool($entry['31']);
         $update_email         = $common->gf_yes_no_bool($entry['33']);
 
+        $new_email_address    = ($update_email) ? $entry['3'] : null;
+        if (!is_null($new_email_address)) {
+            $lower_email = strtolower($new_email_address);
+            $common->update_candidate_email($candidate_id, $lower_email);
+        }
+        
+        // Do Not Call
+        if ($dnc) { // DNC
+            $worked_candidate = $common->disposition_candidate($candidate_id, 'DNC', $user_id);
+            return $worked_candidate;
+        }
+
+        // Begin disposition logic
+        if (!$call_answered) { // Call was not answered
+            switch ($no_answer) {
+                case 'Call Back':
+                    $worked_candidate = $common->disposition_candidate($candidate_id, 'Call Back', $user_id);
+                    break;
+                default:
+                    $worked_candidate = $common->disposition_candidate($candidate_id, $no_answer, $user_id);
+                    break;
+            }
+            return $worked_candidate;
+        } else if (!$job_seeker) { // Call answered, but not a job seeker
+            $worked_candidate = $common->disposition_candidate($candidate_id, 'Not Looking', $user_id);
+            return $worked_candidate;
+        } else if (!$can_zoom) { // Call answered, job seeker, but can't use Zoom
+            $worked_candidate = $common->disposition_candidate($candidate_id, 'Reschedule Zoom', $user_id);
+            return $worked_candidate;
+        } else { // Zoom Scheduled! 
+            $worked_candidate = $common->disposition_candidate($candidate_id, 'Scheduled', $user_id);
+            $interview = $common->schedule_candidate($candidate_id, $user_id, $briefing_date);
+        }
 
         $fields = array(
             'candidate_id'      => $candidate_id,
@@ -377,13 +412,18 @@ class Tjg_Csbs_Public
             'call_id'           => $call_id,
             'date_created'      => $date_format,
             'call_answered'     => $call_answered,
+            'no_answer'         => $no_answer,
             'job_seeker'        => $job_seeker,
             'can_zoom'          => $can_zoom,
+            'briefing_date'     => $briefing_date,
             'dnc'               => $dnc,
+            'worked_candidate'  => $worked_candidate,
+            'interview'         => $interview,
             'update_name_phone' => $update_name_phone,
             'update_email'      => $update_email,
+            'new_email_address' => $new_email_address,
         );
-        
+
         error_log(print_r($fields, true));
 
         // End interview timer
@@ -423,9 +463,10 @@ class Tjg_Csbs_Public
         return $output;
     }
 
-    function csbs_admin_link_shortcode() {
+    function csbs_admin_link_shortcode()
+    {
         $user = wp_get_current_user();
-        $role = ( array ) $user->roles;
+        $role = (array) $user->roles;
         $allowed = array('administrator', 'tjg_csbs_admin');
         if (array_intersect($allowed, $role)) {
             $output = '<a href="/wp-admin/admin.php?page=tjg-csbs-admin">Admin Panel</a>';

@@ -828,6 +828,43 @@ class Tjg_Csbs_Common
     }
 
     /**
+     * Update candidate email
+     * 
+     * Updates a candidate's email in the database table tjg_csbs_candidates
+     * 
+     * @param int $id
+     * @param string $email
+     * @return bool|string $updated or $error
+     */
+    public function update_candidate_email($id, $email)
+    {
+        global $wpdb;
+        $table_name = $this->candidate_table;
+
+        $validate_email = preg_match('/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/', $email);
+        if (!$validate_email) return false;
+
+        $update_query = "UPDATE $table_name
+            SET email = %s
+            WHERE id = %d";
+        $update_query = $wpdb->prepare(
+            $update_query,
+            $email,
+            $id
+        );
+        $updated = $wpdb->query($update_query);
+        // Update date_updated to current date
+        $this->updated_candidate($id);
+
+        if ($updated) return true;
+        else if (!$updated) {
+            // get query error
+            $error = $wpdb->last_error;
+            return $error;
+        }
+    }
+
+    /**
      * Get date updated
      * 
      * Returns the date_updated from the database table tjg_csbs_candidates
@@ -1125,6 +1162,77 @@ class Tjg_Csbs_Common
         }
     }
 
+    /**
+     * disposition_candidate
+     * 
+     * Adds a disposition to a candidate in the database
+     * 
+     * @param int $candidate_id
+     * @param string $disposition
+     * @param int $user_id
+     * 
+     * @return bool|string $updated - updated = 1 or error string
+     */
+    public function disposition_candidate(int $candidate_id, string $disposition, int $user_id)
+    {
+        global $wpdb;
+        $table = $this->candidate_table;
+
+        $candidate_id = intval($candidate_id);
+        $rep_user_id = intval($user_id);
+
+        $updated = $wpdb->update(
+            $table,
+            array('disposition' => $disposition),
+            array('id' => $candidate_id)
+        );
+
+        if ($updated == true) {
+            $fresh_date = $this->updated_candidate($candidate_id);
+            $this->tjg_csbs_create_log_entry(
+                $rep_user_id,
+                $candidate_id,
+                'disposition_candidate',
+                $fresh_date
+            );
+            return $updated;
+        } else {
+            // get query error
+            $error = $wpdb->last_error;
+            return $error;
+        }
+    }
+
+    public function schedule_candidate(int $candidate_id, int $user_id, string $scheduled_interview_date) {
+        global $wpdb;
+        $table = $this->candidate_table;
+
+        $candidate_id = intval($candidate_id);
+        $rep_user_id = intval($user_id);
+        $date_scheduled = date("Y-m-d H:i:s", strtotime($scheduled_interview_date));
+
+        $updated = $wpdb->update(
+            $table,
+            array('date_scheduled' => $date_scheduled),
+            array('id' => $candidate_id)
+        );
+
+        if ($updated == true) {
+            $fresh_date = $this->updated_candidate($candidate_id);
+            $this->tjg_csbs_create_log_entry(
+                $rep_user_id,
+                $candidate_id,
+                'schedule_candidate',
+                $fresh_date
+            );
+            return $updated;
+        } else {
+            // get query error
+            $error = $wpdb->last_error;
+            return $error;
+        }
+    }
+
     #endregion CRUD Update Functions
 
     #region CRUD Delete Functions
@@ -1203,6 +1311,20 @@ class Tjg_Csbs_Common
     }
 
     /**
+     * gf_job_seeker_bool
+     * 
+     * Converts a Gravity Forms Job Seeker field value to a boolean,
+     * or returns null if the value is not valid
+     * 
+     * @param  string|null $value - 'Still Looking' or 'No Longer Looking'
+     * @return bool|null
+     */
+    public function gf_job_seeker_bool(string $value = null) {
+        if (is_null($value)) return null;
+        return $value == 'Still Looking' ? true : false;
+    }
+
+    /**
      * gf_dnc_bool
      * 
      * Converts a Gravity Forms Do Not Call field value to a boolean
@@ -1213,7 +1335,7 @@ class Tjg_Csbs_Common
     public function gf_dnc_bool(string $value = null)
     {
         if (is_null($value)) return null;
-        return ($value == 'Remove Candidate') ? true : false;
+        return ($value == 'Remove - Do Not Call') ? true : false;
     }
 
     // Table Names
