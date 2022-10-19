@@ -362,7 +362,7 @@ class Tjg_Csbs_Public
         // Disposition fields
         $call_answered  = $common->gf_yes_no_bool($entry['8']);
         $no_answer      = $entry['35'] ?? null;
-        $job_seeker     = $common->gf_job_seeker_bool($entry['11']);
+        $job_seeker     = $common->gf_yes_no_bool($entry['11']);
         $can_zoom       = $common->gf_yes_no_bool($entry['18']);
         $dnc_field      = $entry['22'] ?? null;
         $dnc            = $common->gf_dnc_bool($dnc_field);
