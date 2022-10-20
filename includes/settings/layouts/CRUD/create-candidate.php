@@ -90,6 +90,16 @@ $common = new Common();
             </div>
         </div>
 
+        <!-- hidden success -->
+        <div class="alert alert-success" role="alert" id="success" hidden>
+            <strong>Success!</strong> Candidate created successfully.
+        </div>
+
+        <!-- hidden error -->
+        <div class="alert alert-danger" role="alert" id="error" hidden>
+            <strong>Error!</strong> There was an error creating the candidate.
+        </div>
+
         <div class="form-group row">
             <div class="col-sm-4">
                 <button type="submit" class="btn btn-primary">Create Candidate</button>
