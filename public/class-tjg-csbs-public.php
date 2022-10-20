@@ -362,6 +362,7 @@ class Tjg_Csbs_Public
         // Disposition fields
         $call_answered  = $common->gf_yes_no_bool($entry['8']);
         $no_answer      = $entry['35'] ?? null;
+        $call_back_time = $entry['38'] ?? null;
         $job_seeker     = $common->gf_yes_no_bool($entry['11']);
         $can_zoom       = $common->gf_yes_no_bool($entry['18']);
         $dnc_field      = $entry['22'] ?? null;
@@ -410,6 +411,7 @@ class Tjg_Csbs_Public
                     error_log('Call Back');
                     error_log(print_r($fields, true));
                     $worked_candidate = $common->disposition_candidate($candidate_id, 'Call Back', $user_id);
+                    $call_back = $common->schedule_callback($candidate_id, $call_back_time, $user_id);
                     break;
                 default:
                     error_log('No Answer');

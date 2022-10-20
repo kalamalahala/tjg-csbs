@@ -1233,6 +1233,36 @@ class Tjg_Csbs_Common
         }
     }
 
+    public function schedule_callback(int $candidate_id, string $scheduled_callback_date, int $user_id) {
+        global $wpdb;
+        $table = $this->candidate_table;
+
+        $candidate_id = intval($candidate_id);
+        $rep_user_id = intval($user_id);
+        $date_scheduled = date("Y-m-d H:i:s", strtotime($scheduled_callback_date));
+
+        $updated = $wpdb->update(
+            $table,
+            array('date_scheduled' => $date_scheduled),
+            array('id' => $candidate_id)
+        );
+
+        if ($updated == true) {
+            $fresh_date = $this->updated_candidate($candidate_id);
+            $this->tjg_csbs_create_log_entry(
+                $rep_user_id,
+                $candidate_id,
+                'schedule_callback',
+                $fresh_date
+            );
+            return $updated;
+        } else {
+            // get query error
+            $error = $wpdb->last_error;
+            return $error;
+        }
+    }
+
     #endregion CRUD Update Functions
 
     #region CRUD Delete Functions

@@ -1,16 +1,18 @@
-modify GF wiz date output
-Filter by phone number, complete final interview
+modify GF wiz date output // gppa_process_template snippet provided at info@
 
 Call Back -> Notes Field and Datetime Picker
+# added datetime picker, but need to verify column name once table is back up
 
 
-# TOMORROW ###
-People will say yes on the phone
+# TODAY #####
+Handle inbound calls via VBC API if possible
 
 
 #NEXT WEEK
-Portal Page
+Filter by phone number, complete final interview
+Create via gravity view or add to master view
 
+Portal Page
 Agents are registered in phases Licensed -> Training -> Agent
 Licensed Agents:
     Access to Zoom Room
