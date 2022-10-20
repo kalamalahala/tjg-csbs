@@ -1376,6 +1376,83 @@ class Tjg_Csbs_Common
         return true;
     }
 
+    /**
+     * states_array
+     * 
+     * Returns an array of US states with the state abbreviation as the key
+     * 
+     * @return array
+     */
+    public function get_states() {
+
+        $states = array(
+            'AL' => 'ALABAMA',
+            'AK' => 'ALASKA',
+            'AS' => 'AMERICAN SAMOA',
+            'AZ' => 'ARIZONA',
+            'AR' => 'ARKANSAS',
+            'CA' => 'CALIFORNIA',
+            'CO' => 'COLORADO',
+            'CT' => 'CONNECTICUT',
+            'DE' => 'DELAWARE',
+            'DC' => 'DISTRICT OF COLUMBIA',
+            'FM' => 'FEDERATED STATES OF MICRONESIA',
+            'FL' => 'FLORIDA',
+            'GA' => 'GEORGIA',
+            'GU' => 'GUAM GU',
+            'HI' => 'HAWAII',
+            'ID' => 'IDAHO',
+            'IL' => 'ILLINOIS',
+            'IN' => 'INDIANA',
+            'IA' => 'IOWA',
+            'KS' => 'KANSAS',
+            'KY' => 'KENTUCKY',
+            'LA' => 'LOUISIANA',
+            'ME' => 'MAINE',
+            'MH' => 'MARSHALL ISLANDS',
+            'MD' => 'MARYLAND',
+            'MA' => 'MASSACHUSETTS',
+            'MI' => 'MICHIGAN',
+            'MN' => 'MINNESOTA',
+            'MS' => 'MISSISSIPPI',
+            'MO' => 'MISSOURI',
+            'MT' => 'MONTANA',
+            'NE' => 'NEBRASKA',
+            'NV' => 'NEVADA',
+            'NH' => 'NEW HAMPSHIRE',
+            'NJ' => 'NEW JERSEY',
+            'NM' => 'NEW MEXICO',
+            'NY' => 'NEW YORK',
+            'NC' => 'NORTH CAROLINA',
+            'ND' => 'NORTH DAKOTA',
+            'MP' => 'NORTHERN MARIANA ISLANDS',
+            'OH' => 'OHIO',
+            'OK' => 'OKLAHOMA',
+            'OR' => 'OREGON',
+            'PW' => 'PALAU',
+            'PA' => 'PENNSYLVANIA',
+            'PR' => 'PUERTO RICO',
+            'RI' => 'RHODE ISLAND',
+            'SC' => 'SOUTH CAROLINA',
+            'SD' => 'SOUTH DAKOTA',
+            'TN' => 'TENNESSEE',
+            'TX' => 'TEXAS',
+            'UT' => 'UTAH',
+            'VT' => 'VERMONT',
+            'VI' => 'VIRGIN ISLANDS',
+            'VA' => 'VIRGINIA',
+            'WA' => 'WASHINGTON',
+            'WV' => 'WEST VIRGINIA',
+            'WI' => 'WISCONSIN',
+            'WY' => 'WYOMING',
+            'AE' => 'ARMED FORCES AFRICA \ CANADA \ EUROPE \ MIDDLE EAST',
+            'AA' => 'ARMED FORCES AMERICA (EXCEPT CANADA)',
+            'AP' => 'ARMED FORCES PACIFIC'
+        );
+
+        return $states;
+    }
+
     #endregion Helper Functions
 
     #region SendGrid Functions ##############################################
@@ -1437,30 +1514,41 @@ class Tjg_Csbs_Common
      */
     public function sendgrid_email_send_confirmation(Candidate $candidate, string $template_id, string $subject_line, string $webinar_link)
     {
-        $email = new \SendGrid\Mail\Mail();
-        $email->setFrom($this->sendgrid_email_from(), "TJG Career Services");
+        $email = new \SendGrid\Mail\Mail(); // Create a new SendGrid Mail object
+
+        $plugin_settings = array( // Check for plugin settings
+            'sendgrid_api_key' => $this->sendgrid_api_key(),
+            'sendgrid_email_from' => $this->sendgrid_email_from(),
+            'sendgrid_email_from_name' => $this->sendgrid_email_from_name()
+        );
+
+        if (in_array(null, $plugin_settings)) { // If any of the plugin settings are null, return false
+            error_log('SendGrid plugin settings are not configured');
+            return false;
+        }
+
+        // Set the email properties
+        $email->setFrom($plugin_settings['sendgrid_email_from'], $plugin_settings['sendgrid_email_from_name']);
         $email->setSubject($subject_line);
         $email->addTo($candidate->email, $candidate->first_name . ' ' . $candidate->last_name);
         $email->setTemplateId($template_id);
 
+        // Set the substitutions
         $email->addDynamicTemplateData('first_name', $candidate->first_name);
         $email->addDynamicTemplateData('last_name', $candidate->last_name);
-        $email->addDynamicTemplateData('briefing_date', $candidate->briefing_date);
+        $email->addDynamicTemplateData('briefing_date', $candidate->confirmed_date);
         $email->addDynamicTemplateData('briefing_url', $webinar_link);
 
-        $sendgrid = new \SendGrid($this->sendgrid_api_key());
-        try {
+        // Create a SendGrid client to send the email
+        $sendgrid = new \SendGrid($plugin_settings['sendgrid_api_key']);
+
+        try { // Try to send the email
             $response = $sendgrid->send($email);
             return true;
-        } catch (Exception $e) {
+        } catch (Exception $e) { // If there is an error, log it and return false
             error_log($e->getMessage());
             return false;
         }
-    }
-
-    public function candidate_object_test($id) {
-        $candidate = new Candidate($id);
-        return $candidate;
     }
     
 }
