@@ -490,7 +490,7 @@
         type: "POST",
         contentType: false,
         processData: false,
-        candidate_data: {
+        data: {
           form_data
         },
         success: function (response) {
