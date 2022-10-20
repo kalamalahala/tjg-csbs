@@ -182,10 +182,7 @@ class Tjg_Csbs_Common
                 // Add current date and time
                 $date = date("Y-m-d H:i:s");
 
-                // Insert candidate based on mode
-                switch ($mode) {
-                    case 'db':
-                        $inserted = $this->tjg_csbs_insert_new_candidate(
+                $inserted = $this->tjg_csbs_insert_new_candidate(
                             $first_name,
                             $last_name,
                             $phone,
@@ -195,21 +192,6 @@ class Tjg_Csbs_Common
                             $date,
                             $source
                         );
-                        break;
-                    case 'gf':
-                        $inserted = $this->tjg_csbs_gf_insert_new_candidate(
-                            $first_name,
-                            $last_name,
-                            $phone,
-                            $email,
-                            $city,
-                            $state,
-                            $date
-                        );
-                        break;
-                    default:
-                        wp_send_json_error('Invalid mode');
-                        die();
                 }
 
                 /* $inserted returns
@@ -246,23 +228,14 @@ class Tjg_Csbs_Common
                 }
             }
 
-
             // Delete file from server
             unlink($upload['file']);
 
             // Send json success with payload
             wp_send_json_success($payload);
             die();
-        } else {
-            unlink($upload['file']);
-            wp_send_json_error('Error loading file');
-            die();
-        }
-
-        unlink($upload['file']);
-        wp_send_json_error('Error loading file');
-        die();
     }
+
     #endregion Spreadsheet methods
 
     #region CRUD Operations for Candidates ################################
@@ -346,31 +319,62 @@ class Tjg_Csbs_Common
         string $date,
         string $source
     ) {
-        /*
-        * $payload = array(
-        *     'first_name' => $first_name,
-        *     'last_name' => $last_name,
-        *     'phone' => $phone,
-        *     'email' => $email,
-        *     'city' => $city,
-        *     'state' => $state,
-        *     'date' => $date
-        * );
-        */
-
         global $wpdb;
         $candidate_table = $this->candidate_table;
-        $log_table = $this->log_table;
-        $duplicates = [];
+        $errors = [];
         $insertions = 0;
 
-        // Select candidates with Date Added before now
-        $query = "SELECT * FROM $candidate_table WHERE phone LIKE %s AND date_added < %s";
-        $query = $wpdb->prepare($query, $phone, $date);
-        $result = $wpdb->get_results($query);
+        // Clean up phone number and validate length
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($phone) != 10) {
+            array_push($errors, array(
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'phone' => $phone,
+                'email' => $email,
+                'city' => $city,
+                'state' => $state,
+                'date' => $date,
+                'error' => 'Invalid phone number'
+            ));
+            return $errors;
+        }
+
+        // Validate email format
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            array_push($errors, array(
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'phone' => $phone,
+                'email' => $email,
+                'city' => $city,
+                'state' => $state,
+                'date' => $date,
+                'error' => 'Invalid email'
+            ));
+            return $errors;
+        }
+
+        // Insertion requires unique phone number and unique email
+        $dup_check_query = "SELECT * FROM $candidate_table WHERE phone LIKE %s OR email LIKE %s";
+        $dup_check_query = $wpdb->prepare($dup_check_query, $phone, $email);
+        $dup_check_result = $wpdb->get_results($dup_check_query);
+        if (!empty($dup_check_result)) {
+            array_push($errors, array(
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'phone' => $phone,
+                'email' => $email,
+                'city' => $city,
+                'state' => $state,
+                'date' => $date,
+                'error' => 'Candidate already exists with this phone number or email'
+            ));
+            return $errors;
+        }
 
         // If no results, insert candidate
-        if (empty($result)) {
+        if (empty($dup_check_result)) {
             $candidate_query_raw = "INSERT INTO $candidate_table
             (first_name, last_name, phone, email, city, state, date_added, lead_source)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)";
@@ -405,60 +409,6 @@ class Tjg_Csbs_Common
         }
     }
 
-    public function tjg_csbs_gf_insert_new_candidate(
-        $first_name,
-        $last_name,
-        $phone,
-        $email,
-        $city,
-        $state,
-        $date
-    ) {
-        // Collect form ID from Plugin Settings
-        $form_id = get_option('tjg_csbs_gravity_forms_id');
-        if (!$form_id) {
-            echo 'No Gravity Form ID set';
-            die();
-        }
-
-        // Check if candidate already exists by phone number
-        $search_criteria = array(
-            'status' => 'active',
-            'field_filters' => array(
-                array(
-                    'key' => '3',
-                    'value' => $phone
-                )
-            )
-        );
-        $entry = GFAPI::get_entries($form_id, $search_criteria);
-
-        // If no entry exists, insert candidate
-        if (empty($entry)) {
-            $entry = array(
-                'form_id' => $form_id,
-                'date_created' => $date,
-                'created_by' => 1,
-                '1.3' => $first_name,
-                '1.6' => $last_name,
-                '3' => $phone,
-                '4' => $email,
-                '6' => $city,
-                '7' => $state
-            );
-
-            // Insert entry try/catch
-            try {
-                // @php-ignore
-                $inserted = GFAPI::add_entry($entry);
-            } catch (Exception $e) {
-                $error = $e->getMessage();
-                return $error;
-            }
-        }
-        if ($inserted) return true;
-        else return false;
-    }
     #endregion CRUD Create Functions
 
     #region CRUD Read Functions
@@ -1007,7 +957,7 @@ class Tjg_Csbs_Common
         $table_name = $this->candidate_table;
 
         $date = date('Y-m-d H:i:s');
-        
+
         $update_query = "UPDATE $table_name
             SET date_updated = %s
             WHERE id = %d";
@@ -1203,7 +1153,8 @@ class Tjg_Csbs_Common
         }
     }
 
-    public function schedule_candidate(int $candidate_id, int $user_id, string $scheduled_interview_date) {
+    public function schedule_candidate(int $candidate_id, int $user_id, string $scheduled_interview_date)
+    {
         global $wpdb;
         $table = $this->candidate_table;
 
@@ -1233,7 +1184,8 @@ class Tjg_Csbs_Common
         }
     }
 
-    public function schedule_callback(int $candidate_id, string $scheduled_callback_date, int $user_id) {
+    public function schedule_callback(int $candidate_id, string $scheduled_callback_date, int $user_id)
+    {
         global $wpdb;
         $table = $this->candidate_table;
 
@@ -1349,7 +1301,8 @@ class Tjg_Csbs_Common
      * @param  string|null $value - 'Still Looking' or 'No Longer Looking'
      * @return bool|null
      */
-    public function gf_job_seeker_bool(string $value = null) {
+    public function gf_job_seeker_bool(string $value = null)
+    {
         if (is_null($value)) return null;
         return $value == 'Still Looking' ? true : false;
     }
@@ -1405,19 +1358,19 @@ class Tjg_Csbs_Common
         // $number_array = explode(',', $numbers);
 
         // foreach ($number_array as $number) {
-            try {
+        try {
 
-                $client->messages->create(
-                    $number,
-                    array(
-                        'messagingServiceSid' => $twilio_msid,
-                        'body' => $message
-                    )
-                );
-            } catch (Exception $e) {
-                error_log($e->getMessage());
-                return false;
-            }
+            $client->messages->create(
+                $number,
+                array(
+                    'messagingServiceSid' => $twilio_msid,
+                    'body' => $message
+                )
+            );
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
         // }
 
         return true;
