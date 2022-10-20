@@ -30,9 +30,9 @@ echo 'sendgrid api key: ' . $sendgrid_key . '<br />';
 // Sendgrid integration testing real quick
 if ($_GET['sendgrid'] == 'test') {
     $email = new \SendGrid\Mail\Mail();
-    $email->setFrom("info@vertical-businesssolutions.com", "Example User");
+    $email->setFrom("info@vertical-businesssolutions.com", "Thomas Hammond");
     $email->setSubject("Sending with SendGrid is Fun");
-    $email->addTo("info@vertical-businesssolutions.com", "Example User");
+    $email->addTo("solo.driver.bob@gmail.com", "Tyler Karle");
     $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
     $email->addContent(
         "text/html",
