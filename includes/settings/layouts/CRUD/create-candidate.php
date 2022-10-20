@@ -36,8 +36,16 @@ if ($_GET['sendgrid'] == 'test') {
     $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
     $email->addContent(
         "text/html",
-        "<strong>and easy to do anywhere, even with PHP</strong>"
+        "<strong>and easy to do anywhere, even with PHP
+        {{first_name}} {{last_name}} - {{custom_field}}
+            </strong>"
     );
+
+    // Add cadndidate information using Handlebars
+    $email->addSubstitution("{{first_name}}", "Thomas");
+    $email->addSubstitution("{{last_name}}", "Hammond");
+    $email->addSubstitution("{{custom_field}}", "Custom Field Value");
+    
     $sendgrid = new \SendGrid(get_option('tjg_csbs_sendgrid_api_key'));
     try {
         $response = $sendgrid->send($email);
