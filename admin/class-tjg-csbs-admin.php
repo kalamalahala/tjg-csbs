@@ -181,6 +181,8 @@ class Tjg_Csbs_Admin
 		$method 		= $_POST['method'] ?? $_GET['method'] ?? null;
 		$agent_id 		= $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
 		$candidate_data = $_POST['candidate_data'] ?? $_GET['candidate_data'] ?? null;
+
+		wp_send_json_success($candidate_data);
 		
 		// Check for method
 		if (!isset($method)) {
@@ -224,7 +226,7 @@ class Tjg_Csbs_Admin
 									$state = $candidate_data['state'];
 									$source = $candidate_data['lead_source'];
 									$date = date('Y-m-d H:i:s');
-									$output = $common->tjg_csbs_insert_new_candidate(
+									$payload = $common->tjg_csbs_insert_new_candidate(
 										$first_name,
 										$last_name,
 										$phone,
