@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Form for creating a new candidate
  * 
@@ -20,6 +21,33 @@ if (!defined('WPINC')) {
 // Get the current user
 $current_user = wp_get_current_user();
 $user_id = $current_user->ID;
+
+$sendgrid_key = get_option('tjg_csbs_sendgrid_api_key');
+
+echo 'sendgrid api key: ' . $sendgrid_key . '<br />';
+
+
+// Sendgrid integration testing real quick
+if ($_GET['sendgrid'] == 'test') {
+    $email = new \SendGrid\Mail\Mail();
+    $email->setFrom("test@example.com", "Example User");
+    $email->setSubject("Sending with SendGrid is Fun");
+    $email->addTo("test@example.com", "Example User");
+    $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
+    $email->addContent(
+        "text/html",
+        "<strong>and easy to do anywhere, even with PHP</strong>"
+    );
+    $sendgrid = new \SendGrid(get_option('tjg_csbs_sendgrid_api_key'));
+    try {
+        $response = $sendgrid->send($email);
+        print $response->statusCode() . "\n";
+        print_r($response->headers());
+        print $response->body() . "\n";
+    } catch (Exception $e) {
+        echo 'Caught exception: ' . $e->getMessage() . "\n";
+    }
+}
 
 ?>
 
@@ -57,76 +85,76 @@ $user_id = $current_user->ID;
                         <div class="tjg-csbs-form-section-body-row-column">
                             <label for="tjg-csbs-city">City</label>
                             <input type="text" name="tjg-csbs-city" id="tjg-csbs-city" class="tjg-csbs-form-input" />
-                            </div>
-                            
+                        </div>
+
                         <div class="tjg-csbs-form-section-body-row-column">
                             <label for="tjg-csbs-state">State</label>
                             <select name="tjg-csbs-state" id="tjg-csbs-state" class="tjg-csbs-form-input">
                                 <?php
 
                                 $states = array(
-                                'AL'=>'ALABAMA',
-                                'AK'=>'ALASKA',
-                                'AS'=>'AMERICAN SAMOA',
-                                'AZ'=>'ARIZONA',
-                                'AR'=>'ARKANSAS',
-                                'CA'=>'CALIFORNIA',
-                                'CO'=>'COLORADO',
-                                'CT'=>'CONNECTICUT',
-                                'DE'=>'DELAWARE',
-                                'DC'=>'DISTRICT OF COLUMBIA',
-                                'FM'=>'FEDERATED STATES OF MICRONESIA',
-                                'FL'=>'FLORIDA',
-                                'GA'=>'GEORGIA',
-                                'GU'=>'GUAM GU',
-                                'HI'=>'HAWAII',
-                                'ID'=>'IDAHO',
-                                'IL'=>'ILLINOIS',
-                                'IN'=>'INDIANA',
-                                'IA'=>'IOWA',
-                                'KS'=>'KANSAS',
-                                'KY'=>'KENTUCKY',
-                                'LA'=>'LOUISIANA',
-                                'ME'=>'MAINE',
-                                'MH'=>'MARSHALL ISLANDS',
-                                'MD'=>'MARYLAND',
-                                'MA'=>'MASSACHUSETTS',
-                                'MI'=>'MICHIGAN',
-                                'MN'=>'MINNESOTA',
-                                'MS'=>'MISSISSIPPI',
-                                'MO'=>'MISSOURI',
-                                'MT'=>'MONTANA',
-                                'NE'=>'NEBRASKA',
-                                'NV'=>'NEVADA',
-                                'NH'=>'NEW HAMPSHIRE',
-                                'NJ'=>'NEW JERSEY',
-                                'NM'=>'NEW MEXICO',
-                                'NY'=>'NEW YORK',
-                                'NC'=>'NORTH CAROLINA',
-                                'ND'=>'NORTH DAKOTA',
-                                'MP'=>'NORTHERN MARIANA ISLANDS',
-                                'OH'=>'OHIO',
-                                'OK'=>'OKLAHOMA',
-                                'OR'=>'OREGON',
-                                'PW'=>'PALAU',
-                                'PA'=>'PENNSYLVANIA',
-                                'PR'=>'PUERTO RICO',
-                                'RI'=>'RHODE ISLAND',
-                                'SC'=>'SOUTH CAROLINA',
-                                'SD'=>'SOUTH DAKOTA',
-                                'TN'=>'TENNESSEE',
-                                'TX'=>'TEXAS',
-                                'UT'=>'UTAH',
-                                'VT'=>'VERMONT',
-                                'VI'=>'VIRGIN ISLANDS',
-                                'VA'=>'VIRGINIA',
-                                'WA'=>'WASHINGTON',
-                                'WV'=>'WEST VIRGINIA',
-                                'WI'=>'WISCONSIN',
-                                'WY'=>'WYOMING',
-                                'AE'=>'ARMED FORCES AFRICA \ CANADA \ EUROPE \ MIDDLE EAST',
-                                'AA'=>'ARMED FORCES AMERICA (EXCEPT CANADA)',
-                                'AP'=>'ARMED FORCES PACIFIC'
+                                    'AL' => 'ALABAMA',
+                                    'AK' => 'ALASKA',
+                                    'AS' => 'AMERICAN SAMOA',
+                                    'AZ' => 'ARIZONA',
+                                    'AR' => 'ARKANSAS',
+                                    'CA' => 'CALIFORNIA',
+                                    'CO' => 'COLORADO',
+                                    'CT' => 'CONNECTICUT',
+                                    'DE' => 'DELAWARE',
+                                    'DC' => 'DISTRICT OF COLUMBIA',
+                                    'FM' => 'FEDERATED STATES OF MICRONESIA',
+                                    'FL' => 'FLORIDA',
+                                    'GA' => 'GEORGIA',
+                                    'GU' => 'GUAM GU',
+                                    'HI' => 'HAWAII',
+                                    'ID' => 'IDAHO',
+                                    'IL' => 'ILLINOIS',
+                                    'IN' => 'INDIANA',
+                                    'IA' => 'IOWA',
+                                    'KS' => 'KANSAS',
+                                    'KY' => 'KENTUCKY',
+                                    'LA' => 'LOUISIANA',
+                                    'ME' => 'MAINE',
+                                    'MH' => 'MARSHALL ISLANDS',
+                                    'MD' => 'MARYLAND',
+                                    'MA' => 'MASSACHUSETTS',
+                                    'MI' => 'MICHIGAN',
+                                    'MN' => 'MINNESOTA',
+                                    'MS' => 'MISSISSIPPI',
+                                    'MO' => 'MISSOURI',
+                                    'MT' => 'MONTANA',
+                                    'NE' => 'NEBRASKA',
+                                    'NV' => 'NEVADA',
+                                    'NH' => 'NEW HAMPSHIRE',
+                                    'NJ' => 'NEW JERSEY',
+                                    'NM' => 'NEW MEXICO',
+                                    'NY' => 'NEW YORK',
+                                    'NC' => 'NORTH CAROLINA',
+                                    'ND' => 'NORTH DAKOTA',
+                                    'MP' => 'NORTHERN MARIANA ISLANDS',
+                                    'OH' => 'OHIO',
+                                    'OK' => 'OKLAHOMA',
+                                    'OR' => 'OREGON',
+                                    'PW' => 'PALAU',
+                                    'PA' => 'PENNSYLVANIA',
+                                    'PR' => 'PUERTO RICO',
+                                    'RI' => 'RHODE ISLAND',
+                                    'SC' => 'SOUTH CAROLINA',
+                                    'SD' => 'SOUTH DAKOTA',
+                                    'TN' => 'TENNESSEE',
+                                    'TX' => 'TEXAS',
+                                    'UT' => 'UTAH',
+                                    'VT' => 'VERMONT',
+                                    'VI' => 'VIRGIN ISLANDS',
+                                    'VA' => 'VIRGINIA',
+                                    'WA' => 'WASHINGTON',
+                                    'WV' => 'WEST VIRGINIA',
+                                    'WI' => 'WISCONSIN',
+                                    'WY' => 'WYOMING',
+                                    'AE' => 'ARMED FORCES AFRICA \ CANADA \ EUROPE \ MIDDLE EAST',
+                                    'AA' => 'ARMED FORCES AMERICA (EXCEPT CANADA)',
+                                    'AP' => 'ARMED FORCES PACIFIC'
                                 );
 
                                 foreach ($states as $val => $state) {
@@ -153,7 +181,7 @@ $user_id = $current_user->ID;
                             </select>
                         </div>
                     </div>
-                    
-                                
+
+
     </form>
 </div>
