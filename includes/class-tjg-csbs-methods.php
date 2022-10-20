@@ -1243,7 +1243,7 @@ class Tjg_Csbs_Common
 
         $updated = $wpdb->update(
             $table,
-            array('date_scheduled' => $date_scheduled),
+            array('call_back_time' => $date_scheduled),
             array('id' => $candidate_id)
         );
 
