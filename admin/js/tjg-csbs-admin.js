@@ -470,6 +470,45 @@
       console.log(numbers_array);
       console.log(message);
     });
+
+    // Create single candidate: form #create-single-candidate
+    $(document).on("submit", "#create-single-candidate", function (e) {
+      e.preventDefault();
+
+      // disable button
+      $("#create-single-candidate-submit").prop("disabled", true);
+
+      // Get form data
+      const data = $(this).serializeArray();
+
+      // Send AJAX to create candidate
+      $.ajax({
+        url: ajax_object.ajax_url,
+        type: "POST",
+        data: {
+          action: "tjg_csbs_admin",
+          nonce: ajax_object.nonce,
+          method: "create_single_candidate",
+          data: data,
+        },
+        success: function (response) {
+          console.log(response);
+          // enable button
+          $("#create-single-candidate-submit").prop("disabled", false);
+          // clear form
+          $("#create-single-candidate").trigger("reset");
+          // reload table
+        },
+        error: function (response) {
+          // enable button
+          $("#create-single-candidate-submit").prop("disabled", false);
+          console.log(response);
+        },
+      });
+    });
+
+
+
   });
 })(jQuery);
 

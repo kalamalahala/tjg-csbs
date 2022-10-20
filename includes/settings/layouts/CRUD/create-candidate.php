@@ -29,7 +29,7 @@ $common = new Common();
     <hr class="wp-header-end">
     <div class="row">
         <div class="col-md-6">
-            <form method="" action="">
+            <form id="create-single-candidate">
                 <!-- Bootstrap 4 Form Styling -->
                 <div class="form-group row">
                     <label for="first_name" class="col-sm-2 col-form-label">First Name</label>
@@ -108,7 +108,7 @@ $common = new Common();
 
                 <div class="form-group row">
                     <div class="col-sm-4">
-                        <button type="submit" class="btn btn-primary">Create Candidate</button>
+                        <button type="submit" class="btn btn-primary" id="create-single-candidate-submit">Create Candidate</button>
                     </div>
                     <div class="col-sm-4">
                         <button type="reset" class="btn btn-secondary">Clear</button>
