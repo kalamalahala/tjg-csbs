@@ -182,7 +182,7 @@ class Tjg_Csbs_Admin
 		$agent_id 		= $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
 		$candidate_data = $_POST['candidate_data'] ?? $_GET['candidate_data'] ?? null;
 
-		wp_send_json_success($candidate_data);
+		wp_send_json_success($candidate_data['first_name']);
 		
 		// Check for method
 		if (!isset($method)) {
