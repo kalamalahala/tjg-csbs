@@ -488,7 +488,9 @@
       $.ajax({
         url: ajax_object.ajax_url,
         type: "POST",
-        data: {
+        contentType: false,
+        processData: false,
+        candidate_data: {
           form_data
         },
         success: function (response) {
