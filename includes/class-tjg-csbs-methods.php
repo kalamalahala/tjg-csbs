@@ -9,10 +9,10 @@
  */
 
 require_once plugin_dir_path(dirname(__FILE__)) . '/vendor/autoload.php';
+require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-tjg-csbs-candidate.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use Sendgrid\Mail\Mail as Mail;
 use Twilio\Rest\Client as Client;
 
 class Tjg_Csbs_Common
@@ -1377,4 +1377,90 @@ class Tjg_Csbs_Common
     }
 
     #endregion Helper Functions
+
+    #region SendGrid Functions ##############################################
+
+    /**
+     * sendgrid_api_key
+     * 
+     * Returns the SendGrid API key
+     * 
+     * @return string
+     */
+    public function sendgrid_api_key()
+    {
+        $key = get_option('tjg_csbs_sendgrid_api_key');
+        return $key;
+    }
+
+    /**
+     * sendgrid_email_from
+     * 
+     * Returns the SendGrid email from address
+     * 
+     * @return string
+     */
+    public function sendgrid_email_from()
+    {
+        $from = get_option('tjg_csbs_sendgrid_email_from');
+        return $from;
+    }
+
+    /**
+     * sendgrid_email_from_name
+     * 
+     * Returns the SendGrid email from name
+     * 
+     * @return string
+     */
+    public function sendgrid_email_from_name() {
+        $from_name = get_option('tjg_csbs_sendgrid_email_from_name');
+        return $from_name;
+    }
+
+    /**
+     * sendgrid_email_send_confirmation
+     * 
+     * Sends a confirmation email to the candidate using
+     * SendGrid template located in the SendGrid account
+     * 
+     * Substitutions expected:
+     * - {{first_name}}
+     * - {{last_name}}
+     * - {{briefing_date}}
+     * - {{briefing_url}}
+     * 
+     * @param object $candidate
+     * @param string $template_id
+     * @param string $webinar_link
+     * @return bool
+     */
+    public function sendgrid_email_send_confirmation(Candidate $candidate, string $template_id, string $subject_line, string $webinar_link)
+    {
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom($this->sendgrid_email_from(), "TJG Career Services");
+        $email->setSubject($subject_line);
+        $email->addTo($candidate->email, $candidate->first_name . ' ' . $candidate->last_name);
+        $email->setTemplateId($template_id);
+
+        $email->addDynamicTemplateData('first_name', $candidate->first_name);
+        $email->addDynamicTemplateData('last_name', $candidate->last_name);
+        $email->addDynamicTemplateData('briefing_date', $candidate->briefing_date);
+        $email->addDynamicTemplateData('briefing_url', $webinar_link);
+
+        $sendgrid = new \SendGrid($this->sendgrid_api_key());
+        try {
+            $response = $sendgrid->send($email);
+            return true;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function candidate_object_test($id) {
+        $candidate = new Candidate($id);
+        return $candidate;
+    }
+    
 }

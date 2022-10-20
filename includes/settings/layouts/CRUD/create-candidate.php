@@ -22,41 +22,6 @@ if (!defined('WPINC')) {
 $current_user = wp_get_current_user();
 $user_id = $current_user->ID;
 
-$sendgrid_key = get_option('tjg_csbs_sendgrid_api_key');
-
-echo 'sendgrid api key: ' . $sendgrid_key . '<br />';
-
-
-// Sendgrid integration testing real quick
-if ($_GET['sendgrid'] == 'test') {
-    $email = new \SendGrid\Mail\Mail();
-    $email->setFrom("info@vertical-businesssolutions.com", "Thomas Hammond");
-    $email->setSubject("Sending with SendGrid is Fun");
-    $email->addTo("solo.driver.bob@gmail.com", "Tyler Karle");
-    $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
-    $email->addContent(
-        "text/html",
-        "<strong>and easy to do anywhere, even with PHP
-        {{first_name}} {{last_name}} - {{custom_field}}
-            </strong>"
-    );
-
-    // Add cadndidate information using Handlebars
-    $email->addSubstitution("{{first_name}}", "Thomas");
-    $email->addSubstitution("{{last_name}}", "Hammond");
-    $email->addSubstitution("{{custom_field}}", "Custom Field Value");
-    
-    $sendgrid = new \SendGrid(get_option('tjg_csbs_sendgrid_api_key'));
-    try {
-        $response = $sendgrid->send($email);
-        print $response->statusCode() . "\n";
-        print_r($response->headers());
-        print $response->body() . "\n";
-    } catch (Exception $e) {
-        echo 'Caught exception: ' . $e->getMessage() . "\n";
-    }
-}
-
 ?>
 
 <div class="wrap">
