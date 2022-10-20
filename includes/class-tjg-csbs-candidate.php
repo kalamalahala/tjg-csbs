@@ -43,27 +43,27 @@ class Candidate
         }
     }
     
-    public function populate_candidate_information(object $candidate) {
+    private function populate_candidate_information(object $candidate) {
         $methods = new Tjg_Csbs_Common();
         $candidate_array = $methods->get_candidate_by_id($candidate->id);
-        $candidate->first_name = $candidate_array['first_name'];
-        $candidate->last_name = $candidate_array['last_name'];
-        $candidate->email = $candidate_array['email'];
-        $candidate->phone = $candidate_array['phone'];
-        $candidate->city = $candidate_array['city'];
-        $candidate->state = $candidate_array['state'];
-        $candidate->date_created = $candidate_array['date_created'];
-        $candidate->date_updated = $candidate_array['date_updated'];
-        $candidate->date_worked = $candidate_array['date_worked'];
-        $candidate->date_scheduled = $candidate_array['date_scheduled'];
-        $candidate->call_back_time = $candidate_array['call_back_time'];
-        $candidate->disposition = $candidate_array['disposition'];
-        $candidate->confirmed_date = $candidate_array['confirmed_date'];
-        $candidate->rep_user_id = $candidate_array['rep_user_id'];
-        $candidate->interview_date = $candidate_array['interview_date'];
-        $candidate->merge_status = $candidate_array['merge_status'];
-        $candidate->lead_source = $candidate_array['lead_source'];
-
-        return $candidate;
+        $this->first_name = $candidate_array['first_name'];
+        $this->last_name = $candidate_array['last_name'];
+        $this->email = $candidate_array['email'];
+        $this->phone = $candidate_array['phone'];
+        $this->address = $candidate_array['address'];
+        $this->city = $candidate_array['city'];
+        $this->state = $candidate_array['state'];
+        $this->date_created = $candidate_array['date_created'];
+        $this->date_updated = $candidate_array['date_updated'];
+        $this->date_worked = $candidate_array['date_worked'];
+        $this->date_scheduled = $candidate_array['date_scheduled'];
+        $this->call_back_time = $candidate_array['call_back_time'];
+        $this->disposition = $candidate_array['disposition'];
+        $this->confirmed_date = $candidate_array['confirmed_date'];
+        $this->rep_user_id = $candidate_array['rep_user_id'];
+        $this->interview_date = $candidate_array['interview_date'];
+        $this->merge_status = $candidate_array['merge_status'];
+        $this->lead_source = $candidate_array['lead_source'];
     }
+
 }
