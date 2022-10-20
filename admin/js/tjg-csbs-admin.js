@@ -478,18 +478,18 @@
       // disable button
       $("#create-single-candidate-submit").prop("disabled", true);
 
-      // Get form data
-      const data = $(this).serializeArray();
+      // Get form data with FormData
+      let form_data = new FormData(this);
+      form_data.append("action", "tjg_csbs_admin");
+      form_data.append("nonce", ajax_object.nonce);
+      form_data.append("method", "create_single_candidate");
 
       // Send AJAX to create candidate
       $.ajax({
         url: ajax_object.ajax_url,
         type: "POST",
         data: {
-          action: "tjg_csbs_admin",
-          nonce: ajax_object.nonce,
-          method: "create_single_candidate",
-          candidate_data: data,
+          form_data
         },
         success: function (response) {
           console.log(response);
