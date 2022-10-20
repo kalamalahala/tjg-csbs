@@ -53,7 +53,11 @@ $user_id = get_current_user_id();
 
     // var dump a candidate by id using the Candidate object and candidate_object_test method
     $candidate = $common->candidate_object_test(1);
+    $oop_candidate = new Candidate(1);
+    
     var_dump($candidate);
+
+    var_dump($oop_candidate);
 
     ?>
 
