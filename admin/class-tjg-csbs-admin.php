@@ -178,8 +178,9 @@ class Tjg_Csbs_Admin
 		
 		
 		// Collect variables from POST or GET
-		$method = $_POST['method'] ?? $_GET['method'] ?? null;
-		$agent_id = $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
+		$method 		= $_POST['method'] ?? $_GET['method'] ?? null;
+		$agent_id 		= $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
+		$candidate_data = $_POST['candidate_data'] ?? $_GET['candidate_data'] ?? null;
 		
 		// Check for method
 		if (!isset($method)) {
@@ -211,6 +212,29 @@ class Tjg_Csbs_Admin
 					$mode
 				);
 				break;
+				                // create single candidate form
+								case 'create_single_candidate':
+									if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified');
+									if (in_array(null, $candidate_data)) wp_send_json_error('Missing data, all fields required');
+									$first_name = $candidate_data['first_name'];
+									$last_name = $candidate_data['last_name'];
+									$email = $candidate_data['email'];
+									$phone = $candidate_data['phone'];
+									$city = $candidate_data['city'];
+									$state = $candidate_data['state'];
+									$source = $candidate_data['lead_source'];
+									$date = date('Y-m-d H:i:s');
+									$output = $common->tjg_csbs_insert_new_candidate(
+										$first_name,
+										$last_name,
+										$phone,
+										$email,
+										$city,
+										$state,
+										$date,
+										$source
+									);
+									break;
 			case 'assign_candidate':
 				$payload[] = $common->assign_candidate($_POST['agent_id'], $_POST['candidate_ids']);
 				break;

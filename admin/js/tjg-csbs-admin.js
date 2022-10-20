@@ -489,7 +489,7 @@
           action: "tjg_csbs_admin",
           nonce: ajax_object.nonce,
           method: "create_single_candidate",
-          data: data,
+          candidate_data: data,
         },
         success: function (response) {
           console.log(response);
