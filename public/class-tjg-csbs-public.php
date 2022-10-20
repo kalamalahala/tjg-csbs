@@ -284,6 +284,30 @@ class Tjg_Csbs_Public
                 $output = $common->get_candidates_assigned_to_user($user_id);
                 break;
 
+                // create single candidate form
+            case 'create_single_candidate':
+                if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified');
+                if (in_array(null, $candidate_data)) wp_send_json_error('Missing data, all fields required');
+                $first_name = $data['first_name'];
+                $last_name = $data['last_name'];
+                $email = $data['email'];
+                $phone = $data['phone'];
+                $city = $data['city'];
+                $state = $data['state'];
+                $source = $data['lead_source'];
+                $date = date('Y-m-d H:i:s');
+                $output = $common->tjg_csbs_insert_new_candidate(
+                    $first_name,
+                    $last_name,
+                    $phone,
+                    $email,
+                    $city,
+                    $state,
+                    $date,
+                    $source
+                );
+                break;
+
                 // Updates a candidate in the database
             case 'update_candidate':
                 if (is_null($candidate_id)) wp_send_json_error('No ID specified');
