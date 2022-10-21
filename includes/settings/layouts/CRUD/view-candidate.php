@@ -68,7 +68,7 @@ $candidate = new Candidate( $_GET['candidate_id'] );
                     <th>Agent Name</th>
                 </tr>
                 <tr>
-                    <td><? echo $common->get_agent_name($candidate->rep_user_id); ?></td>
+                    <td><? echo $common->get_agent_name($candidate->rep_user_id, 'first_and_last', 'string'); ?></td>
                 </tr>
             </tbody>
         </table>
