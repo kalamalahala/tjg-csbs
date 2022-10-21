@@ -105,13 +105,23 @@ class Tjg_Csbs_Sendgrid {
             }
         }
 
+        error_log('Sending email to ' . $to_email . ' using template ' . $template_id);
+        error_log('Personalization: ' . print_r($personalization, true));
+        error_log('From: ' . $from_email . ' (' . $from_name . ')');
+        error_log('Subject: ' . $subject);
+        error_log('To: ' . $to_email . ' (' . $to_name . ')');
+        error_log(print_r($mail, true));
+
         $sendgrid = new \SendGrid($api_key);
         try {
             $response = $sendgrid->send($mail);
+            error_log('SendGrid response: ' . print_r($response, true));
             return true;
         } catch (TypeException $e) {
+            error_log('TypeException sending email: ' . $e->getMessage());
             return false;
         } catch (SendGridException $e) {
+            error_log('SendGridException sending email: ' . $e->getMessage());
             return false;
         }
 

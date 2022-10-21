@@ -407,7 +407,9 @@ class Tjg_Csbs_Public
 
         // Begin disposition logic
         if (!$call_answered) { // Call was not answered
+
             error_log('Call was not answered');
+
             switch ($no_answer) {
                 case 'Call Back':
                     error_log('Call Back');
@@ -421,21 +423,32 @@ class Tjg_Csbs_Public
                     $worked_candidate = $common->disposition_candidate($candidate_id, $no_answer, $user_id);
                     break;
             }
+
             $common->end_interview($call_id, $candidate_id, $user_id);
             return $worked_candidate;
+
         } else if (!$job_seeker) { // Call answered, but not a job seeker
+
             error_log('Call answered, but not a job seeker');
             error_log(print_r($fields, true));
+
             $worked_candidate = $common->disposition_candidate($candidate_id, 'Not Looking', $user_id);
             $common->end_interview($call_id, $candidate_id, $user_id);
+
             return $worked_candidate;
+
         } else if (!$can_zoom) { // Call answered, job seeker, but can't use Zoom
+
             error_log('Call answered, job seeker, but can\'t use Zoom');
             error_log(print_r($fields, true));
+
             $worked_candidate = $common->disposition_candidate($candidate_id, 'Reschedule Zoom', $user_id);
             $common->end_interview($call_id, $candidate_id, $user_id);
+
             return $worked_candidate;
+
         } else { // Zoom Scheduled! 
+
             error_log('Zoom Scheduled!');
             error_log(print_r($fields, true));
 
@@ -455,26 +468,27 @@ class Tjg_Csbs_Public
 
             // Update candidate status
             if ($send_email) {
+
+                error_log('Email sent successfully');
+                error_log(print_r($fields, true));
                 $worked_candidate = $common->disposition_candidate($candidate_id, 'Zoom Scheduled', $user_id);
                 $common->end_interview($call_id, $candidate_id, $user_id);
                 return $worked_candidate;
+
             } else {
+
                 error_log('Sendgrid email failed');
                 error_log(print_r($fields, true));
                 $worked_candidate = $common->disposition_candidate($candidate_id, 'Zoom Scheduled', $user_id);
                 $common->end_interview($call_id, $candidate_id, $user_id);
                 return $worked_candidate;
+
             }
-
-
-
-            // $worked_candidate = $common->disposition_candidate($candidate_id, 'Scheduled', $user_id);
-            // $interview = $common->schedule_candidate($candidate_id, $user_id, $briefing_date);
         }
 
 
+        error_log('End of logic, should not be here');
         error_log(print_r($fields, true));
-
         // End interview timer
         $common->end_interview($call_id, $candidate_id, $user_id);
         return false;
