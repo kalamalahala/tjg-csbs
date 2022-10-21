@@ -205,7 +205,7 @@ class Tjg_Csbs
 				'callback' => 'tjg_csbs_admin_ajax_handler_nopriv',
 			),
 			'sendgrid_nopriv_hook' => array( // Sendgrid webhook handler
-				'hook' => 'wp_admin_post_nopriv_sendgrid_webhook',
+				'hook' => 'admin_post_nopriv_sendgrid_webhook',
 				'callback' => 'tjg_csbs_sendgrid_webhook_handler',
 			),
 			'csbs_admin_roles' => array( // Add custom roles
