@@ -45,11 +45,11 @@ class Tjg_Csbs_Sendgrid {
         $api_key = $this->api_key;
         $sg = new \SendGrid($api_key);
 
-        echo $api_key;
+        var_dump($sg);
 
         try {
-            $response = $sg->client->templates()->get();
-            print $status_code = $response->statusCode() . '\n';
+            $response = $sg->client->templates()->get(null);
+            print $code = $response->statusCode() . '\n';
             echo '<pre>';
             print_r($body = $response->body());
             echo '</pre>';
