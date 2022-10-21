@@ -186,6 +186,9 @@
           orderable: false,
           searchable: false,
           render: function (data, type, row) {
+            console.log(data);
+            console.log(type);
+            console.log(row);
             /* Render actions as a button group */
             // bootstrap 4 small button: View
             // Get the candidate id from the ajax request
