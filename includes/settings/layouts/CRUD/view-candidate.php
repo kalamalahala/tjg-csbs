@@ -32,11 +32,7 @@ $candidate = new Candidate( $_GET['candidate_id'] );
                     <th>Date Worked</th>
                 </tr>
                 <tr>
-                    <td><? echo date(
-                        'm/d/Y',
-                        strtotime($candidate->date_created));
-                        
-                        ?></td>
+                    <td><? echo $candidate->date_added ?></td>
                     <td><? echo $candidate->date_updated ?></td>
                     <td><? echo $candidate->date_worked ?></td>
                 </tr>
