@@ -1533,7 +1533,7 @@ class Tjg_Csbs_Common
         }
 
         // Set the email properties
-        $email->setFrom($plugin_settings['sendgrid_email_from'], $plugin_settings['sendgrid_email_from_name']);
+        $email->setFrom($plugin_settings['tjg_csbs_sendgrid_email_from'], $plugin_settings['tjg_csbs_sendgrid_email_from_name']);
         $email->setSubject($subject_line);
         $email->addTo($candidate->email, $candidate->first_name . ' ' . $candidate->last_name);
         $email->setTemplateId($template_id);
