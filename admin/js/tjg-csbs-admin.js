@@ -558,7 +558,7 @@
             action: "tjg_csbs_admin",
             nonce: ajax_object.nonce,
             method: "send_confirmation_email",
-            candidate_id: candidate_id,
+            candidate_to_email: candidate_id,
           },
           success: function (response) {
             // enable button
