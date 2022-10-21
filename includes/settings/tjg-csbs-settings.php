@@ -67,8 +67,14 @@ class Tjg_Csbs_Settings {
 			'tjg_csbs_settings'
 		);
 
-		// Sendgrid Template Selector
-		// todo
+		// Sendgrid Template ID
+		add_settings_field(
+			'tjg_csbs_sendgrid_template_id',
+			'SendGrid Template ID',
+			array($this, 'tjg_csbs_settings_field_sendgrid_template_id'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
 
 		// Number of candidates to display on main page
 		add_settings_field(
@@ -182,6 +188,12 @@ class Tjg_Csbs_Settings {
 	{
 		$email_from_name = get_option('tjg_csbs_sendgrid_email_from_name');
 		echo '<input type="text" id="tjg_csbs_sendgrid_email_from_name" name="tjg_csbs_sendgrid_email_from_name" value="' . $email_from_name . '">';
+	}
+
+	public function tjg_csbs_settings_field_sendgrid_template_id()
+	{
+		$template_id = get_option('tjg_csbs_sendgrid_template_id');
+		echo '<input type="text" id="tjg_csbs_sendgrid_template_id" name="tjg_csbs_sendgrid_template_id" value="' . $template_id . '">';
 	}
 
 	public function tjg_csbs_settings_field_num_candidates()

@@ -22,7 +22,7 @@ require_once plugin_dir_path(__FILE__) . '../includes/class-tjg-csbs-methods.php
 require_once plugin_dir_path(__FILE__) . '../includes/class-tjg-csbs-sendgrid.php';
 
 use Tjg_Csbs_Common as Common;
-use Tjg_Csbs_Sendgrid as Sendgrid;
+use Tjg_Csbs_Sendgrid as Sendgrid_Handler;
 
 // use PhpOffice\PhpSpreadsheet\IOFactory;
 // use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -350,7 +350,7 @@ class Tjg_Csbs_Public
     {
         // Instantiate method handler
         $common = new Common();
-        // $sendgrid = new SendGrid();
+        $sendgrid_handler = new Sendgrid_Handler();
 
         // User, Candidate, Call, and Date information
         $candidate_id   = $entry['28'] ?? null;
@@ -368,10 +368,11 @@ class Tjg_Csbs_Public
         $dnc_field      = $entry['22'] ?? null;
         $dnc            = $common->gf_dnc_bool($dnc_field);
         $briefing_date  = $entry['29'] ?? null;
-        
+        $briefing_url   = $entry['9'] ?? null;
+
         // Update Logic Fields
         $update_name_phone    = $common->gf_yes_no_bool($entry['31']);
-        
+
         // New Email
         $update_email         = $common->gf_yes_no_bool($entry['33']);
         $new_email_address    = ($update_email) ? $entry['3'] : null;
@@ -391,6 +392,7 @@ class Tjg_Csbs_Public
             'job_seeker'        => $job_seeker,
             'can_zoom'          => $can_zoom,
             'briefing_date'     => $briefing_date,
+            'briefing_url'      => $briefing_url,
             'dnc'               => $dnc,
             'update_name_phone' => $update_name_phone,
             'update_email'      => $update_email,
@@ -436,8 +438,38 @@ class Tjg_Csbs_Public
         } else { // Zoom Scheduled! 
             error_log('Zoom Scheduled!');
             error_log(print_r($fields, true));
-            $worked_candidate = $common->disposition_candidate($candidate_id, 'Scheduled', $user_id);
-            $interview = $common->schedule_candidate($candidate_id, $user_id, $briefing_date);
+
+            // Fire off Confirmation email to candidate
+            $candidate          = new Candidate($candidate_id);
+            $template_id        = get_option('tjg_csbs_sendgrid_template_id');
+            $personalization    = array(
+                'dynamic_template_data' => array(
+                    'first_name' => $candidate->first_name,
+                    'last_name'  => $candidate->last_name,
+                    'briefing_date' => $briefing_date,
+                    'briefing_url' => $briefing_url,
+                ),
+            );
+
+            $send_email = $sendgrid_handler->send_email($candidate, 'Candidate Confirmation', $template_id, $personalization);
+
+            // Update candidate status
+            if ($send_email) {
+                $worked_candidate = $common->disposition_candidate($candidate_id, 'Zoom Scheduled', $user_id);
+                $common->end_interview($call_id, $candidate_id, $user_id);
+                return $worked_candidate;
+            } else {
+                error_log('Sendgrid email failed');
+                error_log(print_r($fields, true));
+                $worked_candidate = $common->disposition_candidate($candidate_id, 'Zoom Scheduled', $user_id);
+                $common->end_interview($call_id, $candidate_id, $user_id);
+                return $worked_candidate;
+            }
+
+
+
+            // $worked_candidate = $common->disposition_candidate($candidate_id, 'Scheduled', $user_id);
+            // $interview = $common->schedule_candidate($candidate_id, $user_id, $briefing_date);
         }
 
 
@@ -445,7 +477,8 @@ class Tjg_Csbs_Public
 
         // End interview timer
         $common->end_interview($call_id, $candidate_id, $user_id);
-        return ['worked_candidate' => $worked_candidate, 'interview' => $interview];
+        return false;
+        // return ['worked_candidate' => $worked_candidate, 'interview' => $interview];
     }
     #endregion Handle Gravity Forms submission of Interview form #############################################
 
