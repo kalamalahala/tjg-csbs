@@ -11,6 +11,7 @@
  */
 
 require_once plugin_dir_path(dirname(__FILE__)) . '/includes/class-tjg-csbs-methods.php';
+require_once plugin_dir_path(dirname(__FILE__)) . '/includes/class-tjg-csbs-sendgrid.php';
 require_once plugin_dir_path(dirname(__FILE__)) . '/includes/settings/tjg-csbs-settings.php';
 require_once plugin_dir_path(dirname(__FILE__)) . '/includes/settings/tjg-csbs-menu.php';
 require_once plugin_dir_path(dirname(__FILE__)) . '/vendor/autoload.php';
@@ -18,7 +19,9 @@ require_once plugin_dir_path(dirname(__FILE__)) . '/vendor/autoload.php';
 use Tjg_Csbs_Common as Common;
 use Tjg_Csbs_Settings as Settings;
 use Tjg_Csbs_Menu as Menu;
-use Vonage\Client\Credentials\Basic as Basic;
+use Tjg_Csbs_Sendgrid as Sendgrid_Handler;
+// use Vonage\Client\Credentials\Basic as Basic;
+
 
 /**
  * The admin-specific functionality of the plugin.
@@ -348,4 +351,23 @@ class Tjg_Csbs_Admin
 	}
 	 
 	#endregion Roles and Capabilities #############################################
+
+	#region Sendgrid Webhook Callback #############################################
+	public function tjg_csbs_sendgrid_webhook_handler()
+	{
+		if (!isset($_POST['sendgrid_handler'])) {
+			error_log('Attempted to access webhook without sendgrid_handler');
+			return;
+		}
+
+		error_log('Sendgrid webhook handler called');
+		error_log('POST: ' . print_r($_POST, true));
+		error_log('GET: ' . print_r($_GET, true));
+		error_log('SERVER: ' . print_r($_SERVER, true));
+
+		echo 'Sendgrid webhook handler called';
+		wp_die();
+		// $handler = new Sendgrid_Handler();
+
+	}
 }
