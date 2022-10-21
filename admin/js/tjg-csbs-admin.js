@@ -490,9 +490,7 @@
         type: "POST",
         contentType: false,
         processData: false,
-        data: {
-          form_data
-        },
+        data: form_data,
         success: function (response) {
           console.log(response);
           // enable button
