@@ -85,13 +85,13 @@ $candidate = new Candidate( $_GET['candidate_id'] );
             <p class="card-text">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                        <button class="btn btn-sm btn-primary" id="update-candidate">
+                        <button class="btn btn-sm btn-primary" id="update-candidate" data-id="<?php echo $candidate->id ?>">
                             Update
                         </button>
-                        <button class="btn btn-sm btn-primary" id="send-email">
+                        <button class="btn btn-sm btn-primary" id="send-email" data-id="<?php echo $candidate->id ?>">
                             Send Email
                         </button>
-                        <button class="btn btn-sm btn-primary" id="delete-candidate">
+                        <button class="btn btn-sm btn-primary" id="delete-candidate" data-id="<?php echo $candidate->id ?>">
                             Delete
                         </button>
                     </div>

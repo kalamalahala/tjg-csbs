@@ -532,6 +532,46 @@
       });
     });
 
+    // View Candidate page actions
+    const updateButton    = $("#update-candidate");
+    const deleteButton    = $("#delete-candidate");
+    const sendEmailButton = $("#send-email");
+
+    // Email AJAX
+    $(document).on("click", sendEmailButton, function (e) {
+      e.preventDefault();
+
+      // disable button
+      sendEmailButton.prop("disabled", true);
+
+      // Confirm action
+      if (!confirm("Are you sure you want to send an email to this candidate?")) {
+        sendEmailButton.prop("disabled", false);
+        return;
+      } else {
+        let candidate_id = $(this).data("id");
+        // Send AJAX to send email
+        $.ajax({
+          url: ajax_object.ajax_url,
+          type: "POST",
+          data: {
+            action: "tjg_csbs_admin",
+            nonce: ajax_object.nonce,
+            method: "send_confirmation_email",
+            candidate_id: candidate_id,
+          },
+          success: function (response) {
+            // enable button
+            sendEmailButton.prop("disabled", false);
+            console.log(response);
+          },
+          error: function (response) {
+            console.log(response);
+          },
+        }); // end AJAX
+
+      } // end else
+    }); // end sendEmailButton click
 
 
   });
