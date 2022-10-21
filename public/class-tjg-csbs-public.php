@@ -430,11 +430,13 @@ class Tjg_Csbs_Public
                         $candidate          = new Candidate($candidate_id);
                         $template_id        = get_option('tjg_csbs_sendgrid_voicemail_template_id');
                         $personalization    = array(
+                            'dynamic_template_data' => array(
                             'first_name'    => $candidate->first_name,
                             'last_name'     => $candidate->last_name,
                             'agent_name'    => $agent_name,
                             'briefing_date' => $briefing_date,
                             'briefing_url'  => $briefing_url,
+                        )
                         );
                         
                         $handler = new Sendgrid_Handler();
