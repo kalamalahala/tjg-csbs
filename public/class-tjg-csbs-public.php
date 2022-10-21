@@ -355,6 +355,7 @@ class Tjg_Csbs_Public
         // User, Candidate, Call, and Date information
         $candidate_id   = $entry['28'] ?? null;
         $user_id        = $entry['created_by'];
+        $agent_name     = $common->get_agent_name($user_id, 'first_and_last', 'string');
         $call_id        = $entry['30'] ?? null;
         $date_created   = $entry['date_created'];
         $date_format    = date('Y-m-d H:i:s', strtotime($date_created));
@@ -385,6 +386,7 @@ class Tjg_Csbs_Public
         $fields = array(
             'candidate_id'      => $candidate_id,
             'user_id'           => $user_id,
+            'agent_name'        => $agent_name,
             'call_id'           => $call_id,
             'date_created'      => $date_format,
             'call_answered'     => $call_answered,
@@ -458,6 +460,7 @@ class Tjg_Csbs_Public
                 'dynamic_template_data' => array(
                     'first_name' => $candidate->first_name,
                     'last_name'  => $candidate->last_name,
+                    'agent_name' => $agent_name,
                     'briefing_date' => $briefing_date,
                     'briefing_url' => $briefing_url,
                 ),
