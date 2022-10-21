@@ -192,7 +192,7 @@
             let viewButton = '<a href="?page=tjg-csbs-admin-view-candidate&candidate_id="'
                             + candidate_id
                             +'" class="btn btn-sm btn-primary tjg-csbs-candidate-view" title="View Candidate">'
-                            +'<i class="fas fa-eye"></i></a>';
+                            +'<i class="fa fa-eye"></i></a>';
             return viewButton;
           },
         },

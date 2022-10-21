@@ -65,6 +65,14 @@ class Tjg_Csbs_Menu
         );
         add_submenu_page(
             'tjg-csbs-admin',
+            'View Candidate',
+            'View Candidate',
+            'tjg_csbs_admin',
+            'tjg-csbs-admin-view-candidate',
+            array($this, 'tjg_csbs_admin_view_candidate_page')
+        );
+        add_submenu_page(
+            'tjg-csbs-admin',
             'CSBS Settings',
             'Settings',
             'tjg_csbs_admin',
@@ -87,7 +95,7 @@ class Tjg_Csbs_Menu
             'tjg-csbs-admin-bulk-message',
             array($this, 'tjg_csbs_admin_bulk_message_page')
         );
-        $submenu['tjg-csbs-admin'][0][0] = 'View Candidates';
+        $submenu['tjg-csbs-admin'][0][0] = 'Candidate List';
     }
 
     public function tjg_csbs_admin_main_page()
@@ -115,6 +123,13 @@ class Tjg_Csbs_Menu
     {
         ob_start();
         include_once plugin_dir_path(__FILE__) . 'layouts/CRUD/create-candidate.php';
+        echo ob_get_clean();
+    }
+
+    public function tjg_csbs_admin_view_candidate_page()
+    {
+        ob_start();
+        include_once plugin_dir_path(__FILE__) . 'layouts/CRUD/view-candidate.php';
         echo ob_get_clean();
     }
 
