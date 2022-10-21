@@ -223,7 +223,7 @@ class Tjg_Csbs_Admin
 					break;
 					// create single candidate form
 					case 'create_single_candidate':
-						if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified');
+						if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified', 400);
 						$first_name = $candidate_data['first_name'];
 						$last_name = $candidate_data['last_name'];
 						$email = $candidate_data['email'];
