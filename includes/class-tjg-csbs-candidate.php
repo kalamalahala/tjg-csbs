@@ -23,7 +23,7 @@ class Candidate
     public $address;
     public $city;
     public $state;
-    public $date_created;
+    public $date_added;
     public $date_updated;
     public $date_worked;
     public $date_scheduled;
@@ -45,10 +45,9 @@ class Candidate
             $this->last_name = $candidate_array['last_name'];
             $this->email = $candidate_array['email'];
             $this->phone = $candidate_array['phone'];
-            $this->address = $candidate_array['address'];
             $this->city = $candidate_array['city'];
             $this->state = $candidate_array['state'];
-            $this->date_created = $candidate_array['date_created'];
+            $this->date_added = $candidate_array['date_added'];
             $this->date_updated = $candidate_array['date_updated'];
             $this->date_worked = $candidate_array['date_worked'];
             $this->date_scheduled = $candidate_array['date_scheduled'];
