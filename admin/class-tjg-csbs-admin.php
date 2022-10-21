@@ -180,7 +180,15 @@ class Tjg_Csbs_Admin
 		// Collect variables from POST or GET
 		$method 		= $_POST['method'] ?? $_GET['method'] ?? null;
 		$agent_id 		= $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
-		$candidate_data = $_POST['candidate_data'] ?? $_GET['candidate_data'] ?? null;
+		$candidate_data = array(
+			'first_name' 	=> $_POST['first_name'] ?? $_GET['first_name'] ?? null,
+			'last_name' 	=> $_POST['last_name'] ?? $_GET['last_name'] ?? null,
+			'email' 		=> $_POST['email'] ?? $_GET['email'] ?? null,
+			'phone' 		=> $_POST['phone'] ?? $_GET['phone'] ?? null,
+			'city' 			=> $_POST['city'] ?? $_GET['city'] ?? null,
+			'state' 		=> $_POST['state'] ?? $_GET['state'] ?? null,
+			'lead_source' 	=> $_POST['lead_source'] ?? $_GET['lead_source'] ?? null,
+		);
 
 		
 		// Check for method
@@ -215,9 +223,9 @@ class Tjg_Csbs_Admin
 					break;
 					// create single candidate form
 					case 'create_single_candidate':
-						wp_send_json_success(print_r($_POST));
+						wp_send_json_success($candidate_data);
 						if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified');
-						if (in_array(null, $candidate_data)) wp_send_json_error('Missing data, all fields required');
+						// if (in_array(null, $candidate_data)) wp_send_json_error('Missing data, all fields required');
 						$first_name = $candidate_data['first_name'];
 						$last_name = $candidate_data['last_name'];
 						$email = $candidate_data['email'];
