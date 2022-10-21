@@ -494,31 +494,36 @@
         contentType: false,
         processData: false,
         data: form_data,
-        success: function (response) {
-          // enable button
-          $("#create-single-candidate-submit").prop("disabled", false);
-          // clear form
-          $("#create-single-candidate").trigger("reset");
-          // show success message
-          successMessage.prop('hidden', false);
-          errorMessage.prop('hidden', true);
+        success: function (response) { // wp_send_json always returns here, so handle logic here
+          if (data.success == true) {
+            // enable button
+            $("#create-single-candidate-submit").prop("disabled", false);
+            // clear form
+            $("#create-single-candidate").trigger("reset");
+            // show success message
+            successMessage.prop('hidden', false);
+            errorMessage.prop('hidden', true);
+  
+            // fade out success message after 5 seconds
+            setTimeout(function () {
+              successMessage.prop('hidden', true);
+            }, 5000);
+          } else {
 
-          // fade out success message after 5 seconds
-          setTimeout(function () {
+            // enable button
+            $("#create-single-candidate-submit").prop("disabled", false);
+            let errorText = errorMessage.innerText;
+            // Append error message: response.data after innerHTML of #error
+            errorText += response.data;
+    
+            // show error message
+            errorMessage.prop('hidden', false);
             successMessage.prop('hidden', true);
-          }, 5000);
+
+          }
         },
         error: function (response) {
-          // enable button
-          $("#create-single-candidate-submit").prop("disabled", false);
-          let errorText = errorMessage.innerText;
-          // Append error message: response.data after innerHTML of #error
-          errorText += response.data;
-
-          // show error message
-          errorMessage.prop('hidden', false);
-          successMessage.prop('hidden', true);
-
+          console.log(response);
         },
       });
     });
