@@ -44,11 +44,18 @@ class Tjg_Csbs_Sendgrid {
     public function get_templates() {
         $api_key = $this->api_key;
         $sg = new \SendGrid($api_key);
+        $dynamic = json_decode(
+            '{
+                "generations": "dynamic",
+                "limit": 100,
+                "page_size": 100
+            }'
+        );
 
         var_dump($sg);
 
         try {
-            $response = $sg->client->templates()->get(null);
+            $response = $sg->client->templates()->get(null, $dynamic);
             print $code = $response->statusCode() . '\n';
             echo '<pre>';
             print_r($body = $response->body());
