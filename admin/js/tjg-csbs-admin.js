@@ -191,7 +191,9 @@
             // bootstrap 4 small button: View
             // Get the candidate id from the ajax request
             // let id = row.id;
-            let viewButton = '<a href="?page=tjg-csbs-admin-view-candidate&candidate_id="'+row.id+'" class="btn btn-sm btn-primary tjg-csbs-candidate-view" title="View Candidate">View</a>';
+            // convert to string to concatenate
+            let idString = row.id.toString();
+            let viewButton = '<a href="?page=tjg-csbs-admin-view-candidate&candidate_id="'+idString+'" class="btn btn-sm btn-primary tjg-csbs-candidate-view" title="View Candidate">View</a>';
             return viewButton;
           },
         },
