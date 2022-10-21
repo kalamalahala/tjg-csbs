@@ -272,7 +272,7 @@ class Tjg_Csbs_Admin
 				$candidate_id = $candidate_to_email ?? null;
 				if (is_null($candidate_id)) wp_send_json_error('No candidate id specified');
 				$candidate = new Candidate($candidate_id);
-				$payload[] = $common->sendgrid_email_send_confirmation($candidate, 'template_id', 'subject', 'url');
+				$payload[] = $common->sendgrid_email_send_confirmation($candidate, 'd-360a649159244606804328a383d9a9fc', 'Candidate Confirmation', 'https://thejohnson.group/');
 			default:
 				wp_send_json_error('Invalid method');
 				break;
