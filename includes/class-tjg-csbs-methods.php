@@ -1514,6 +1514,9 @@ class Tjg_Csbs_Common
      */
     public function sendgrid_email_send_confirmation(Candidate $candidate, string $template_id, string $subject_line, string $webinar_link)
     {
+        echo '<h1>sendgrid_email_send_confirmation</h1>';
+        wp_send_json($candidate, 200, JSON_PRETTY_PRINT);
+
         $email = new \SendGrid\Mail\Mail(); // Create a new SendGrid Mail object
 
         $plugin_settings = array( // Check for plugin settings

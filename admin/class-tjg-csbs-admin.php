@@ -178,9 +178,9 @@ class Tjg_Csbs_Admin
 		
 		
 		// Collect variables from POST or GET
-		$method 		= $_POST['method'] ?? $_GET['method'] ?? null;
-		$agent_id 		= $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
-		$candidate_data = array(
+		$method 			= $_POST['method'] ?? $_GET['method'] ?? null;
+		$agent_id 			= $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
+		$candidate_data 	= array(
 			'first_name' 	=> $_POST['first_name'] ?? $_GET['first_name'] ?? null,
 			'last_name' 	=> $_POST['last_name'] ?? $_GET['last_name'] ?? null,
 			'email' 		=> $_POST['email_address'] ?? $_GET['email_address'] ?? null,
@@ -189,6 +189,8 @@ class Tjg_Csbs_Admin
 			'state' 		=> $_POST['state'] ?? $_GET['state'] ?? null,
 			'lead_source' 	=> $_POST['lead_source'] ?? $_GET['lead_source'] ?? null,
 		);
+
+		$candidate_to_email = $_POST['candidate_to_email'] ?? $_GET['candidate_to_email'] ?? null;
 
 		
 		// Check for method
@@ -265,6 +267,12 @@ class Tjg_Csbs_Admin
 					$payload[] = $common->twilio_message($number, $message);
 				}
 				break;
+			case 'send_confirmation_email':
+				// require candidate id
+				$candidate_id = $candidate_to_email ?? null;
+				if (is_null($candidate_id)) wp_send_json_error('No candidate id specified');
+				$candidate = new Candidate($candidate_id);
+				$payload[] = $common->sendgrid_email_send_confirmation($candidate, 'template_id', 'subject', 'url');
 			default:
 				wp_send_json_error('Invalid method');
 				break;

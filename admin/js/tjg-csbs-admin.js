@@ -187,7 +187,13 @@
           searchable: false,
           render: function (data, type, row) {
             /* Render actions as a button group */
-            return "TODO";
+            // bootstrap 4 small button: View
+            let candidate_id = data.id ? data.id : "";
+            let viewButton = '<a href="?page=tjg-csbs-admin-view-candidate&candidate_id="'
+                            + candidate_id
+                            +'" class="btn btn-sm btn-primary tjg-csbs-candidate-view" title="View Candidate">'
+                            +'<i class="fas fa-eye"></i></a>';
+            return viewButton;
           },
         },
       ],
@@ -495,7 +501,7 @@
         processData: false,
         data: form_data,
         success: function (response) { // wp_send_json always returns here, so handle logic here
-          if (response.data.success == true) {
+          if (response.success == true) {
             // enable button
             $("#create-single-candidate-submit").prop("disabled", false);
             // clear form
