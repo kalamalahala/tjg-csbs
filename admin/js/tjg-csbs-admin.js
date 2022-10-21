@@ -188,9 +188,10 @@
           render: function (data, type, row) {
             /* Render actions as a button group */
             // bootstrap 4 small button: View
-            let candidate_id = row.id ? row.id : "";
+            // Get the data-id attribute from the row
+            let id = $(row).attr("data-id");
             let viewButton = '<a href="?page=tjg-csbs-admin-view-candidate&candidate_id="'
-                            + candidate_id
+                            + id
                             +'" class="btn btn-sm btn-primary tjg-csbs-candidate-view" title="View Candidate">'
                             +'<i class="fa fa-eye"></i></a>';
             return viewButton;
