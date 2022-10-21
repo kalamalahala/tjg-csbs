@@ -356,13 +356,13 @@ class Tjg_Csbs_Admin
 	public function tjg_csbs_sendgrid_webhook_handler()
 	{
 		status_header(200);
+		echo 'Sendgrid webhook handler called';
 		error_log('Sendgrid webhook handler called');
 		error_log('POST: ' . print_r($_POST, true));
 		error_log('GET: ' . print_r($_GET, true));
 		error_log('SERVER: ' . print_r($_SERVER, true));
 
-		echo 'Sendgrid webhook handler called';
-		wp_die();
+		wp_die('You\'ve reached the Sendgrid webhook handler');
 		// $handler = new Sendgrid_Handler();
 
 	}
