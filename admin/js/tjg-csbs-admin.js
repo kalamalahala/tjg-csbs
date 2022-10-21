@@ -495,7 +495,7 @@
         processData: false,
         data: form_data,
         success: function (response) { // wp_send_json always returns here, so handle logic here
-          if (data.success == true) {
+          if (response.data.success == true) {
             // enable button
             $("#create-single-candidate-submit").prop("disabled", false);
             // clear form
