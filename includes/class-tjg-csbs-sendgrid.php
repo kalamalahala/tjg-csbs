@@ -47,9 +47,11 @@ class Tjg_Csbs_Sendgrid {
 
         try {
             $response = $sg->client->templates()->get();
-            print $status_code = $response->statusCode() . PHP_EOL;
+            print $status_code = $response->statusCode() . '\n';
+            echo '<pre>';
             print_r($body = $response->body());
-            print $headers = $response->headers() . PHP_EOL;
+            echo '</pre>';
+            print $headers = $response->headers() . '\n';
         } catch (Exception $e) {
             error_log('Error retrieving SendGrid templates: ' . $e->getMessage());
             echo 'Caught exception: ', $e->getMessage();

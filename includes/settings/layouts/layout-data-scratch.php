@@ -35,25 +35,12 @@ $user_id = get_current_user_id();
                 echo (is_array($candidates)) ? count($candidates) : '0';
                 ?>
             </li>
-            <li>
-                <strong>API Key: </strong>
-                <?php echo $tjg_csbs_sendgrid->get_templates(); ?>
-            </li>
-            <li></li>
         </ul>
         </p>
     </div>
     <div class="card-footer">
-        Footer
+    <strong>API Key: </strong>
+        <?php echo $tjg_csbs_sendgrid->get_templates(); ?>
     </div>
-
-    <?php
-
-    // var dump a candidate by id using the Candidate object and candidate_object_test method
-    $oop_candidate = new Candidate(967);
-
-    var_dump($oop_candidate);
-
-    ?>
 
 </div>
