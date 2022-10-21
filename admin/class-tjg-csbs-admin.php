@@ -355,6 +355,7 @@ class Tjg_Csbs_Admin
 	#region Sendgrid Webhook Callback #############################################
 	public function tjg_csbs_sendgrid_webhook_handler()
 	{
+		error_log('Sendgrid Webhook Handler');
 		status_header(200);
 		echo 'Sendgrid webhook handler called';
 		echo '<br>';
@@ -363,7 +364,7 @@ class Tjg_Csbs_Admin
 		echo 'GET' . print_r($_GET, true);
 		echo '<br>';
 		echo 'SERVER' . print_r($_SERVER, true);
-		
+
 		// error_log('Sendgrid webhook handler called');
 		// error_log('POST: ' . print_r($_POST, true));
 		// error_log('GET: ' . print_r($_GET, true));
