@@ -45,6 +45,8 @@ class Tjg_Csbs_Sendgrid {
         $api_key = $this->api_key;
         $sg = new \SendGrid($api_key);
 
+        echo $api_key;
+
         try {
             $response = $sg->client->templates()->get();
             print $status_code = $response->statusCode() . '\n';
