@@ -52,7 +52,7 @@ class Tjg_Csbs_Settings {
 		add_settings_field(
 			'tjg_csbs_sendgrid_email_from',
 			'SendGrid From Email',
-			array($this, 'tjg_csbs_settings_field_sendgrid_from_email'),
+			array($this, 'tjg_csbs_settings_field_sendgrid_email_from'),
 			'tjg-csbs-admin-settings',
 			'tjg_csbs_settings'
 		);
