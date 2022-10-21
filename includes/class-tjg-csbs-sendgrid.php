@@ -24,7 +24,36 @@ class Tjg_Csbs_Sendgrid {
     private $api_key;
 
     public function __construct($api_key = null) {
-        $this->api_key = $api_key;
+        if ($api_key) {
+            $this->api_key = $api_key;
+        } else {
+            $this->api_key = get_option('tjg_csbs_sendgrid_api_key');
+        }        
+    }
+
+    /**
+     * Retrieve Transactional Templates
+     * 
+     * List all transactional templates available in your account
+     * and their associated IDs, names, and versions.
+     * 
+     * @link https://docs.sendgrid.com/api-reference/transactional-templates/retrieve-paged-transactional-templates
+     * 
+     * @return array
+     */
+    public function get_templates() {
+        $api_key = $this->api_key;
+        $sg = new \SendGrid($api_key);
+
+        try {
+            $response = $sg->client->templates()->get();
+            print $status_code = $response->statusCode() . PHP_EOL;
+            print_r($body = $response->body());
+            print $headers = $response->headers() . PHP_EOL;
+        } catch (Exception $e) {
+            error_log('Error retrieving SendGrid templates: ' . $e->getMessage());
+            echo 'Caught exception: ', $e->getMessage();
+        }
     }
 
     /**

@@ -5,12 +5,10 @@
  */
 
 use Tjg_Csbs_Common as Common;
-use Tjg_Csbs_Sendgrid as Sendgrid;
+use Tjg_Csbs_Sendgrid as Tjg_Sendgrid;
 
-$sendgrid_api_key = get_option('tjg_csbs_sendgrid_api_key');
-
+$tjg_csbs_sendgrid = new Tjg_Sendgrid();
 $common = new Common();
-$sendgrid = new Sendgrid( $sendgrid_api_key );
 $user_id = get_current_user_id();
 
 ?>
@@ -39,7 +37,7 @@ $user_id = get_current_user_id();
             </li>
             <li>
                 <strong>API Key: </strong>
-                <?php echo $sendgrid->get_api_key(); ?>
+                <?php echo $tjg_csbs_sendgrid->get_templates(); ?>
             </li>
             <li></li>
         </ul>
