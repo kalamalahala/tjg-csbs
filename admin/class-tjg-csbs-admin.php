@@ -183,8 +183,8 @@ class Tjg_Csbs_Admin
 		$candidate_data = array(
 			'first_name' 	=> $_POST['first_name'] ?? $_GET['first_name'] ?? null,
 			'last_name' 	=> $_POST['last_name'] ?? $_GET['last_name'] ?? null,
-			'email' 		=> $_POST['email'] ?? $_GET['email'] ?? null,
-			'phone' 		=> $_POST['phone'] ?? $_GET['phone'] ?? null,
+			'email' 		=> $_POST['email_address'] ?? $_GET['email_address'] ?? null,
+			'phone' 		=> $_POST['phone_number'] ?? $_GET['phone_number'] ?? null,
 			'city' 			=> $_POST['city'] ?? $_GET['city'] ?? null,
 			'state' 		=> $_POST['state'] ?? $_GET['state'] ?? null,
 			'lead_source' 	=> $_POST['lead_source'] ?? $_GET['lead_source'] ?? null,
