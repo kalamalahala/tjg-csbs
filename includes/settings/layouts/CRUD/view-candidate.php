@@ -77,6 +77,28 @@ $candidate = new Candidate( $_GET['candidate_id'] );
             </tbody>
         </table>
     </div>
+    <!-- Actions -->
+    <!-- Update, Send Email, Delete -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Actions</h5>
+            <p class="card-text">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-primary" id="update-candidate">
+                            Update
+                        </button>
+                        <button class="btn btn-sm btn-primary" id="send-email">
+                            Send Email
+                        </button>
+                        <button class="btn btn-sm btn-primary" id="delete-candidate">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </p>
+        </div>
+    </div>
 
 
 </div>
