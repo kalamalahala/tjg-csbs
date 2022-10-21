@@ -423,6 +423,27 @@ class Tjg_Csbs_Public
                     error_log('No Answer');
                     error_log(print_r($fields, true));
                     $worked_candidate = $common->disposition_candidate($candidate_id, $no_answer, $user_id);
+
+                    if (!$dnc) {
+                        error_log('Sending Left Voicemail email');
+
+                        $candidate          = new Candidate($candidate_id);
+                        $template_id        = get_option('tjg_csbs_sendgrid_voicemail_template_id');
+                        $personalization    = array(
+                            'first_name'    => $candidate->first_name,
+                            'last_name'     => $candidate->last_name,
+                            'agent_name'    => $agent_name,
+                            'briefing_date' => $briefing_date,
+                            'briefing_url'  => $briefing_url,
+                        );
+                        
+                        $handler = new Sendgrid_Handler();
+                        $send = $handler->send_email($candidate, 'Candidate Email', $template_id, $personalization);
+                        
+                        error_log(print_r($send, true));
+                    }
+
+
                     break;
             }
 
