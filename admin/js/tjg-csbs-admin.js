@@ -538,7 +538,7 @@
     const sendEmailButton = $("#send-email");
 
     // Email AJAX
-    $(document).on("click", sendEmailButton, function (e) {
+    $(document).on("click", "#send-email", function (e) {
       e.preventDefault();
 
       // disable button
