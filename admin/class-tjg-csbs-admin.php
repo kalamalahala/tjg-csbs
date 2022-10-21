@@ -223,9 +223,7 @@ class Tjg_Csbs_Admin
 					break;
 					// create single candidate form
 					case 'create_single_candidate':
-						wp_send_json_success($candidate_data);
 						if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified');
-						// if (in_array(null, $candidate_data)) wp_send_json_error('Missing data, all fields required');
 						$first_name = $candidate_data['first_name'];
 						$last_name = $candidate_data['last_name'];
 						$email = $candidate_data['email'];
@@ -233,6 +231,12 @@ class Tjg_Csbs_Admin
 						$city = $candidate_data['city'];
 						$state = $candidate_data['state'];
 						$source = $candidate_data['lead_source'];
+
+						if (empty($email) && empty($phone)) {
+							error_log('Candidate not created: no email or phone');
+							error_log(print_r($candidate_data, true));
+							wp_send_json_error('Email or Phone is required for candidate insertion.');
+						}
 						$date = date('Y-m-d H:i:s');
 						$payload = $common->tjg_csbs_insert_new_candidate(
 										$first_name,
