@@ -484,6 +484,9 @@
       form_data.append("nonce", ajax_object.nonce);
       form_data.append("method", "create_single_candidate");
 
+      let successMessage = $('#success');
+      let errorMessage = $('#error');
+
       // Send AJAX to create candidate
       $.ajax({
         url: ajax_object.ajax_url,
@@ -492,17 +495,30 @@
         processData: false,
         data: form_data,
         success: function (response) {
-          console.log(response);
           // enable button
           $("#create-single-candidate-submit").prop("disabled", false);
           // clear form
           $("#create-single-candidate").trigger("reset");
-          // reload table
+          // show success message
+          successMessage.prop('hidden', false);
+          errorMessage.prop('hidden', true);
+
+          // fade out success message after 5 seconds
+          setTimeout(function () {
+            successMessage.prop('hidden', true);
+          }, 5000);
         },
         error: function (response) {
           // enable button
           $("#create-single-candidate-submit").prop("disabled", false);
-          console.log(response);
+          let errorText = errorMessage.innerText;
+          // Append error message: response.data after innerHTML of #error
+          errorText += response.data;
+
+          // show error message
+          errorMessage.prop('hidden', false);
+          successMessage.prop('hidden', true);
+
         },
       });
     });
