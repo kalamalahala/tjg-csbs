@@ -136,6 +136,10 @@ class Tjg_Csbs_Settings {
 		);
 		register_setting(
 			'tjg_csbs_option_group',
+			'tjg_csbs_sendgrid_template_id'
+		);
+		register_setting(
+			'tjg_csbs_option_group',
 			'tjg_csbs_num_candidates'
 		);
 		register_setting(
