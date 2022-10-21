@@ -22,7 +22,7 @@ $candidate = new Candidate( $_GET['candidate_id'] );
 
 <div class="wrap">
     <h1>Viewing: <? echo $candidate->first_name . ' ' . $candidate->last_name ?></h1>
-    
+    <div class="container-fluid w-75 ">
         <!-- Date Added, Date Updated, Date Worked 3 column table -->
         <table class="table table-light striped" id="csbs-date-info">
             <tbody>
@@ -38,9 +38,9 @@ $candidate = new Candidate( $_GET['candidate_id'] );
                 </tr>
             </tbody>
         </table>
-   
+    </div>
     <!-- Candidate Information -->
-    
+    <div class="container-fluid w-75">
         <h2>Candidate Information</h2>
         <table class="table table-light striped" id="csbs-candidate-info">
             <tbody>
@@ -58,9 +58,9 @@ $candidate = new Candidate( $_GET['candidate_id'] );
                 </tr>
             </tbody>
         </table>
-    
+    </div>
     <!-- Agent Information -->
-    
+    <div class="container-fluid w-75">
         <h2>Agent Information</h2>
         <table class="table table-light striped" id="csbs-agent-info">
             <tbody>
@@ -72,7 +72,7 @@ $candidate = new Candidate( $_GET['candidate_id'] );
                 </tr>
             </tbody>
         </table>
-    
+    </div>
 
 
 </div>
