@@ -21,7 +21,7 @@ $candidate = new Candidate( $_GET['candidate_id'] );
 ?>
 
 <div class="wrap">
-    <h1>Viewing: <? echo $candidate->first_name . ' ' . $candidate->last_name ?></h1>
+    <h1 class="mb-2">Viewing: <? echo $candidate->first_name . ' ' . $candidate->last_name ?></h1>
     <div class="container-fluid w-75 ml-0 ">
         <!-- Date Added, Date Updated, Date Worked 3 column table -->
         <table class="table table-light striped" id="csbs-date-info">
@@ -32,7 +32,11 @@ $candidate = new Candidate( $_GET['candidate_id'] );
                     <th>Date Worked</th>
                 </tr>
                 <tr>
-                    <td><? echo $candidate->date_created ?></td>
+                    <td><? echo date(
+                        'm/d/Y',
+                        strtotime($candidate->date_created));
+                        
+                        ?></td>
                     <td><? echo $candidate->date_updated ?></td>
                     <td><? echo $candidate->date_worked ?></td>
                 </tr>
