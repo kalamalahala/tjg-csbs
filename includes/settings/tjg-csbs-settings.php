@@ -194,6 +194,18 @@ class Tjg_Csbs_Settings {
 		echo '<input type="password" id="tjg_csbs_sendgrid_api_key" name="tjg_csbs_sendgrid_api_key" value="' . $api_key . '">';
 	}
 
+	public function tjg_csbs_settings_field_sendgrid_email_from()
+	{
+		$email_from = get_option('tjg_csbs_sendgrid_email_from');
+		echo '<input type="text" id="tjg_csbs_sendgrid_email_from" name="tjg_csbs_sendgrid_email_from" value="' . $email_from . '">';
+	}
+
+	public function tjg_csbs_settings_field_sendgrid_email_from_name()
+	{
+		$email_from_name = get_option('tjg_csbs_sendgrid_email_from_name');
+		echo '<input type="text" id="tjg_csbs_sendgrid_email_from_name" name="tjg_csbs_sendgrid_email_from_name" value="' . $email_from_name . '">';
+	}
+
 	public function tjg_csbs_settings_field_num_candidates()
 	{
 		$num_candidates = get_option('tjg_csbs_num_candidates');
