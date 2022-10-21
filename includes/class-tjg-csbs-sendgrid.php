@@ -84,6 +84,7 @@ class Tjg_Csbs_Sendgrid {
      * @return bool
      */
     public function send_email( Candidate $candidate, string $subject, string $template_id, array $personalization ) {
+        error_log('SendGrid API Key: ' . $this->api_key . 'send_email()');
         // get plugin settings for SendGrid
         $api_key = $this->api_key;
         $from_email = $this->from_email;

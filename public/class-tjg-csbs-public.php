@@ -449,8 +449,7 @@ class Tjg_Csbs_Public
 
         } else { // Zoom Scheduled! 
 
-            error_log('Zoom Scheduled!');
-            error_log(print_r($fields, true));
+            error_log('Begin Zoom Scheduled');
 
             // Fire off Confirmation email to candidate
             $candidate          = new Candidate($candidate_id);
@@ -465,6 +464,8 @@ class Tjg_Csbs_Public
             );
 
             $send_email = $sendgrid_handler->send_email($candidate, 'Candidate Confirmation', $template_id, $personalization);
+
+            error_log(print_r($fields, true));
 
             // Update candidate status
             if ($send_email) {
