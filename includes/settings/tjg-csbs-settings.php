@@ -48,6 +48,24 @@ class Tjg_Csbs_Settings {
 			'tjg_csbs_settings'
 		);
 
+		// Sendgrid From Email
+		add_settings_field(
+			'tjg_csbs_sendgrid_email_from',
+			'SendGrid From Email',
+			array($this, 'tjg_csbs_settings_field_sendgrid_from_email'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
+
+		// Sendgrid From Name
+		add_settings_field(
+			'tjg_csbs_sendgrid_email_from_name',
+			'SendGrid From Name',
+			array($this, 'tjg_csbs_settings_field_sendgrid_email_from_name'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
+
 		// Number of candidates to display on main page
 		add_settings_field(
 			'tjg_csbs_num_candidates',
@@ -115,6 +133,14 @@ class Tjg_Csbs_Settings {
 		register_setting(
 			'tjg_csbs_option_group',
 			'tjg_csbs_sendgrid_api_key'
+		);
+		register_setting(
+			'tjg_csbs_option_group',
+			'tjg_csbs_sendgrid_email_from'
+		);
+		register_setting(
+			'tjg_csbs_option_group',
+			'tjg_csbs_sendgrid_email_from_name'
 		);
 		register_setting(
 			'tjg_csbs_option_group',
