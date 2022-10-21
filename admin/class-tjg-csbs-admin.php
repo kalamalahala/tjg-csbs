@@ -182,51 +182,51 @@ class Tjg_Csbs_Admin
 		$agent_id 		= $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
 		$candidate_data = $_POST['candidate_data'] ?? $_GET['candidate_data'] ?? null;
 
-		// wp_send_json_success($_POST);
 		
 		// Check for method
 		if (!isset($method)) {
 			wp_send_json_error('No method specified');
 		}
-
+		
 		// Handle method
 		switch ($method) {
 			case 'get_candidates':
 				$payload = $common->get_candidates();
 				break;
-			case 'delete_candidate':
-				$payload[] = $common->delete_candidate($_POST['id']);
+				case 'delete_candidate':
+					$payload[] = $common->delete_candidate($_POST['id']);
+					break;
+					case 'get_spreadsheet_summary':
+						$file = $_FILES['file'] ?? null;
+						if (is_null($file)) wp_send_json_error('No file specified');
+						$payload[] = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
 				break;
-			case 'get_spreadsheet_summary':
-				$file = $_FILES['file'] ?? null;
-                if (is_null($file)) wp_send_json_error('No file specified');
-				$payload[] = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
-				break;
-			case 'upload_new_candidates':
-				$file = $_FILES['file'] ?? null;
-				if (is_null($file)) wp_send_json_error('No file specified');
-				$mode = $_POST['mode'] ?? null;
-				if (is_null($mode)) wp_send_json_error('No mode specified');
-				$selected_columns = json_decode(stripslashes($_POST['selectData'])) ?? null;
-				$payload[] = $common->tjg_csbs_ajax_parse_spreadsheet(
-					$file,
-					$selected_columns,
-					$mode
-				);
-				break;
-				                // create single candidate form
-								case 'create_single_candidate':
-									if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified');
-									if (in_array(null, $candidate_data)) wp_send_json_error('Missing data, all fields required');
-									$first_name = $candidate_data['first_name'];
-									$last_name = $candidate_data['last_name'];
-									$email = $candidate_data['email'];
-									$phone = $candidate_data['phone'];
-									$city = $candidate_data['city'];
-									$state = $candidate_data['state'];
-									$source = $candidate_data['lead_source'];
-									$date = date('Y-m-d H:i:s');
-									$payload = $common->tjg_csbs_insert_new_candidate(
+				case 'upload_new_candidates':
+					$file = $_FILES['file'] ?? null;
+					if (is_null($file)) wp_send_json_error('No file specified');
+					$mode = $_POST['mode'] ?? null;
+					if (is_null($mode)) wp_send_json_error('No mode specified');
+					$selected_columns = json_decode(stripslashes($_POST['selectData'])) ?? null;
+					$payload[] = $common->tjg_csbs_ajax_parse_spreadsheet(
+						$file,
+						$selected_columns,
+						$mode
+					);
+					break;
+					// create single candidate form
+					case 'create_single_candidate':
+						wp_send_json_success($_POST);
+						if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified');
+						if (in_array(null, $candidate_data)) wp_send_json_error('Missing data, all fields required');
+						$first_name = $candidate_data['first_name'];
+						$last_name = $candidate_data['last_name'];
+						$email = $candidate_data['email'];
+						$phone = $candidate_data['phone'];
+						$city = $candidate_data['city'];
+						$state = $candidate_data['state'];
+						$source = $candidate_data['lead_source'];
+						$date = date('Y-m-d H:i:s');
+						$payload = $common->tjg_csbs_insert_new_candidate(
 										$first_name,
 										$last_name,
 										$phone,
