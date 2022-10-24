@@ -358,15 +358,6 @@ class Tjg_Csbs_Admin
 	#region Sendgrid Webhook Callback #############################################
 	public function tjg_csbs_sendgrid_webhook_handler()
 	{
-		// error_log('Sendgrid Webhook Handler');
-		// error_log('POST: ' . $_POST['event']);
-
-		// error_log('Server array dump');
-		// error_log(print_r($_SERVER, true));
-
-		// error_log('REQUEST array dump');
-		// error_log(print_r($_REQUEST, true));
-
 		// Get Header Signature: X-Twilio-Email-Event-Webhook-Signature
 		$signature = $_SERVER['HTTP_X_TWILIO_EMAIL_EVENT_WEBHOOK_SIGNATURE'] ?? null;
 		if (is_null($signature)) {
@@ -388,10 +379,11 @@ class Tjg_Csbs_Admin
 		$public_key = PublicKey::fromString($verification_key);
 
 		// Get the raw body
-		$payload = $_REQUEST['body'] ?? null;
+		$payload 		= file_get_contents('php://input');
+		$payload_decode = json_decode($payload, true);
 
 		// Verify the signature
-		$check = $this->tjg_csbs_sendgrid_webhook_verify($public_key, $payload, $signature, $timestamp);
+		$check = $this->tjg_csbs_sendgrid_webhook_verify($public_key, $payload_decode, $signature, $timestamp);
 
 
 		// If the signature is valid, process the event
@@ -417,8 +409,6 @@ class Tjg_Csbs_Admin
 			error_log('Request: ' . print_r($_REQUEST, true));
 			error_log('Server: ' . print_r($_SERVER, true));
 			error_log('Might as well print GET: ' . print_r($_GET, true));
-
-
 			// check php://input
 			$raw = file_get_contents('php://input');
 			error_log('php://input: ' . $raw);
@@ -429,13 +419,6 @@ class Tjg_Csbs_Admin
 	}
 
 	public function tjg_csbs_sendgrid_webhook_verify($public_key, $payload, $signature, $timestamp) {
-		// We know this is being called
-		error_log('Verifying signature');
-		error_log('POST: ' . print_r($_POST, true));
-
-		// still trying to find the event body
-
-
 		// append timestamp to payload
 		$timestamp_payload = $payload . $timestamp;
 
