@@ -392,6 +392,12 @@ class Tjg_Csbs_Admin
 
 		// Update candidate merge_status, sg_message_id, and sg_timestamp
 		$merge_update = $common->tjg_csbs_update_candidate_merge_status($candidate_id, $merge, $message, $webhook_timestamp);
+
+		// Add merge to primary log database
+		$timestamp_date = date('Y-m-d H:i:s', $webhook_timestamp);
+		$log = $common->tjg_csbs_create_log_entry($candidate->rep_user_id, $candidate->id, $merge, $timestamp_date);
+
+
 		if ($merge_update === false || is_string($merge_update)) {
 			error_log('Error updating candidate merge status');
 			error_log(print_r($error_log_fields, true));
