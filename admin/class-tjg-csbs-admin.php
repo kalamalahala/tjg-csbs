@@ -362,6 +362,8 @@ class Tjg_Csbs_Admin
 		error_log(print_r(file_get_contents('php://input'), true));
 
 		$webhook_data 			= json_decode(file_get_contents('php://input'), true);
+		error_log(print_r($webhook_data, true));
+		return false;
 		$webhook_timestamp 		= $webhook_data['timestamp'];
 		$merge 					= $webhook_data['event'];
 		$email 					= $webhook_data['email'];
