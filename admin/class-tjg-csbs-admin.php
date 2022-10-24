@@ -20,6 +20,9 @@ use Tjg_Csbs_Common as Common;
 use Tjg_Csbs_Settings as Settings;
 use Tjg_Csbs_Menu as Menu;
 use Tjg_Csbs_Sendgrid as Sendgrid_Handler;
+use EllipticCurve\ECDSA as ECDSA;
+use EllipticCurve\PublicKey as PublicKey;
+use EllipticCurve\Signature as Signature;
 // use Vonage\Client\Credentials\Basic as Basic;
 
 
@@ -355,16 +358,22 @@ class Tjg_Csbs_Admin
 	#region Sendgrid Webhook Callback #############################################
 	public function tjg_csbs_sendgrid_webhook_handler()
 	{
-		error_log('Sendgrid Webhook Handler');
-		status_header(200);
+		// Get Header Signature: X-Twilio-Email-Event-Webhook-Signature
+		$signature = $_SERVER['HTTP_X_TWILIO_EMAIL_EVENT_WEBHOOK_SIGNATURE'] ?? null;
+		if (is_null($signature)) {
+			error_log('No signature found');
+			return;
+		}
 
-		error_log('Sendgrid webhook handler called');
-		error_log('POST: ' . print_r($_POST, true));
-		error_log('GET: ' . print_r($_GET, true));
-		error_log('SERVER: ' . print_r($_SERVER, true));
+		// Get Header Timestamp: X-Twilio-Email-Event-Webhook-Timestamp
+		$timestamp = $_SERVER['HTTP_X_TWILIO_EMAIL_EVENT_WEBHOOK_TIMESTAMP'] ?? null;
+		if (is_null($timestamp)) {
+			error_log('No timestamp found');
+			return;
+		}
 
-		wp_die('You\'ve reached the Sendgrid webhook handler');
-		// $handler = new Sendgrid_Handler();
+		
+
 
 	}
 }

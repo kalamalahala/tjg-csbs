@@ -85,6 +85,15 @@ class Tjg_Csbs_Settings {
 			'tjg_csbs_settings'
 		);
 
+		// Sendgrid API Verification Key
+		add_settings_field(
+			'tjg_csbs_sendgrid_api_verification_key',
+			'SendGrid API Verification Key',
+			array($this, 'tjg_csbs_settings_field_sendgrid_api_verification_key'),
+			'tjg-csbs-admin-settings',
+			'tjg_csbs_settings'
+		);
+
 		// Number of candidates to display on main page
 		add_settings_field(
 			'tjg_csbs_num_candidates',
@@ -153,6 +162,10 @@ class Tjg_Csbs_Settings {
 		);
 		register_setting(
 			'tjg_csbs_option_group',
+			'tjg_csbs_sendgrid_api_verification_key'
+		);
+		register_setting(
+			'tjg_csbs_option_group',
 			'tjg_csbs_num_candidates'
 		);
 		register_setting(
@@ -217,6 +230,12 @@ class Tjg_Csbs_Settings {
 	{
 		$template_id = get_option('tjg_csbs_sendgrid_voicemail_template_id');
 		echo '<input type="text" id="tjg_csbs_sendgrid_voicemail_template_id" name="tjg_csbs_sendgrid_voicemail_template_id" value="' . $template_id . '">';
+	}
+
+	public function tjg_csbs_settings_field_sendgrid_api_verification_key()
+	{
+		$api_verification_key = get_option('tjg_csbs_sendgrid_api_verification_key');
+		echo '<input type="password" id="tjg_csbs_sendgrid_api_verification_key" name="tjg_csbs_sendgrid_api_verification_key" value="' . $api_verification_key . '">';
 	}
 
 	public function tjg_csbs_settings_field_num_candidates()
