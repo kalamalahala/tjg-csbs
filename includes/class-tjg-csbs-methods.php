@@ -603,7 +603,7 @@ class Tjg_Csbs_Common
         global $wpdb;
         $table_name = $this->candidate_table;
 
-        $query = "SELECT 'id' FROM $table_name WHERE email = %s";
+        $query = "SELECT * FROM $table_name WHERE email = %s";
         $query = $wpdb->prepare($query, $email);
         $result = $wpdb->get_row($query, ARRAY_A);
 
