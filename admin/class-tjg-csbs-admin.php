@@ -362,12 +362,15 @@ class Tjg_Csbs_Admin
 		error_log(print_r(file_get_contents('php://input'), true));
 
 		$webhook_data 			= json_decode(file_get_contents('php://input'), true);
-		error_log(print_r($webhook_data, true));
-		return false;
-		$webhook_timestamp 		= $webhook_data['timestamp'];
-		$merge 					= $webhook_data['event'];
-		$email 					= $webhook_data['email'];
-		$message 				= $webhook_data['sg_message_id'];
+		// error_log(print_r($webhook_data, true));
+		// return false;
+
+		foreach ($webhook_data as $request){
+			$webhook_timestamp 		= $request['timestamp'];
+			$merge 					= $request['event'];
+			$email 					= $request['email'];
+			$message 				= $request['sg_message_id'];
+		}
 
 		$common 	= new Common();
 		$candidate 	= $common->get_candidate_by_email($email);
