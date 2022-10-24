@@ -372,8 +372,27 @@ class Tjg_Csbs_Admin
 
 		$candidate_id = $candidate->id;
 
+		$error_log_fields = array(
+			'webhook_data' => $webhook_data,
+			'webhook_timestamp' => $webhook_timestamp,
+			'merge' => $merge,
+			'email' => $email,
+			'message' => $message,
+			'candidate' => $candidate,
+			'candidate_id' => $candidate_id,
+		);
+
 		// Update candidate merge_status, sg_message_id, and sg_timestamp
-		$common->tjg_csbs_update_candidate_merge_status($candidate_id, $merge, $message, $webhook_timestamp);
+		$merge_update = $common->tjg_csbs_update_candidate_merge_status($candidate_id, $merge, $message, $webhook_timestamp);
+		if ($merge_update === false || is_string($merge_update)) {
+			error_log('Error updating candidate merge status');
+			error_log(print_r($error_log_fields, true));
+			error_log(print_r($merge_update, true));
+			wp_send_json_error($merge_update);
+		} else {
+			error_log('Candidate merge status appears to be updated');
+			error_log(print_r($error_log_fields, true));
+		}
 
 		return true;
 
