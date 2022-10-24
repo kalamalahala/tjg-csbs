@@ -202,6 +202,7 @@ class Tjg_Csbs_Settings {
 		$api_key = get_option('tjg_csbs_sendgrid_api_key');
 		// $sendgrid_api_key = $options['tjg_csbs_sendgrid_api_key'];
 		echo '<input type="password" id="tjg_csbs_sendgrid_api_key" name="tjg_csbs_sendgrid_api_key" value="' . $api_key . '">';
+		echo $api_key;
 	}
 
 	public function tjg_csbs_settings_field_sendgrid_email_from()
