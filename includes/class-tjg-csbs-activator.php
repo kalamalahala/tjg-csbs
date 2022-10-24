@@ -72,6 +72,8 @@ class Tjg_Csbs_Activator
                 interview_date DATETIME DEFAULT NULL,
                 merge_status VARCHAR(255) DEFAULT NULL,
                 lead_source VARCHAR(255) DEFAULT NULL,
+                sg_message_id VARCHAR(255) DEFAULT NULL,
+                sg_timestamp VARCHAR(255) DEFAULT NULL,
                 PRIMARY KEY  (id)
                 ) $charset_collate;";
         }

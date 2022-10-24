@@ -592,6 +592,27 @@ class Tjg_Csbs_Common
     }
 
     /**
+     * Get candidate by email
+     * 
+     * Returns a candidate from the database table tjg_csbs_candidates
+     * 
+     * @param string $email
+     * @return Candidate $candidate
+     */
+    public function get_candidate_by_email(string $email) {
+        global $wpdb;
+        $table_name = $this->candidate_table;
+
+        $query = "SELECT 'id' FROM $table_name WHERE email = %s";
+        $query = $wpdb->prepare($query, $email);
+        $result = $wpdb->get_row($query, ARRAY_A);
+
+        $candidate = new Candidate($result['id']);
+
+        return $candidate;
+    }
+
+    /**
      * Get number of calls made to candidate
      * 
      * Returns the number of calls made to a candidate
@@ -1209,6 +1230,46 @@ class Tjg_Csbs_Common
             );
             return $updated;
         } else {
+            // get query error
+            $error = $wpdb->last_error;
+            return $error;
+        }
+    }
+
+    /**
+     * tjg_csbs_update_candidate_merge_status
+     * 
+     * Updates the merge_status column in the database table tjg_csbs_candidates
+     * with data from Sendgrid Webhook
+     * 
+     * @param int $candidate_id
+     * @param string $merge_status
+     * @param string $message_id
+     * @param string $timestamp
+     * 
+     * @return bool|string $updated - updated = 1 or error string
+     */
+    public function tjg_csbs_update_candidate_merge_status(int $candidate_id, string $merge_status, string $message_id, string $timestamp) {
+        global $wpdb;
+        $table = $this->candidate_table;
+
+        $candidate_id = intval($candidate_id);
+        $merge_status = sanitize_text_field($merge_status);
+        $message_id = sanitize_text_field($message_id);
+        $timestamp = sanitize_text_field($timestamp);
+
+        $updated = $wpdb->update(
+            $table,
+            array(
+                'merge_status' => $merge_status,
+                'message_id' => $message_id,
+                'merge_timestamp' => $timestamp
+            ),
+            array('id' => $candidate_id)
+        );
+
+        if ($updated == true) return $updated;
+        else {
             // get query error
             $error = $wpdb->last_error;
             return $error;

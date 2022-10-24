@@ -361,6 +361,20 @@ class Tjg_Csbs_Admin
 		error_log('Sendgrid Webhook Handler');
 		error_log(print_r(file_get_contents('php://input'), true));
 
+		$webhook_data 			= json_decode(file_get_contents('php://input'), true);
+		$webhook_timestamp 		= $webhook_data['timestamp'];
+		$merge 					= $webhook_data['event'];
+		$email 					= $webhook_data['email'];
+		$message 				= $webhook_data['sg_message_id'];
+
+		$common 	= new Common();
+		$candidate 	= $common->get_candidate_by_email($email);
+
+		$candidate_id = $candidate->id;
+
+		// Update candidate merge_status, sg_message_id, and sg_timestamp
+		$common->tjg_csbs_update_candidate_merge_status($candidate_id, $merge, $message, $webhook_timestamp);
+
 		return true;
 
 
