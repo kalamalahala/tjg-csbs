@@ -391,6 +391,8 @@ class Tjg_Csbs_Admin
 		// append timestamp to payload
 		$timestamp_payload = $payload_event . $timestamp;
 
+		error_log('Timestamp Payload: ' . $timestamp_payload);
+
 		// Decode signature
 		$decode_signature = Signature::fromBase64($signature);
 
