@@ -421,17 +421,29 @@ class Tjg_Csbs_Admin
 	}
 
 	public function tjg_csbs_sendgrid_webhook_verify($public_key, $payload, $signature, $timestamp) {
+		// We know this is being called
+		error_log('Verifying signature');
+		error_log('POST: ' . print_r($_POST, true));
+
+		// still trying to find the event body
+
+
 		// append timestamp to payload
 		$timestamp_payload = $payload . $timestamp;
-
-		error_log('Payload: ' . $timestamp_payload);
 
 		// Decode signature
 		$decode_signature = Signature::fromBase64($signature);
 
-		error_log('Signature: ' . $decode_signature);
+		try {
+			// Verify the signature
+			$check = ECDSA::verify($timestamp_payload, $decode_signature, $public_key);
+			return $check;
+		} catch (Exception $e) {
+			error_log('Error verifying signature: ' . $e->getMessage());
+			return false;
+		}
 
 		// Verify signature
-		return ECDSA::verify($timestamp_payload, $decode_signature, $public_key);
+		// return ECDSA::verify($timestamp_payload, $decode_signature, $public_key);
 	}
 }
