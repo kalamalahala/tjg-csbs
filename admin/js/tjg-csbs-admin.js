@@ -170,15 +170,15 @@
             );
           },
         },
-        {
-          targets: [11], // Column: Merge Status
-          render: function (data, type, row) {
-            // Convert merge_status first letter to uppercase if not null
-            if (data !== null) {
-              return data.charAt(0).toUpperCase() + data.slice(1);
-            }
-          }
-        },
+        // {
+        //   targets: [11], // Column: Merge Status
+        //   render: function (data, type, row) {
+        //     // Convert merge_status first letter to uppercase if not null
+        //     if (data !== null) {
+        //       return data.charAt(0).toUpperCase() + data.slice(1);
+        //     }
+        //   }
+        // },
         {
           // Skip City, State, Disposition, Lead Source
           targets: [12], // Column: Rep User ID
