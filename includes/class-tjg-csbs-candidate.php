@@ -34,6 +34,8 @@ class Candidate
     public $interview_date;
     public $merge_status;
     public $lead_source;
+    public $sg_message_id;
+    public $sg_timestamp;
 
     public function __construct($id = null)
     {
@@ -58,6 +60,8 @@ class Candidate
             $this->interview_date = $candidate_array['interview_date'];
             $this->merge_status = $candidate_array['merge_status'];
             $this->lead_source = $candidate_array['lead_source'];
+            $this->sg_message_id = $candidate_array['sg_message_id'];
+            $this->sg_timestamp = $candidate_array['sg_timestamp'];
             // $this->populate_candidate_information($this);
         }
     }

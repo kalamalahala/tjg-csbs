@@ -607,9 +607,9 @@ class Tjg_Csbs_Common
         $query = $wpdb->prepare($query, $email);
         $result = $wpdb->get_row($query, ARRAY_A);
 
-        error_log(print_r($result, true));
-        error_log($wpdb->last_error);
-        error_log($wpdb->last_query);
+        // error_log(print_r($result, true));
+        // error_log($wpdb->last_error);
+        // error_log($wpdb->last_query);
 
         $candidate = new Candidate($result['id']);
 
