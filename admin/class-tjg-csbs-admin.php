@@ -358,6 +358,12 @@ class Tjg_Csbs_Admin
 	#region Sendgrid Webhook Callback #############################################
 	public function tjg_csbs_sendgrid_webhook_handler()
 	{
+		error_log('Sendgrid Webhook Handler');
+		error_log('POST: ' . $_POST['event']);
+
+		error_log('Server array dump');
+		error_log(print_r($_SERVER, true));
+
 		// Get Header Signature: X-Twilio-Email-Event-Webhook-Signature
 		$signature = $_SERVER['HTTP_X_TWILIO_EMAIL_EVENT_WEBHOOK_SIGNATURE'] ?? null;
 		if (is_null($signature)) {
