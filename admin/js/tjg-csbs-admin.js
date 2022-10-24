@@ -183,7 +183,7 @@
         },
         {
           // Skip City, State, Disposition, Lead Source
-          targets: [12], // Column: Rep User ID
+          targets: [13], // Column: Rep User ID
           render: function (data, type, row) {
             // return '' if data is null or undefined
             if (data === null || data === undefined) {
