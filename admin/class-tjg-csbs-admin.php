@@ -299,10 +299,7 @@ class Tjg_Csbs_Admin
 	#region Settings and Menu Configuration #######################################
 	public function tjg_csbs_register_settings()
 	{
-		$handler = new Common();
-		$vonage_api_key = $handler->vonage_api_key();
-		$vonage_api_secret = $handler->vonage_api_secret();
-		$settings = new Settings($this->plugin_name, $this->version, $vonage_api_key, $vonage_api_secret);
+		$settings = new Settings($this->plugin_name, $this->version);
 	}
 
 	public function tjg_csbs_create_admin_menu()
@@ -358,68 +355,38 @@ class Tjg_Csbs_Admin
 	#region Sendgrid Webhook Callback #############################################
 	public function tjg_csbs_sendgrid_webhook_handler()
 	{
-		// Get Header Signature: X-Twilio-Email-Event-Webhook-Signature
+		// Get Header Signature and Timestamp
 		$signature = $_SERVER['HTTP_X_TWILIO_EMAIL_EVENT_WEBHOOK_SIGNATURE'] ?? null;
-		if (is_null($signature)) {
-			error_log('No signature found');
-			return;
-		}
-
-		// Get Header Timestamp: X-Twilio-Email-Event-Webhook-Timestamp
 		$timestamp = $_SERVER['HTTP_X_TWILIO_EMAIL_EVENT_WEBHOOK_TIMESTAMP'] ?? null;
-		if (is_null($timestamp)) {
-			error_log('No timestamp found');
-			return;
-		}
 
-		// Verification key located in Plugin Settings
-		$verification_key = Common::sendgrid_verification_key();
-
-		// Convert public key to ECDSA
-		$public_key = PublicKey::fromString($verification_key);
+		// Create PublicKey ECDSA Object from Verification Key
+		$public_key = PublicKey::fromString(Common::sendgrid_verification_key());
 
 		// Get the raw body
-		$payload 		= file_get_contents('php://input');
-		$payload_decode = json_decode($payload, true);
-		$event_payload  = $payload_decode['event'] ?? null;
+		$payload = json_decode(file_get_contents('php://input'), true);
+		$event  = $payload['event'] ?? null;
 
 		// Verify the signature
-		$check = $this->tjg_csbs_sendgrid_webhook_verify($public_key, $event_payload, $signature, $timestamp);
+		$check = $this->tjg_csbs_sendgrid_webhook_verify($public_key, $event, $signature, $timestamp);
 
 
 		// If the signature is valid, process the event
 		if ($check) {
-			// Get the event type
-			$event_type = $_REQUEST['event'] ?? null;
-			if (is_null($event_type)) {
-				error_log('No event type found');
-				return;
-			}
-
-			// Get the event data
-			$event_data = $_REQUEST['data'] ?? null;
-			if (is_null($event_data)) {
-				error_log('No event data found');
-				return;
-			}
-
+			error_log('Signature is valid');
 			// Process the event
-			error_log('Processing event: ' . $event_type);
+			error_log('Processing event: ' . $event);
 		} else {
 			error_log('Invalid signature');
-			// check php://input
-			$raw = file_get_contents('php://input');
-			$json_raw = json_decode($raw, true);
-			error_log(print_r($json_raw, true));
+			error_log(print_r($payload, true));
 		}
 		
 
 
 	}
 
-	public function tjg_csbs_sendgrid_webhook_verify($public_key, $payload, $signature, $timestamp) {
+	public function tjg_csbs_sendgrid_webhook_verify($public_key, $payload_event, $signature, $timestamp) {
 		// append timestamp to payload
-		$timestamp_payload = $payload . $timestamp;
+		$timestamp_payload = $payload_event . $timestamp;
 
 		// Decode signature
 		$decode_signature = Signature::fromBase64($signature);

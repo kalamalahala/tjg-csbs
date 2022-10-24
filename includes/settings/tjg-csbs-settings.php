@@ -19,13 +19,9 @@ class Tjg_Csbs_Settings {
 	private $vonage_api_key;
 	private $vonage_api_secret;
 
-    public function __construct( $plugin_name, $version, $vonage_api_key, $vonage_api_secret) {
+    public function __construct( $plugin_name, $version) {
         $this->plugin_name = $plugin_name;
         $this->version = $version;
-
-		// Assign Vonage settings
-		$this->vonage_api_key = $vonage_api_key;
-		$this->vonage_api_secret = $vonage_api_secret;
 
         // Create settings fields
         $this->do_settings();
