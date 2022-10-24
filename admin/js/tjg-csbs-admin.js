@@ -170,21 +170,23 @@
             );
           },
         },
-        // {
-        //   targets: [11], // Column: Merge Status
-        //   render: function (data, type, row) {
-        //     // Convert merge_status first letter to uppercase if not null
-        //     if (data !== null) {
-        //       return data.charAt(0).toUpperCase() + data.slice(1);
-        //     }
-        //   }
-        // },
+        {
+          targets: [11], // Column: Merge Status
+          render: function (data, type, row) {
+            // Convert merge_status first letter to uppercase if not null
+            if (data !== null) {
+              return data.charAt(0).toUpperCase() + data.slice(1);
+            } else {
+              return "";
+            }
+          }
+        },
         {
           // Skip City, State, Disposition, Lead Source
           targets: [12], // Column: Rep User ID
           render: function (data, type, row) {
             // return '' if data is null or undefined
-            if (!data) {
+            if (data === null || data === undefined) {
               return "";
             }
             /* Render rep name from agentList */
