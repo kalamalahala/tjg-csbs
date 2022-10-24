@@ -407,12 +407,10 @@ class Tjg_Csbs_Admin
 			error_log('Processing event: ' . $event_type);
 		} else {
 			error_log('Invalid signature');
-			error_log('Request: ' . print_r($_REQUEST, true));
-			error_log('Server: ' . print_r($_SERVER, true));
-			error_log('Might as well print GET: ' . print_r($_GET, true));
 			// check php://input
 			$raw = file_get_contents('php://input');
-			error_log('php://input: ' . $raw);
+			$json_raw = json_decode($raw, true);
+			error_log(print_r($json_raw, true));
 		}
 		
 
