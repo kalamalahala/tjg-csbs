@@ -74,6 +74,7 @@
         { data: "city" },
         { data: "state" },
         { data: "disposition" },
+        { data: "merge_status" },
         { data: "lead_source" },
         { data: "rep_user_id" },
         { defaultContent: "" },
@@ -168,6 +169,15 @@
               "</a>"
             );
           },
+        },
+        {
+          targets: [11], // Column: Merge Status
+          render: function (data, type, row) {
+            // Convert merge_status first letter to uppercase if not null
+            if (data) {
+              return data.charAt(0).toUpperCase() + data.slice(1);
+            }
+          }
         },
         {
           // Skip City, State, Disposition, Lead Source

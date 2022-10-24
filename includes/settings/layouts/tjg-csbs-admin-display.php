@@ -56,20 +56,21 @@ $common = new Common();
             <table id="tjg-csbs-candidates" class="table table-striped table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>Select</th> <!-- Checkbox -->
-                        <th>ID</th>
-                        <th>Date Added</th>
-                        <th>Date Updated</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>City</th>
-                        <th>State</th>
-                        <th>Disposition</th>
-                        <th>Lead Source</th>
-                        <th>Assigned Agent</th>
-                        <th>Actions</th>
+                        <th>Select</th> <!-- Checkbox [0] -->
+                        <th>ID</th> <!-- ID [1] -->
+                        <th>Date Added</th> <!-- Date Added [2] -->
+                        <th>Date Updated</th> <!-- Date Updated [3] -->
+                        <th>First Name</th> <!-- First Name [4] -->
+                        <th>Last Name</th> <!-- Last Name [5] -->
+                        <th>Email</th> <!-- Email [6] -->
+                        <th>Phone</th> <!-- Phone [7] -->
+                        <th>City</th> <!-- City [8] -->
+                        <th>State</th> <!-- State [9] -->
+                        <th>Disposition</th> <!-- Disposition [10] -->
+                        <th>Merge Status</th> <!-- Merge Status [11] -->
+                        <th>Lead Source</th> <!-- Lead Source [12] -->
+                        <th>Assigned Agent</th> <!-- Assigned Agent [13] -->
+                        <th>Actions</th> <!-- Actions [14] -->
                     </tr>
                 </thead>
                 <tbody>
