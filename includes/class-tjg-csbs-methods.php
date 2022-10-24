@@ -1266,8 +1266,8 @@ class Tjg_Csbs_Common
             $table,
             array(
                 'merge_status' => $merge_status,
-                'message_id' => $message_id,
-                'merge_timestamp' => $timestamp
+                'sg_message_id' => $message_id,
+                'sg_timestamp' => $timestamp
             ),
             array('id' => $candidate_id)
         );
