@@ -381,9 +381,10 @@ class Tjg_Csbs_Admin
 		// Get the raw body
 		$payload 		= file_get_contents('php://input');
 		$payload_decode = json_decode($payload, true);
+		$event_payload  = $payload_decode['event'] ?? null;
 
 		// Verify the signature
-		$check = $this->tjg_csbs_sendgrid_webhook_verify($public_key, $payload_decode, $signature, $timestamp);
+		$check = $this->tjg_csbs_sendgrid_webhook_verify($public_key, $event_payload, $signature, $timestamp);
 
 
 		// If the signature is valid, process the event
