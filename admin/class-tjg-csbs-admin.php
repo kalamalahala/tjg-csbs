@@ -387,6 +387,9 @@ class Tjg_Csbs_Admin
 			'candidate_id' => $candidate_id,
 		);
 
+		error_log(print_r($error_log_fields, true));
+		return false;
+
 		// Update candidate merge_status, sg_message_id, and sg_timestamp
 		$merge_update = $common->tjg_csbs_update_candidate_merge_status($candidate_id, $merge, $message, $webhook_timestamp);
 		if ($merge_update === false || is_string($merge_update)) {
