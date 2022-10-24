@@ -355,6 +355,19 @@ class Tjg_Csbs_Admin
 	#region Sendgrid Webhook Callback #############################################
 	public function tjg_csbs_sendgrid_webhook_handler()
 	{
+		// Signed events seem to be failing, might require a paid account
+
+		// In the mean time, try unsigned and check php://input
+		error_log('Sendgrid Webhook Handler');
+		error_log(print_r(file_get_contents('php://input'), true));
+
+		return true;
+
+
+
+
+
+
 		// Get Header Signature and Timestamp
 		$signature = $_SERVER['HTTP_X_TWILIO_EMAIL_EVENT_WEBHOOK_SIGNATURE'] ?? null;
 		$timestamp = $_SERVER['HTTP_X_TWILIO_EMAIL_EVENT_WEBHOOK_TIMESTAMP'] ?? null;
