@@ -1496,6 +1496,19 @@ class Tjg_Csbs_Common
     }
 
     /**
+     * sendgrid_verification_key
+     * 
+     * Returns the SendGrid verification key
+     * 
+     * @return string
+     */
+    public static function sendgrid_verification_key()
+    {
+        $key = get_option('tjg_csbs_sendgrid_api_verification_key');
+        return $key;
+    }
+
+    /**
      * sendgrid_email_send_confirmation
      * 
      * Sends a confirmation email to the candidate using

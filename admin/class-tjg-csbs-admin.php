@@ -372,8 +372,53 @@ class Tjg_Csbs_Admin
 			return;
 		}
 
+		// Verification key located in Plugin Settings
+		$verification_key = Common::sendgrid_verification_key();
+
+		// Convert public key to ECDSA
+		$public_key = PublicKey::fromString($verification_key);
+
+		// Get the raw body
+		$payload = $_REQUEST['body'] ?? null;
+
+		// Verify the signature
+		$check = $this->tjg_csbs_sendgrid_webhook_verify($public_key, $payload, $signature, $timestamp);
+
+
+		// If the signature is valid, process the event
+		if ($check) {
+			// Get the event type
+			$event_type = $_REQUEST['event'] ?? null;
+			if (is_null($event_type)) {
+				error_log('No event type found');
+				return;
+			}
+
+			// Get the event data
+			$event_data = $_REQUEST['data'] ?? null;
+			if (is_null($event_data)) {
+				error_log('No event data found');
+				return;
+			}
+
+			// Process the event
+			error_log('Processing event: ' . $event_type);
+		} else {
+			error_log('Invalid signature');
+		}
 		
 
 
+	}
+
+	public function tjg_csbs_sendgrid_webhook_verify($public_key, $payload, $signature, $timestamp) {
+		// append timestamp to payload
+		$timestamp_payload = $payload . $timestamp;
+
+		// Decode signature
+		$decode_signature = Signature::fromBase64($signature);
+
+		// Verify signature
+		return ECDSA::verify($timestamp_payload, $decode_signature, $public_key);
 	}
 }

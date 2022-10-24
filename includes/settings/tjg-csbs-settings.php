@@ -232,7 +232,7 @@ class Tjg_Csbs_Settings {
 		echo '<input type="text" id="tjg_csbs_sendgrid_voicemail_template_id" name="tjg_csbs_sendgrid_voicemail_template_id" value="' . $template_id . '">';
 	}
 
-	public function tjg_csbs_settings_field_sendgrid_api_verification_key()
+	public static function tjg_csbs_settings_field_sendgrid_api_verification_key()
 	{
 		$api_verification_key = get_option('tjg_csbs_sendgrid_api_verification_key');
 		echo '<input type="password" id="tjg_csbs_sendgrid_api_verification_key" name="tjg_csbs_sendgrid_api_verification_key" value="' . $api_verification_key . '">';
