@@ -364,6 +364,9 @@ class Tjg_Csbs_Admin
 		error_log('Server array dump');
 		error_log(print_r($_SERVER, true));
 
+		error_log('REQUEST array dump');
+		error_log(print_r($_REQUEST, true));
+
 		// Get Header Signature: X-Twilio-Email-Event-Webhook-Signature
 		$signature = $_SERVER['HTTP_X_TWILIO_EMAIL_EVENT_WEBHOOK_SIGNATURE'] ?? null;
 		if (is_null($signature)) {
