@@ -360,12 +360,13 @@
     });
 
     // Send AJAX to Update Candidate when form is submitted
-    $(document).on('submit', '#updateCandidate', function(e) {
-      e.preventDefault();
-      console.log('Update Candidate Form Submitted');
-
-      return false;
-    });
+    $('#updateCandidate').submit(
+      function(e) {
+        e.preventDefault();
+        console.log('Update Candidate Form Submitted');
+        return undefined;        
+      }
+    );
     
     // Delete Candidate
     $(document).on('click', '.tjg-csbs-candidate-delete', function(e) {
