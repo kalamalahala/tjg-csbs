@@ -364,6 +364,7 @@
       e.preventDefault();
       console.log('Update Candidate Form Submitted');
 
+      return false;
     });
     
     // Delete Candidate
