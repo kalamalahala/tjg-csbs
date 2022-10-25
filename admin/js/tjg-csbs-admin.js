@@ -247,7 +247,7 @@
       pageLength: 10,
       lengthMenu: [10, 25, 50, 100, 250, 500],
       responsive: true,
-      dom: 'Bfl<"select-agent">rtip',
+      dom: 'Bfl<"select-agent"><"select-template">rtip',
     });
 
     // Add Select Agent dropdown
@@ -256,6 +256,15 @@
         '<label for="tjg-csbs-select-agent">Select Agent: </label>' +
         '<select id="tjg-csbs-select-agent" class="form-control"><option value="0">Select Agent</option></select>' +
         '<button id="tjg-csbs-assign-agent-btn" class="btn btn-primary btn-sm ml-2">Assign</button>' +
+        "</form>"
+    );
+
+    // Add Select Template dropdown
+    $("div.select-template").html(
+      '<form id="tjg-csbs-select-template-form">' +
+        '<label for="tjg-csbs-select-template">Select Template: </label>' +
+        '<select id="tjg-csbs-select-template" class="form-control"><option value="0">Select Template</option></select>' +
+        '<button id="tjg-csbs-send-template-btn" class="btn btn-primary btn-sm ml-2">Send</button>' +
         "</form>"
     );
 
