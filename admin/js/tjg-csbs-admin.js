@@ -529,7 +529,7 @@
           $("#create-single-candidate-submit").prop("disabled", false);
 
           // append error message to error div
-          errorMessage.html('<strong>Error</strong: ' + response.responseJSON.data);
+          errorMessage.html('<strong>Error</strong>: ' + response.responseJSON.data);
           errorMessage.prop('hidden', false);
           successMessage.prop('hidden', true);
 
