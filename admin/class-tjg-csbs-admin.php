@@ -258,7 +258,8 @@ class Tjg_Csbs_Admin
 				}
 
 				// Save new candidate
-				$paylod[] = $new_candidate->save();
+				$new_candidate->save();
+				$payload[] = $new_candidate;
 				break;
 
 				/* old method
