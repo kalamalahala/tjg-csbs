@@ -197,6 +197,8 @@ class Tjg_Csbs_Admin
 			'lead_source' 	=> $_POST['lead_source'] ?? $_GET['lead_source'] ?? null,
 		);
 
+		wp_send_json_error($candidate_data, 400);
+
 		$candidate_to_email = $_POST['candidate_to_email'] ?? $_GET['candidate_to_email'] ?? null;
 
 
