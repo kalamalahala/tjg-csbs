@@ -367,7 +367,7 @@
         
         // Get form data
         let formData = new FormData(this);
-        formData.append('id', id);
+        formData.append('candidate_id', id);
         formData.append('action', 'tjg_csbs_admin');
         formData.append('method', 'update_candidate');
         formData.append('nonce', ajax_object.nonce);
