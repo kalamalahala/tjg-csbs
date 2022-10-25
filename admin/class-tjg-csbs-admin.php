@@ -197,11 +197,10 @@ class Tjg_Csbs_Admin
 			'lead_source' 	=> $_POST['lead_source'] ?? $_GET['lead_source'] ?? null,
 		);
 
-		wp_send_json_error($candidate_data, 400);
-
+		
 		$candidate_to_email = $_POST['candidate_to_email'] ?? $_GET['candidate_to_email'] ?? null;
-
-
+		
+		
 		// Check for method
 		if (!isset($method)) {
 			wp_send_json_error('No method specified');
@@ -212,10 +211,11 @@ class Tjg_Csbs_Admin
 			case 'get_candidates':
 				$payload = $common->get_candidates();
 				break;
-			case 'delete_candidate':
-				$payload[] = $common->delete_candidate($_POST['id']);
-				break;
-			case 'update_candidate':
+				case 'delete_candidate':
+					$payload[] = $common->delete_candidate($_POST['id']);
+					break;
+					case 'update_candidate':
+						wp_send_json_error($candidate_data, 400);
 					$candidate_update = new Candidate($candidate_data['id']);
 					$candidate_update->set_first_name($candidate_data['first_name']);
 					$candidate_update->set_last_name($candidate_data['last_name']);
