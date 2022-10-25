@@ -120,17 +120,17 @@ $common = new Common();
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group row">
-                                        <label for="email" class="col-sm-4 col-form-label">Email</label>
+                                        <label for="email_address" class="col-sm-4 col-form-label">Email</label>
                                         <div class="col-sm-8">
-                                            <input type="email" class="form-control" id="tjg_csbs_email" name="email" placeholder="Email">
+                                            <input type="email" class="form-control" id="tjg_csbs_email" name="email_address" placeholder="Email">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row">
-                                        <label for="phone" class="col-sm-4 col-form-label">Phone</label>
+                                        <label for="phone_number" class="col-sm-4 col-form-label">Phone</label>
                                         <div class="col-sm-8">
-                                            <input type="tel" class="form-control" id="tjg_csbs_phone" name="phone" placeholder="Phone">
+                                            <input type="tel" class="form-control" id="tjg_csbs_phone" name="phone_number" placeholder="Phone">
                                         </div>
                                     </div>
                                 </div>
