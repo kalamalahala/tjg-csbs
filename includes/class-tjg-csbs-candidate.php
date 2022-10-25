@@ -14,29 +14,29 @@
 class Candidate 
 {
 
-    public $id;
-    public $first_name;
-    public $last_name;
-    public $email;
-    public $phone;
-    public $address;
-    public $city;
-    public $state;
-    public $date_added;
-    public $date_updated;
-    public $date_worked;
-    public $date_scheduled;
-    public $call_back_time;
-    public $disposition;
-    public $confirmed_date;
-    public $rep_user_id;
-    public $interview_date;
-    public $merge_status;
-    public $lead_source;
-    public $sg_message_id;
-    public $sg_timestamp;
+    private $id;
+    private $first_name;
+    private $last_name;
+    private $email;
+    private $phone;
+    private $address;
+    private $city;
+    private $state;
+    private $date_added;
+    private $date_updated;
+    private $date_worked;
+    private $date_scheduled;
+    private $call_back_time;
+    private $disposition;
+    private $confirmed_date;
+    private $rep_user_id;
+    private $interview_date;
+    private $merge_status;
+    private $lead_source;
+    private $sg_message_id;
+    private $sg_timestamp;
     
-    public $candidate_table;
+    private $candidate_table;
 
     public function __construct($id = null)
     {
@@ -279,9 +279,8 @@ class Candidate
     /**
      * save_candidate
      * 
-     * Saves the candidate to the database 
+     * Saves the candidate object to the database 
      * 
-     * @param  Candidate $candidate
      * @return void
      */
     public function save() {

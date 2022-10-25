@@ -187,6 +187,7 @@ class Tjg_Csbs_Admin
 		$method 			= $_POST['method'] ?? $_GET['method'] ?? null;
 		$agent_id 			= $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
 		$candidate_data 	= array(
+			'id'			=> $_POST['candidate_id'] ?? $_GET['candidate_id'] ?? null,
 			'first_name' 	=> $_POST['first_name'] ?? $_GET['first_name'] ?? null,
 			'last_name' 	=> $_POST['last_name'] ?? $_GET['last_name'] ?? null,
 			'email' 		=> $_POST['email_address'] ?? $_GET['email_address'] ?? null,
@@ -213,8 +214,15 @@ class Tjg_Csbs_Admin
 				$payload[] = $common->delete_candidate($_POST['id']);
 				break;
 			case 'update_candidate':
-				wp_send_json_error($_POST, 400);
-				die;
+					$candidate_update = new Candidate($candidate_data['id']);
+					$candidate_update->set_first_name($candidate_data['first_name']);
+					$candidate_update->set_last_name($candidate_data['last_name']);
+					$candidate_update->set_email($candidate_data['email']);
+					$candidate_update->set_phone($candidate_data['phone']);
+					$candidate_update->set_city($candidate_data['city']);
+					$candidate_update->set_state($candidate_data['state']);
+					$payload[] = $candidate_update->save();
+				break;
 			case 'get_spreadsheet_summary':
 				$file = $_FILES['file'] ?? null;
 				if (is_null($file)) wp_send_json_error('No file specified');
