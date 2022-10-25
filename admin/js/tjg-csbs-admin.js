@@ -312,7 +312,7 @@
       e.preventDefault();
       const table = $("#tjg-csbs-candidates-table").DataTable();
       // Get selected rows
-      var selectedRows = table.rows({ selected: true }).data();
+      const selectedRows = table.rows({ selected: true }).data();
       // Get selected template
       var selectedTemplate = $("#tjg-csbs-select-template").val();
 
