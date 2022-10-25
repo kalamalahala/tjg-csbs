@@ -112,27 +112,27 @@ class Candidate
         return $this->state;
     }
 
-    public function get_date_added(): Date
+    public function get_date_added(): string
     {
         return $this->date_added;
     }
 
-    public function get_date_updated(): Date
+    public function get_date_updated(): string
     {
         return $this->date_updated;
     }
 
-    public function get_date_worked(): Date
+    public function get_date_worked(): string
     {
         return $this->date_worked;
     }
 
-    public function get_date_scheduled(): Date
+    public function get_date_scheduled(): string
     {
         return $this->date_scheduled;
     }
 
-    public function get_call_back_time(): Date
+    public function get_call_back_time(): string
     {
         return $this->call_back_time;
     }
@@ -142,7 +142,7 @@ class Candidate
         return $this->disposition;
     }
 
-    public function get_confirmed_date(): Date
+    public function get_confirmed_date(): string
     {
         return $this->confirmed_date;
     }
@@ -152,7 +152,7 @@ class Candidate
         return $this->rep_user_id;
     }
 
-    public function get_interview_date(): Date
+    public function get_interview_date(): string
     {
         return $this->interview_date;
     }
@@ -172,7 +172,7 @@ class Candidate
         return $this->sg_message_id;
     }
 
-    public function get_sg_timestamp(): Date
+    public function get_sg_timestamp(): string
     {
         return $this->sg_timestamp;
     }
@@ -208,27 +208,27 @@ class Candidate
         $this->state = $state;
     }
 
-    public function set_date_added(Date $date_added)
+    public function set_date_added(string $date_added)
     {
         $this->date_added = $date_added;
     }
 
-    public function set_date_updated(Date $date_updated)
+    public function set_date_updated(string $date_updated)
     {
         $this->date_updated = $date_updated;
     }
 
-    public function set_date_worked(Date $date_worked)
+    public function set_date_worked(string $date_worked)
     {
         $this->date_worked = $date_worked;
     }
 
-    public function set_date_scheduled(Date $date_scheduled)
+    public function set_date_scheduled(string $date_scheduled)
     {
         $this->date_scheduled = $date_scheduled;
     }
 
-    public function set_call_back_time(Date $call_back_time)
+    public function set_call_back_time(string $call_back_time)
     {
         $this->call_back_time = $call_back_time;
     }
@@ -238,7 +238,7 @@ class Candidate
         $this->disposition = $disposition;
     }
 
-    public function set_confirmed_date(Date $confirmed_date)
+    public function set_confirmed_date(string $confirmed_date)
     {
         $this->confirmed_date = $confirmed_date;
     }
@@ -248,7 +248,7 @@ class Candidate
         $this->rep_user_id = $rep_user_id;
     }
 
-    public function set_interview_date(Date $interview_date)
+    public function set_interview_date(string $interview_date)
     {
         $this->interview_date = $interview_date;
     }
@@ -268,7 +268,7 @@ class Candidate
         $this->sg_message_id = $sg_message_id;
     }
 
-    public function set_sg_timestamp(Date $sg_timestamp)
+    public function set_sg_timestamp(string $sg_timestamp)
     {
         $this->sg_timestamp = $sg_timestamp;
     }
@@ -285,8 +285,9 @@ class Candidate
      * @return void
      */
     public function save() {
-        global $wpdb;
-        $table = $this->candidate_table;
+        global $wpdb;                                              // Get the global $wpdb object
+        $table = $this->candidate_table;                           // Get the table name
+        $this->set_date_updated(date('Y-m-d H:i:s'));              // Set the date updated to now
 
         $data = array(
             'first_name' => $this->get_first_name(),               // string
@@ -295,19 +296,19 @@ class Candidate
             'phone' => $this->get_phone(),                         // string
             'city' => $this->get_city(),                           // string
             'state' => $this->get_state(),                         // string
-            'date_added' => $this->get_date_added(),               // Date
-            'date_updated' => $this->get_date_updated(),           // Date
-            'date_worked' => $this->get_date_worked(),             // Date
-            'date_scheduled' => $this->get_date_scheduled(),       // Date
-            'call_back_time' => $this->get_call_back_time(),       // Date
+            'date_added' => $this->get_date_added(),               // string
+            'date_updated' => $this->get_date_updated(),           // string
+            'date_worked' => $this->get_date_worked(),             // string
+            'date_scheduled' => $this->get_date_scheduled(),       // string
+            'call_back_time' => $this->get_call_back_time(),       // string
             'disposition' => $this->get_disposition(),             // string
-            'confirmed_date' => $this->get_confirmed_date(),       // Date
+            'confirmed_date' => $this->get_confirmed_date(),       // string
             'rep_user_id' => $this->get_rep_user_id(),             // int
-            'interview_date' => $this->get_interview_date(),       // Date
+            'interview_date' => $this->get_interview_date(),       // string
             'merge_status' => $this->get_merge_status(),           // string
             'lead_source' => $this->get_lead_source(),             // string
             'sg_message_id' => $this->get_sg_message_id(),         // string
-            'sg_timestamp' => $this->get_sg_timestamp()            // Date
+            'sg_timestamp' => $this->get_sg_timestamp()            // string
         );
 
         $entry_format =
@@ -331,9 +332,12 @@ class Candidate
                 '%s',   // lead_source
                 '%s',   // sg_message_id
                 '%s'    // sg_timestamp
-            );
+            ); // entry_format
 
-        // Update candidate by id
+        // Check if the candidate already exists
+        $candidate_exists = (($this->email_exists($this->get_email())) || ($this->phone_exists($this->get_phone())));
+        
+        // Update candidate if ID is set
         if ($this->get_id() != null) {
             $where = array('id' => $this->get_id());
             $where_format = array('%d');
@@ -345,8 +349,7 @@ class Candidate
                 error_log('WPDB Query' . $wpdb->last_query);
                 error_log('Exception: ' . $e->getMessage());
             }
-        } else {
-            // Insert new candidate if email and phone are not already in the database
+        } else if (!$candidate_exists) { // Create new candidate since id is null
             try {
                 $wpdb->insert($table, $data, $entry_format);
             } catch (Exception $e) {
@@ -355,11 +358,16 @@ class Candidate
                 error_log('WPDB Query' . $wpdb->last_query);
                 error_log('Exception: ' . $e->getMessage());
             }
+        } else {
+            error_log('Candidate already exists but somehow we got here before being caught by AJAX handler');
         }
     } // end save_candidate
 
     public static function email_exists(string $email): bool
     {
+        if (empty($email)) {
+            return false;
+        }
         global $wpdb;
         $table = Candidate::get_table();
         $query = "SELECT * FROM $table WHERE email = '$email'";
@@ -373,6 +381,9 @@ class Candidate
 
     public static function phone_exists(string $phone): bool
     {
+        if (empty($phone)) {
+            return false;
+        }
         global $wpdb;
         $table = Candidate::get_table();
         $query = "SELECT * FROM $table WHERE phone = '$phone'";
@@ -383,4 +394,39 @@ class Candidate
             return false;
         }
     } // end phone_exists
+
+    /**
+     * get_existing_id
+     * 
+     * Returns the id of the candidate if the email or phone already exists in the database
+     * 
+     * @param  string $email
+     * @param  string $phone
+     * @param  string $mode
+     * 
+     * @return int
+     */
+    public static function get_existing_id(string $email, string $phone, string $mode = 'email'): int
+    {
+        $table = Candidate::get_table();
+        switch ($mode) {
+            case 'email':
+                $query = "SELECT id FROM $table WHERE email = '$email'";
+                break;
+            case 'phone':
+                $query = "SELECT id FROM $table WHERE phone = '$phone'";
+                break;
+            default:
+                $query = "SELECT id FROM $table WHERE email = '$email'";
+                break;
+        }
+
+        global $wpdb;
+        $result = $wpdb->get_results($query);
+        if (count($result) > 0) {
+            return $result[0]->id;
+        } else {
+            return 0;
+        }
+    } // end get_id_existing
 }

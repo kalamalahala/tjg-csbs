@@ -232,7 +232,6 @@ class Tjg_Csbs_Admin
 				// create single candidate form
 			case 'create_single_candidate':
 				if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified', 400);
-				// rework using Candidate class
 				$new_candidate = new Candidate();
 				$new_candidate->first_name = $candidate_data['first_name'];
 				$new_candidate->last_name = $candidate_data['last_name'];
@@ -241,13 +240,25 @@ class Tjg_Csbs_Admin
 				$new_candidate->city = $candidate_data['city'];
 				$new_candidate->state = $candidate_data['state'];
 				$new_candidate->lead_source = $candidate_data['lead_source'];
+				$new_candidate->date_added = date('Y-m-d H:i:s');
 
-				if (!Candidate::email_exists($new_candidate->email) && !Candidate::phone_exists($new_candidate->phone)) {
-					$new_candidate->save();
-					$payload[] = $new_candidate;
-				} else {
-					wp_send_json_error('Candidate already exists', 400);
+				// Send error message if Phone or Email exist, or if both exist send existing candidate
+				$existing_phone = Candidate::phone_exists($new_candidate->phone);
+				$existing_email = Candidate::email_exists($new_candidate->email);
+				$phone_error = 'Phone number';
+				$email_error = 'Email address';
+				$append = ' already exists.';
+
+				if ($existing_phone && $existing_email) { // 'Phone number and email address already exist'
+					wp_send_json_error($phone_error . ' and ' . $email_error . $append, 400);
+				} elseif ($existing_phone) { // 'Phone number already exists'
+					wp_send_json_error($phone_error . $append, 400);
+				} elseif ($existing_email) { // 'Email address already exists'
+					wp_send_json_error($email_error . $append, 400);
 				}
+
+				// Save new candidate
+				$paylod[] = $new_candidate->save();
 				break;
 
 				/* old method
