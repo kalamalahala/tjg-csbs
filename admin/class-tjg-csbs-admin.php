@@ -261,34 +261,6 @@ class Tjg_Csbs_Admin
 				$new_candidate->save();
 				$payload[] = $new_candidate;
 				break;
-
-				/* old method
-				$first_name = $candidate_data['first_name'];
-				$last_name = $candidate_data['last_name'];
-				$email = $candidate_data['email'];
-				$phone = $candidate_data['phone'];
-				$city = $candidate_data['city'];
-				$state = $candidate_data['state'];
-				$source = $candidate_data['lead_source'];
-
-				if (empty($email) && empty($phone)) {
-					error_log('Candidate not created: no email or phone');
-					error_log(print_r($candidate_data, true));
-					wp_send_json_error('Email or Phone is required for candidate insertion.');
-				}
-				$date = date('Y-m-d H:i:s');
-				$payload = $common->tjg_csbs_insert_new_candidate(
-					$first_name,
-					$last_name,
-					$phone,
-					$email,
-					$city,
-					$state,
-					$date,
-					$source
-				);
-				break;
-				*/
 			case 'assign_candidate':
 				$payload[] = $common->assign_candidate($_POST['agent_id'], $_POST['candidate_ids']);
 				break;

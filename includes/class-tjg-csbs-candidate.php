@@ -429,4 +429,20 @@ class Candidate
             return 0;
         }
     } // end get_id_existing
+
+    public function delete_candidate(int $id = null): bool
+    {
+        global $wpdb;
+        $table = Candidate::get_table();
+        if ($id == null) {
+            $id = $this->get_id();
+        }
+        $query = "DELETE FROM $table WHERE id = $id";
+        $success = $wpdb->query($query);
+        if ($success) {
+            return true;
+        } else {
+            return false;
+        }
+    } // end delete_candidate
 }

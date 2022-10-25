@@ -203,7 +203,8 @@
             // Get the candidate id from the ajax request
             const idString = row.id.toString();
             const viewButton = '<a href="?page=tjg-csbs-admin-view-candidate&candidate_id='+idString+'" class="btn btn-sm btn-primary tjg-csbs-candidate-view" title="View Candidate">View</a>';
-            return viewButton;
+            const actionPopover = '<div class="btn-group tjg-csbs-candidate-actions" role="group" aria-label="Candidate Actions"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button><div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item tjg-csbs-candidate-merge" href="#" title="Merge Candidate">Merge</a><a class="dropdown-item tjg-csbs-candidate-delete" href="#" title="Delete Candidate">Delete</a></div></div>';
+            return viewButton + actionPopover;
           },
         },
       ],
