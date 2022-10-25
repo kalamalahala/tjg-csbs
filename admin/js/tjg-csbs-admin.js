@@ -311,20 +311,24 @@
     $("#tjg-csbs-select-template-form").submit(function (e) {
       e.preventDefault();
       const table = $("#tjg-csbs-candidates-table").DataTable();
-      // Get selected rows
-      const selectedRows = table.rows({ selected: true }).data();
-      // Get selected template
-      var selectedTemplate = $("#tjg-csbs-select-template").val();
+      // get candidate ids from selected rows
+      const selected_rows = $.map(
+        $("#tjg-csbs-candidates").DataTable().rows(".selected").nodes(),
+        function (item) {
+          return $(item).data("id");
+        }
+      );
 
       // Loop through selected rows to create a comma delimited string of candidate IDs
       var candidateIDs = "";
-      $.each(selectedRows, function (key, value) {
+      $.each(selected_rows, function (key, value) {
         candidateIDs += value.id + ",";
       });
       // Remove the last comma from the string
       candidateIDs = candidateIDs.slice(0, -1);
 
-      console.log(selectedRows);
+      console.log('candidateIDs: ', candidateIDs);
+      console.log(selected_rows);
     });
 
     $("#tjg-csbs-candidates tbody").on(
