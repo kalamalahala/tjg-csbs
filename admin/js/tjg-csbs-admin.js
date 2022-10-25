@@ -354,7 +354,7 @@
       });
     });
 
-    $('.tjg-csbs-candidate-delete').on('click', function(e) {
+    $(document).on('click', '.tjg-csbs-candidate-delete', function(e) {
       e.preventDefault();
 
       // Show confirmation dialog
