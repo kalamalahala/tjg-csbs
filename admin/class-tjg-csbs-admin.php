@@ -246,14 +246,15 @@ class Tjg_Csbs_Admin
 			case 'create_single_candidate':
 				if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified', 400);
 				$new_candidate = new Candidate();
-				$new_candidate->first_name = $candidate_data['first_name'];
-				$new_candidate->last_name = $candidate_data['last_name'];
-				$new_candidate->email = $candidate_data['email'];
-				$new_candidate->phone = $candidate_data['phone'];
-				$new_candidate->city = $candidate_data['city'];
-				$new_candidate->state = $candidate_data['state'];
-				$new_candidate->lead_source = $candidate_data['lead_source'];
-				$new_candidate->date_added = date('Y-m-d H:i:s');
+				$new_candidate->set_first_name($candidate_data['first_name']);
+				$new_candidate->set_last_name($candidate_data['last_name']);
+				$new_candidate->set_email($candidate_data['email']);
+				$new_candidate->set_phone($candidate_data['phone']);
+				$new_candidate->set_city($candidate_data['city']);
+				$new_candidate->set_state($candidate_data['state']);
+				$new_candidate->set_lead_source($candidate_data['lead_source']);
+				$payload[] = $new_candidate->save();
+				break;
 
 				// Send error message if Phone or Email exist, or if both exist send existing candidate
 				$existing_phone = Candidate::phone_exists($new_candidate->phone);
