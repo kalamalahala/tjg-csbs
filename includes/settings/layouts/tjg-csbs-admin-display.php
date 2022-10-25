@@ -208,7 +208,7 @@ $common = new Common();
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" type="submit" form="updateCandidate">Save</button>
+                        <button type="button" class="btn btn-primary" type="submit" form="updateCandidate" value="Submit">Save</button>
                     </div>
                 </form>
             </div>
