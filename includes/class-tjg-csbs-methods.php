@@ -1580,7 +1580,11 @@ class Tjg_Csbs_Common
         $args = array(
             'headers' => array(
                 'Authorization' => 'Bearer ' . $key
-            )
+            ),
+            'data-urlencode' => array(
+                'generations' => 'dynamic',
+                'page_size' => 100
+            ),
         );
 
         $response = wp_remote_get($url, $args);
