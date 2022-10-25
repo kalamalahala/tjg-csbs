@@ -175,14 +175,14 @@ class Tjg_Csbs_Admin
 		if (!$tjg_csbs_admin) {
 			wp_send_json_error('You do not have permission to do this');
 		}
-		
+
 		// Load method handler
 		$common = new Common();
 		// $payload = [];
-		
-		
-		
-		
+
+
+
+
 		// Collect variables from POST or GET
 		$method 			= $_POST['method'] ?? $_GET['method'] ?? null;
 		$agent_id 			= $_POST['agent_id'] ?? $_GET['agent_id'] ?? null;
@@ -198,65 +198,85 @@ class Tjg_Csbs_Admin
 
 		$candidate_to_email = $_POST['candidate_to_email'] ?? $_GET['candidate_to_email'] ?? null;
 
-		
+
 		// Check for method
 		if (!isset($method)) {
 			wp_send_json_error('No method specified');
 		}
-		
+
 		// Handle method
 		switch ($method) {
 			case 'get_candidates':
 				$payload = $common->get_candidates();
 				break;
-				case 'delete_candidate':
-					$payload[] = $common->delete_candidate($_POST['id']);
-					break;
-					case 'get_spreadsheet_summary':
-						$file = $_FILES['file'] ?? null;
-						if (is_null($file)) wp_send_json_error('No file specified');
-						$payload[] = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
+			case 'delete_candidate':
+				$payload[] = $common->delete_candidate($_POST['id']);
 				break;
-				case 'upload_new_candidates':
-					$file = $_FILES['file'] ?? null;
-					if (is_null($file)) wp_send_json_error('No file specified');
-					$mode = $_POST['mode'] ?? null;
-					if (is_null($mode)) wp_send_json_error('No mode specified');
-					$selected_columns = json_decode(stripslashes($_POST['selectData'])) ?? null;
-					$payload[] = $common->tjg_csbs_ajax_parse_spreadsheet(
-						$file,
-						$selected_columns,
-						$mode
-					);
-					break;
-					// create single candidate form
-					case 'create_single_candidate':
-						if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified', 400);
-						$first_name = $candidate_data['first_name'];
-						$last_name = $candidate_data['last_name'];
-						$email = $candidate_data['email'];
-						$phone = $candidate_data['phone'];
-						$city = $candidate_data['city'];
-						$state = $candidate_data['state'];
-						$source = $candidate_data['lead_source'];
+			case 'get_spreadsheet_summary':
+				$file = $_FILES['file'] ?? null;
+				if (is_null($file)) wp_send_json_error('No file specified');
+				$payload[] = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
+				break;
+			case 'upload_new_candidates':
+				$file = $_FILES['file'] ?? null;
+				if (is_null($file)) wp_send_json_error('No file specified');
+				$mode = $_POST['mode'] ?? null;
+				if (is_null($mode)) wp_send_json_error('No mode specified');
+				$selected_columns = json_decode(stripslashes($_POST['selectData'])) ?? null;
+				$payload[] = $common->tjg_csbs_ajax_parse_spreadsheet(
+					$file,
+					$selected_columns,
+					$mode
+				);
+				break;
+				// create single candidate form
+			case 'create_single_candidate':
+				if (is_null($candidate_data)) wp_send_json_error('No $candidate_data specified', 400);
+				// rework using Candidate class
+				$new_candidate = new Candidate();
+				$new_candidate->first_name = $candidate_data['first_name'];
+				$new_candidate->last_name = $candidate_data['last_name'];
+				$new_candidate->email = $candidate_data['email'];
+				$new_candidate->phone = $candidate_data['phone'];
+				$new_candidate->city = $candidate_data['city'];
+				$new_candidate->state = $candidate_data['state'];
+				$new_candidate->lead_source = $candidate_data['lead_source'];
 
-						if (empty($email) && empty($phone)) {
-							error_log('Candidate not created: no email or phone');
-							error_log(print_r($candidate_data, true));
-							wp_send_json_error('Email or Phone is required for candidate insertion.');
-						}
-						$date = date('Y-m-d H:i:s');
-						$payload = $common->tjg_csbs_insert_new_candidate(
-										$first_name,
-										$last_name,
-										$phone,
-										$email,
-										$city,
-										$state,
-										$date,
-										$source
-									);
-									break;
+				if (!Candidate::email_exists($new_candidate->email) && !Candidate::phone_exists($new_candidate->phone)) {
+					$new_candidate->save();
+					$payload[] = $new_candidate;
+				} else {
+					wp_send_json_error('Candidate already exists', 400);
+				}
+				break;
+
+				/* old method
+				$first_name = $candidate_data['first_name'];
+				$last_name = $candidate_data['last_name'];
+				$email = $candidate_data['email'];
+				$phone = $candidate_data['phone'];
+				$city = $candidate_data['city'];
+				$state = $candidate_data['state'];
+				$source = $candidate_data['lead_source'];
+
+				if (empty($email) && empty($phone)) {
+					error_log('Candidate not created: no email or phone');
+					error_log(print_r($candidate_data, true));
+					wp_send_json_error('Email or Phone is required for candidate insertion.');
+				}
+				$date = date('Y-m-d H:i:s');
+				$payload = $common->tjg_csbs_insert_new_candidate(
+					$first_name,
+					$last_name,
+					$phone,
+					$email,
+					$city,
+					$state,
+					$date,
+					$source
+				);
+				break;
+				*/
 			case 'assign_candidate':
 				$payload[] = $common->assign_candidate($_POST['agent_id'], $_POST['candidate_ids']);
 				break;
@@ -315,7 +335,8 @@ class Tjg_Csbs_Admin
 	 * 
 	 * @since 1.0.0
 	 */
-	public function tjg_csbs_add_roles() {
+	public function tjg_csbs_add_roles()
+	{
 		add_role(
 			'tjg_csbs_admin',
 			'CSBS Admin',
@@ -323,14 +344,14 @@ class Tjg_Csbs_Admin
 				'read' => true,
 				'upload_files' => true,
 			)
-			);
+		);
 		add_role(
 			'tjg_csbs_agent',
 			'CSBS Agent',
 			array(
 				'read' => true,
 			)
-			);
+		);
 	}
 
 	/**
@@ -339,7 +360,8 @@ class Tjg_Csbs_Admin
 	 * @since 1.0.0
 	 */
 
-	public function tjg_csbs_add_capabilities() {
+	public function tjg_csbs_add_capabilities()
+	{
 		$role = get_role('tjg_csbs_admin');
 		$role->add_cap('tjg_csbs_admin', true);
 
@@ -349,7 +371,7 @@ class Tjg_Csbs_Admin
 		$role = get_role('tjg_csbs_agent');
 		$role->add_cap('tjg_csbs_agent', true);
 	}
-	 
+
 	#endregion Roles and Capabilities #############################################
 
 	#region Sendgrid Webhook Callback #############################################
@@ -365,7 +387,7 @@ class Tjg_Csbs_Admin
 		// error_log(print_r($webhook_data, true));
 		// return false;
 
-		foreach ($webhook_data as $request){
+		foreach ($webhook_data as $request) {
 			$webhook_timestamp 		= $request['timestamp'];
 			$merge 					= $request['event'];
 			$email 					= $request['email'];
@@ -442,12 +464,10 @@ class Tjg_Csbs_Admin
 			error_log('Invalid signature');
 			error_log(print_r($payload, true));
 		}
-		
-
-
 	}
 
-	public function tjg_csbs_sendgrid_webhook_verify($public_key, $payload_event, $signature, $timestamp) {
+	public function tjg_csbs_sendgrid_webhook_verify($public_key, $payload_event, $signature, $timestamp)
+	{
 		// append timestamp to payload
 		$timestamp_payload = $payload_event . $timestamp;
 
