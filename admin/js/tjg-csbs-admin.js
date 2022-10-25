@@ -363,9 +363,11 @@
     $('#updateCandidate').submit(
       function(e) {
         e.preventDefault();
+        const id = $('#tjg_csbs_id').val();
         
         // Get form data
         let formData = new FormData(this);
+        formData.append('id', id);
         formData.append('action', 'tjg_csbs_admin');
         formData.append('method', 'update_candidate');
         formData.append('nonce', ajax_object.nonce);
