@@ -77,11 +77,7 @@ $common = new Common();
             </table>
         </div>
     </div>
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#updateForm">
-      Launch
-    </button>
-    
+   
     <!-- Modal -->
     <div class="modal fade" id="updateForm" tabindex="-1" role="dialog" aria-labelledby="Update Candidate" aria-hidden="true">
         <div class="modal-dialog" role="document">
