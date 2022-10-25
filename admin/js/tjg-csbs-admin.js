@@ -358,6 +358,13 @@
       // Show modal and populate form with candidate data
       $('#updateForm').modal('show');
     });
+
+    // Send AJAX to Update Candidate when form is submitted
+    $(document).on('submit', '#updateForm', function(e) {
+      e.preventDefault();
+      console.log('Update Candidate Form Submitted');
+
+    });
     
     // Delete Candidate
     $(document).on('click', '.tjg-csbs-candidate-delete', function(e) {
