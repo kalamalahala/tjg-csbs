@@ -339,15 +339,14 @@
     $(document).on('click', '.tjg-csbs-candidate-update', function(e) {
       e.preventDefault();
       // Get ID from data-id attribute
-      var id = $(this).data("id");
+      const id = $(this).data("id");
       // Get row
       var row = $(this).closest("tr");
       // get data from row
       var data = $("#tjg-csbs-candidates").DataTable().row(row).data();
-      // console.log(data);
 
       // set values in modal
-      $('#tjg_csbs_id').val(data.id);
+      $('#tjg_csbs_id').val(id);
       $('#tjg_csbs_first_name').val(data.first_name);
       $('#tjg_csbs_last_name').val(data.last_name);
       $('#tjg_csbs_email').val(data.email);
