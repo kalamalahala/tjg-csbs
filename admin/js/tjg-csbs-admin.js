@@ -264,7 +264,7 @@
       '<form id="tjg-csbs-select-template-form">' +
         '<label for="tjg-csbs-select-template">Select Template: </label>' +
         '<select id="tjg-csbs-select-template" class="form-control"><option value="0">Select Template</option></select>' +
-        '<button id="tjg-csbs-send-template-btn" class="btn btn-primary btn-sm ml-2">Send</button>' +
+        '<button id="tjg-csbs-send-template-btn" class="btn btn-primary btn-sm ml-2" type="submit">Send</button>' +
         "</form>"
     );
 
@@ -302,6 +302,28 @@
           });
         });
       },
+    });
+
+    // Populate Select Template dropdown
+    // todo
+
+    // Send Template button form submit
+    $("#tjg-csbs-select-template-form").submit(function (e) {
+      e.preventDefault();
+      // Get selected rows
+      var selectedRows = table.rows({ selected: true }).data();
+      // Get selected template
+      var selectedTemplate = $("#tjg-csbs-select-template").val();
+
+      // Loop through selected rows to create a comma delimited string of candidate IDs
+      var candidateIDs = "";
+      $.each(selectedRows, function (key, value) {
+        candidateIDs += value.id + ",";
+      });
+      // Remove the last comma from the string
+      candidateIDs = candidateIDs.slice(0, -1);
+
+      console.log(candidateIDs);
     });
 
     $("#tjg-csbs-candidates tbody").on(
