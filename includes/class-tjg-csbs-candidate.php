@@ -77,102 +77,102 @@ class Candidate
         return $empty_candidate->candidate_table;
     }
 
-    public function get_id(): int
+    public function get_id(): int|null
     {
         return $this->id;
     }
 
-    public function get_first_name(): string
+    public function get_first_name(): string|null
     {
         return $this->first_name;
     }
 
-    public function get_last_name(): string
+    public function get_last_name(): string|null
     {
         return $this->last_name;
     }
 
-    public function get_email(): string
+    public function get_email(): string|null
     {
         return $this->email;
     }
 
-    public function get_phone(): string
+    public function get_phone(): string|null
     {
         return $this->phone;
     }
 
-    public function get_city(): string
+    public function get_city(): string|null
     {
         return $this->city;
     }
 
-    public function get_state(): string
+    public function get_state(): string|null
     {
         return $this->state;
     }
 
-    public function get_date_added(): string
+    public function get_date_added(): string|null
     {
         return $this->date_added;
     }
 
-    public function get_date_updated(): string
+    public function get_date_updated(): string|null
     {
         return $this->date_updated;
     }
 
-    public function get_date_worked(): string
+    public function get_date_worked(): string|null
     {
         return $this->date_worked;
     }
 
-    public function get_date_scheduled(): string
+    public function get_date_scheduled(): string|null
     {
         return $this->date_scheduled;
     }
 
-    public function get_call_back_time(): string
+    public function get_call_back_time(): string|null
     {
         return $this->call_back_time;
     }
 
-    public function get_disposition(): string
+    public function get_disposition(): string|null
     {
         return $this->disposition;
     }
 
-    public function get_confirmed_date(): string
+    public function get_confirmed_date(): string|null
     {
         return $this->confirmed_date;
     }
 
-    public function get_rep_user_id(): int
+    public function get_rep_user_id(): int|null
     {
         return $this->rep_user_id;
     }
 
-    public function get_interview_date(): string
+    public function get_interview_date(): string|null
     {
         return $this->interview_date;
     }
 
-    public function get_merge_status(): string
+    public function get_merge_status(): string|null
     {
         return $this->merge_status;
     }
 
-    public function get_lead_source(): string
+    public function get_lead_source(): string|null
     {
         return $this->lead_source;
     }
 
-    public function get_sg_message_id(): string
+    public function get_sg_message_id(): string|null
     {
         return $this->sg_message_id;
     }
 
-    public function get_sg_timestamp(): string
+    public function get_sg_timestamp(): string|null
     {
         return $this->sg_timestamp;
     }
