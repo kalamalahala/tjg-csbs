@@ -335,25 +335,17 @@
       }
     );
 
-    $("#ajax-test").on("click", function () {
-      console.log("ajax test");
-      $.ajax({
-        url: ajax_object.ajax_url,
-        type: "post",
-        data: {
-          action: "tjg_csbs_admin",
-          nonce: ajax_object.nonce,
-          method: "get_candidates",
-        },
-        success: function (response) {
-          console.log(response);
-        },
-        error: function (response) {
-          console.log(response);
-        },
-      });
-    });
+    // Update Candidate
+    $(document).on('click', '.tjg-csbs-candidate-update', function(e) {
+      e.preventDefault();
+      // Get ID from data-id attribute
+      var id = $(this).data("id");
 
+      // Show modal and populate form with candidate data
+      $('#updateForm').modal('show');
+    });
+    
+    // Delete Candidate
     $(document).on('click', '.tjg-csbs-candidate-delete', function(e) {
       e.preventDefault();
 
