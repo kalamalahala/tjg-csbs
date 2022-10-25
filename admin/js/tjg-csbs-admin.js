@@ -204,7 +204,7 @@
             const idString = row.id.toString();
             const viewButton = '<a href="?page=tjg-csbs-admin-view-candidate&candidate_id='+idString+'" class="btn btn-sm btn-primary tjg-csbs-candidate-view" title="View Candidate">View</a>';
             const actionPopover = '<div class="btn-group dropleft tjg-csbs-candidate-actions" role="group" aria-label="Candidate Actions"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button><div class="dropdown-menu"><a class="dropdown-item tjg-csbs-candidate-view" href="?page=tjg-csbs-admin-view-candidate&candidate_id='+idString+'" title="View Candidate"><i class="fa fa-eye"></i> View</a><div class="dropdown-divider"></div><a class="dropdown-item tjg-csbs-candidate-delete text-danger" href="#" data-id="'+idString+'" title="Delete Candidate"><i class="fa fa-exclamation-triangle"></i> Delete</a></div></div>';
-            return viewButton + actionPopover;
+            return actionPopover;
           },
         },
       ],
@@ -353,6 +353,38 @@
         },
       });
     });
+
+    $('.tjg-csbs-candidate-delete').on('click', function(e) {
+      e.preventDefault();
+
+      // Show confirmation dialog
+      var r = confirm('Are you sure you want to delete this candidate?');
+      if (r == true) {
+        // Get ID from data-id attribute
+        var id = $(this).data('id');
+
+        // Send AJAX to Delete Candidate
+        $.ajax({
+          url: ajax_object.ajax_url,
+          type: 'POST',
+          data: {
+            action: 'tjg_csbs_admin',
+            nonce: ajax_object.nonce,
+            method: 'delete_candidate',
+            id: id
+          },
+          success: function(response) {
+            // redraw table
+            $('#tjg-csbs-candidates').DataTable().ajax.reload();
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+
+      }
+    });
+
 
     $("#tjg-csbs-assign-agent-btn").on("click", function (e) {
       e.preventDefault();
