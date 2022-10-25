@@ -350,6 +350,8 @@ class Candidate
             }
         } else if (!$candidate_exists) { // Create new candidate since id is null
             try {
+                $this->set_date_added(date('Y-m-d H:i:s')); // Set the date added to now
+                $data['date_added'] = $this->get_date_added();
                 $wpdb->insert($table, $data, $entry_format);
             } catch (Exception $e) {
                 error_log('Error inserting candidate ' . $this->get_first_name() . ' ' . $this->get_last_name());
