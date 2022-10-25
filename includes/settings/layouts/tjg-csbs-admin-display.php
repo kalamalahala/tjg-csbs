@@ -102,7 +102,7 @@ $common = new Common();
                                     <div class="form-group row">
                                         <label for="first_name" class="col-sm-4 col-form-label">First Name</label>
                                         <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name">
+                                            <input type="text" class="form-control" id="tjg_csbs_first_name" name="first_name" placeholder="First Name">
                                         </div>
                                     </div>
                                 </div>
@@ -110,7 +110,7 @@ $common = new Common();
                                     <div class="form-group row">
                                         <label for="last_name" class="col-sm-4 col-form-label">Last Name</label>
                                         <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name">
+                                            <input type="text" class="form-control" id="tjg_csbs_last_name" name="last_name" placeholder="Last Name">
                                         </div>
                                     </div>
                                 </div>
@@ -120,7 +120,7 @@ $common = new Common();
                                     <div class="form-group row">
                                         <label for="email" class="col-sm-4 col-form-label">Email</label>
                                         <div class="col-sm-8">
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                                            <input type="email" class="form-control" id="tjg_csbs_email" name="email" placeholder="Email">
                                         </div>
                                     </div>
                                 </div>
@@ -128,7 +128,7 @@ $common = new Common();
                                     <div class="form-group row">
                                         <label for="phone" class="col-sm-4 col-form-label">Phone</label>
                                         <div class="col-sm-8">
-                                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone">
+                                            <input type="tel" class="form-control" id="tjg_csbs_phone" name="phone" placeholder="Phone">
                                         </div>
                                     </div>
                                 </div>
@@ -138,7 +138,7 @@ $common = new Common();
                                     <div class="form-group row">
                                         <label for="city" class="col-sm-4 col-form-label">City</label>
                                         <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="city" name="city" placeholder="City">
+                                            <input type="text" class="form-control" id="tjg_csbs_city" name="city" placeholder="City">
                                         </div>
                                     </div>
                                 </div>

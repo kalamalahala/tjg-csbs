@@ -340,6 +340,11 @@
       e.preventDefault();
       // Get ID from data-id attribute
       var id = $(this).data("id");
+      // Get row
+      var row = $(this).closest("tr");
+      // get data from row
+      var data = $("#tjg-csbs-candidates").DataTable().row(row).data();
+      console.log(data);
 
       // Show modal and populate form with candidate data
       $('#updateForm').modal('show');
