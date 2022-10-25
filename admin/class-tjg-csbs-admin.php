@@ -215,7 +215,7 @@ class Tjg_Csbs_Admin
 					$payload[] = $common->delete_candidate($_POST['id']);
 					break;
 					case 'update_candidate':
-						wp_send_json_error($candidate_data, 400);
+						// wp_send_json_error($candidate_data, 400);
 					$candidate_update = new Candidate($candidate_data['id']);
 					$candidate_update->set_first_name($candidate_data['first_name']);
 					$candidate_update->set_last_name($candidate_data['last_name']);
