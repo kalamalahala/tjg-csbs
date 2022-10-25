@@ -212,6 +212,9 @@ class Tjg_Csbs_Admin
 			case 'delete_candidate':
 				$payload[] = $common->delete_candidate($_POST['id']);
 				break;
+			case 'update_candidate':
+				wp_send_json_error($_POST, 400);
+				die;
 			case 'get_spreadsheet_summary':
 				$file = $_FILES['file'] ?? null;
 				if (is_null($file)) wp_send_json_error('No file specified');

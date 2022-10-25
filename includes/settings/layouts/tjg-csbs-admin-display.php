@@ -95,6 +95,8 @@ $common = new Common();
                 <div class="modal-body">
                     <div class="container-fluid">
                         <form action="" id="updateCandidate">
+                            <input type="hidden" name="tjg_csbs_id" value="0">
+
                             <!-- bootstrap 4 rows for First Name, Last Name
                             Email, Phone, City, State -->
                             <div class="row">

@@ -347,6 +347,7 @@
       // console.log(data);
 
       // set values in modal
+      $('#tjg_csbs_id').val(data.id);
       $('#tjg_csbs_first_name').val(data.first_name);
       $('#tjg_csbs_last_name').val(data.last_name);
       $('#tjg_csbs_email').val(data.email);
@@ -363,8 +364,32 @@
     $('#updateCandidate').submit(
       function(e) {
         e.preventDefault();
-        console.log('Update Candidate Form Submitted');
-        return undefined;        
+        
+        // Get form data
+        let formData = new FormData(this);
+        formData.append('action', 'tjg_csbs_admin');
+        formData.append('method', 'update_candidate');
+        formData.append('nonce', ajax_object.nonce);
+
+        // Send AJAX to Update Candidate
+        $.ajax({
+          url: ajax_object.ajax_url,
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            console.log(response);
+            // Hide modal
+            $('#updateForm').modal('hide');
+            // Reload table
+            $("#tjg-csbs-candidates").DataTable().ajax.reload();
+          },
+          error: function (error) {
+            console.log(error);
+          },
+        });
+            
       }
     );
     
