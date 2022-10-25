@@ -344,7 +344,7 @@
       var row = $(this).closest("tr");
       // get data from row
       var data = $("#tjg-csbs-candidates").DataTable().row(row).data();
-      console.log(data);
+      // console.log(data);
 
       // set values in modal
       $('#tjg_csbs_first_name').val(data.first_name);
@@ -360,7 +360,7 @@
     });
 
     // Send AJAX to Update Candidate when form is submitted
-    $(document).on('submit', '#updateForm', function(e) {
+    $(document).on('submit', '#updateCandidate', function(e) {
       e.preventDefault();
       console.log('Update Candidate Form Submitted');
 
