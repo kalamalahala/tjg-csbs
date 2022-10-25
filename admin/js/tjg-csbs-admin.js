@@ -324,7 +324,7 @@
       // Remove the last comma from the string
       candidateIDs = candidateIDs.slice(0, -1);
 
-      console.log(candidateIDs);
+      console.log(selectedRows);
     });
 
     $("#tjg-csbs-candidates tbody").on(
