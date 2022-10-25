@@ -305,7 +305,27 @@
     });
 
     // Populate Select Template dropdown
-    // todo
+    $.ajax({
+      url: ajax_object.ajax_url,
+      type: "POST",
+      data: {
+        action: "tjg_csbs_admin",
+        method: "get_sendgrid_templates",
+        nonce: ajax_object.nonce,
+      },
+      success: function (response) {
+        console.log(response);
+        var templates = response.data[0];
+        $.each(templates, function (key, value) {
+          $("#tjg-csbs-select-template").append(
+            '<option value="' + value.id + '">' + value.name + "</option>"
+          );
+        });
+      },
+      error: function (response) {
+        console.log(response);
+      }
+    });
 
     // Send Template button form submit
     $("#tjg-csbs-select-template-form").submit(function (e) {
@@ -318,17 +338,10 @@
           return $(item).data("id");
         }
       );
+      // console.log(selected_rows);
 
-      // Loop through selected rows to create a comma delimited string of candidate IDs
-      var candidateIDs = "";
-      $.each(selected_rows, function (key, value) {
-        candidateIDs += value.id + ",";
-      });
-      // Remove the last comma from the string
-      candidateIDs = candidateIDs.slice(0, -1);
-
-      console.log('candidateIDs: ', candidateIDs);
-      console.log(selected_rows);
+      // get template id from select
+      const template_id = $("#tjg-csbs-select-template").val();
     });
 
     $("#tjg-csbs-candidates tbody").on(

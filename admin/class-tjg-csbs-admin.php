@@ -197,10 +197,10 @@ class Tjg_Csbs_Admin
 			'lead_source' 	=> $_POST['lead_source'] ?? $_GET['lead_source'] ?? null,
 		);
 
-		
+
 		$candidate_to_email = $_POST['candidate_to_email'] ?? $_GET['candidate_to_email'] ?? null;
-		
-		
+
+
 		// Check for method
 		if (!isset($method)) {
 			wp_send_json_error('No method specified');
@@ -211,19 +211,19 @@ class Tjg_Csbs_Admin
 			case 'get_candidates':
 				$payload = $common->get_candidates();
 				break;
-				case 'delete_candidate':
-					$payload[] = $common->delete_candidate($_POST['id']);
-					break;
-					case 'update_candidate':
-						// wp_send_json_error($candidate_data, 400);
-					$candidate_update = new Candidate($candidate_data['id']);
-					$candidate_update->set_first_name($candidate_data['first_name']);
-					$candidate_update->set_last_name($candidate_data['last_name']);
-					$candidate_update->set_email($candidate_data['email']);
-					$candidate_update->set_phone($candidate_data['phone']);
-					$candidate_update->set_city($candidate_data['city']);
-					$candidate_update->set_state($candidate_data['state']);
-					$payload[] = $candidate_update->save();
+			case 'delete_candidate':
+				$payload[] = $common->delete_candidate($_POST['id']);
+				break;
+			case 'update_candidate':
+				// wp_send_json_error($candidate_data, 400);
+				$candidate_update = new Candidate($candidate_data['id']);
+				$candidate_update->set_first_name($candidate_data['first_name']);
+				$candidate_update->set_last_name($candidate_data['last_name']);
+				$candidate_update->set_email($candidate_data['email']);
+				$candidate_update->set_phone($candidate_data['phone']);
+				$candidate_update->set_city($candidate_data['city']);
+				$candidate_update->set_state($candidate_data['state']);
+				$payload[] = $candidate_update->save();
 				break;
 			case 'get_spreadsheet_summary':
 				$file = $_FILES['file'] ?? null;
@@ -282,6 +282,9 @@ class Tjg_Csbs_Admin
 				break;
 			case 'get_agent_name':
 				$payload[] = $common->get_agent_name($agent_id);
+				break;
+			case 'get_sendgrid_templates':
+				$payload[] = $common->get_sendgrid_templates();
 				break;
 			case 'send_bulk_sms':
 				$numbers = $_POST['numbers'] ?? null;

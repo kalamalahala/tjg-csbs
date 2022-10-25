@@ -1573,6 +1573,28 @@ class Tjg_Csbs_Common
         return $key;
     }
 
+    public function get_sendgrid_templates() {
+        $key = $this->sendgrid_api_key();
+        $url = 'https://api.sendgrid.com/v3/templates';
+
+        $args = array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $key
+            )
+        );
+
+        $response = wp_remote_get($url, $args);
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $body = json_decode($body);
+
+        return $body;
+    }
+
     /**
      * sendgrid_email_send_confirmation
      * 
