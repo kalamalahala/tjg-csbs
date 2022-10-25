@@ -94,8 +94,63 @@ $common = new Common();
                         </div>
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <form action="">
-                            to display update form
+                        <form action="" id="updateCandidate">
+                            <!-- bootstrap 4 rows for First Name, Last Name
+                            Email, Phone, City, State -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="first_name" class="col-sm-4 col-form-label">First Name</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="last_name" class="col-sm-4 col-form-label">Last Name</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="email" class="col-sm-4 col-form-label">Email</label>
+                                        <div class="col-sm-8">
+                                            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="phone" class="col-sm-4 col-form-label">Phone</label>
+                                        <div class="col-sm-8">
+                                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="city" class="col-sm-4 col-form-label">City</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="city" name="city" placeholder="City">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="state" class="col-sm-4 col-form-label">State</label>
+                                        <div class="col-sm-8">
+                                            to be added
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>
