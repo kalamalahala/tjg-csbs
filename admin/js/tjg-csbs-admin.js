@@ -310,6 +310,7 @@
     // Send Template button form submit
     $("#tjg-csbs-select-template-form").submit(function (e) {
       e.preventDefault();
+      const table = $("#tjg-csbs-candidates-table").DataTable();
       // Get selected rows
       var selectedRows = table.rows({ selected: true }).data();
       // Get selected template
