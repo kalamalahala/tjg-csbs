@@ -346,6 +346,15 @@
       var data = $("#tjg-csbs-candidates").DataTable().row(row).data();
       console.log(data);
 
+      // set values in modal
+      $('#tjg_csbs_first_name').val(data.first_name);
+      $('#tjg_csbs_last_name').val(data.last_name);
+      $('#tjg_csbs_email').val(data.email);
+      $('#tjg_csbs_phone').val(data.phone);
+      $('#tjg_csbs_email').val(data.email);
+      $('#tjg_csbs_city').val(data.city);
+      $('#tjg_csbs_state').val(data.state);
+
       // Show modal and populate form with candidate data
       $('#updateForm').modal('show');
     });
