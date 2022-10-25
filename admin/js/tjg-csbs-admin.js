@@ -511,7 +511,6 @@
         processData: false,
         data: form_data,
         success: function (response) { // wp_send_json always returns here, so handle logic here
-          if (response.success == true) {
             // enable button
             $("#create-single-candidate-submit").prop("disabled", false);
             // clear form
@@ -524,21 +523,19 @@
             setTimeout(function () {
               successMessage.prop('hidden', true);
             }, 5000);
-          } else {
-
-            // enable button
-            $("#create-single-candidate-submit").prop("disabled", false);
-            let errorText = errorMessage.innerText;
-            // Append error message: response.data after innerHTML of #error
-            errorText += response.data;
-    
-            // show error message
-            errorMessage.prop('hidden', false);
-            successMessage.prop('hidden', true);
-
-          }
         },
         error: function (response) {
+          // enable button
+          $("#create-single-candidate-submit").prop("disabled", false);
+
+          // append error message to error div
+          errorMessage.html(response.responseText);
+          errorMessage.prop('hidden', false);
+          successMessage.prop('hidden', true);
+
+          setTimeout(function () {
+            errorMessage.prop('hidden', true);
+          }, 5000);
           console.log(response);
         },
       });
