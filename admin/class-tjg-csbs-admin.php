@@ -210,6 +210,7 @@ class Tjg_Csbs_Admin
 		switch ($method) {
 			case 'get_candidates':
 				$payload = $common->get_candidates();
+				wp_send_json($payload);
 				break;
 			case 'delete_candidate':
 				$payload[] = $common->delete_candidate($_POST['id']);
