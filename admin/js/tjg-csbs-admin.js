@@ -54,7 +54,7 @@
       "&nonce=" +
       ajax_nonce;
 
-    console.log(agentList);
+    // console.log(agentList[2].agent_name);
 
     // DataTables AJAX init
     $("#tjg-csbs-candidates").DataTable({
@@ -188,12 +188,11 @@
             // return '' if data is null or undefined
             if (data === null || data === undefined) {
               return "";
+            } else {
+              return agentList[data].agent_name;
             }
-            console.log("data: " + data);
-            console.log("row: " + row);
-            console.log("agentList: " + agentList);
             /* Render rep name from agentList */
-            return agentList[data].agent_name;
+            // return agentList.data.agent_name;
           },
         },
         {
@@ -308,27 +307,27 @@
     });
 
     // Populate Select Template dropdown
-    $.ajax({
-      url: ajax_object.ajax_url,
-      type: "POST",
-      data: {
-        action: "tjg_csbs_admin",
-        method: "get_sendgrid_templates",
-        nonce: ajax_object.nonce,
-      },
-      success: function (response) {
-        console.log(response);
-        var templates = response.data[0];
-        $.each(templates, function (key, value) {
-          $("#tjg-csbs-select-template").append(
-            '<option value="' + value.id + '">' + value.name + "</option>"
-          );
-        });
-      },
-      error: function (response) {
-        console.log(response);
-      }
-    });
+    // $.ajax({
+    //   url: ajax_object.ajax_url,
+    //   type: "POST",
+    //   data: {
+    //     action: "tjg_csbs_admin",
+    //     method: "get_sendgrid_templates",
+    //     nonce: ajax_object.nonce,
+    //   },
+    //   success: function (response) {
+    //     console.log(response);
+    //     var templates = response.data[0];
+    //     $.each(templates, function (key, value) {
+    //       $("#tjg-csbs-select-template").append(
+    //         '<option value="' + value.id + '">' + value.name + "</option>"
+    //       );
+    //     });
+    //   },
+    //   error: function (response) {
+    //     console.log(response);
+    //   }
+    // });
 
     // Send Template button form submit
     $("#tjg-csbs-select-template-form").submit(function (e) {
@@ -545,11 +544,11 @@
           success_message.attr("role", "alert");
           success_message.html(
             "Successfully assigned " +
-              response.data[0].candidates_assigned +
+              response.data.candidates_assigned +
               " candidates to " +
-              response.data[0].agent_name +
+              response.data.agent_name +
               " with " +
-              response.data[0].error_count +
+              response.data.error_count +
               " errors."
           );
           $("#tjg-csbs-select-agent-form").append(success_message);
