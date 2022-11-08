@@ -16,8 +16,8 @@ class Tjg_Csbs_Settings {
     private $version;
 
 	// Vonage settings
-	private $vonage_api_key;
-	private $vonage_api_secret;
+	// private $vonage_api_key;
+	// private $vonage_api_secret;
 
     public function __construct( $plugin_name, $version) {
         $this->plugin_name = $plugin_name;

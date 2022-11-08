@@ -189,6 +189,9 @@
             if (data === null || data === undefined) {
               return "";
             }
+            console.log("data: " + data);
+            console.log("row: " + row);
+            console.log("agentList: " + agentList);
             /* Render rep name from agentList */
             return agentList[data].agent_name;
           },
