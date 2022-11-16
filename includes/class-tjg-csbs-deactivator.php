@@ -36,12 +36,14 @@ class Tjg_Csbs_Deactivator {
 		$log_table_name = $wpdb->prefix . 'tjg_csbs_log';
 		$candidate_notes_table_name = $wpdb->prefix . 'tjg_csbs_notes';
         $call_log_table_name = $wpdb->prefix . 'tjg_csbs_call_log';
+		$dnc_list_table_name = $wpdb->prefix . 'tjg_csbs_dnc_list';
 
 		// Drop table if exists
 		// $wpdb->query("DROP TABLE IF EXISTS $candidate_table_name");
 		// $wpdb->query("DROP TABLE IF EXISTS $log_table_name");
 		// $wpdb->query("DROP TABLE IF EXISTS $candidate_notes_table_name");
 		// $wpdb->query("DROP TABLE IF EXISTS $call_log_table_name");
+		// $wpdb->query("DROP TABLE IF EXISTS $dnc_list_table_name");
 
 		// do_action('qm/debug', 'Tjg_Csbs_Deactivator::deactivate()');
 
