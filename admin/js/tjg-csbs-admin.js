@@ -711,7 +711,7 @@
       } // end else
     }); // end sendEmailButton click
 
-    $(document).on('click', '#tjg-csbs-send-bulk-email-modal', function (e) {
+    $(document).on('click', '.tjg-csbs-send-bulk-email-modal', function (e) {
       e.preventDefault();
       $('#send-bulk-email').modal('show');
     });
