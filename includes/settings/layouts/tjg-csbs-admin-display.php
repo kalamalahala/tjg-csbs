@@ -2,6 +2,7 @@
 // include_once plugin_dir_path(__FILE__) . 'includes/class-tjg-csbs-methods.php';
 
 use Tjg_Csbs_Common as Common;
+
 $common = new Common();
 
 /**
@@ -77,17 +78,17 @@ $common = new Common();
             </table>
         </div>
     </div>
-   
+
     <!-- Modal -->
     <div class="modal fade" id="updateForm" tabindex="-1" role="dialog" aria-labelledby="Update Candidate" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                    <div class="modal-header">
-                            <h5 class="modal-title">Update Candidate</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                        </div>
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Candidate</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <div class="container-fluid">
                         <form action="" id="updateCandidate">
@@ -202,13 +203,44 @@ $common = new Common();
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" form="updateCandidate" value="Submit">Save</button>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="updateCandidate" value="Submit">Save</button>
+                </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <!-- Bulk Email Modal -->
+    <div class="modal fade" id="send-bulk-email" tabindex="-1" role="dialog" aria-labelledby="send-bulk-email" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><?php echo __('Send Bulk Email', 'text-domain'); ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <form action="" method="post" id="send-bulk-email-form">
+                            <!-- comma seperated list of selected client IDs -->
+                            <textarea type="text" name="candidate-id-list" id="candidate-id-list" value="0"></textarea>
+                            <input type="number" name="candidate-count" id="candidate-count" value="0">
+                            <label for="bulk-email-recipients"><?php echo __('Recipients', 'text-domain'); ?></label>
+                            <div id="bulk-email-recipients"><span class="bulk-email-recipients-count">0</span> Recipients Selected</div>
+                            <div class="form-group">
+                                <!-- extras -->
+                            </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo __('Cancel', 'text-domain'); ?></button>
+                    <button type="submit" class="btn btn-primary send-bulk-email-submit"><?php echo __('Send', 'text-domain'); ?></button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

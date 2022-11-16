@@ -204,8 +204,8 @@
             // bootstrap 4 small button: View
             // Get the candidate id from the ajax request
             const idString = row.id.toString();
-            const viewButton = '<a href="?page=tjg-csbs-admin-view-candidate&candidate_id='+idString+'" class="btn btn-sm btn-primary tjg-csbs-candidate-view" title="View Candidate">View</a>';
-            const actionPopover = '<div class="btn-group dropleft tjg-csbs-candidate-actions" role="group" aria-label="Candidate Actions"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button><div class="dropdown-menu"><a class="dropdown-item tjg-csbs-candidate-view" href="?page=tjg-csbs-admin-view-candidate&candidate_id='+idString+'" title="View Candidate"><i class="fa fa-eye"></i> View</a><a class="dropdown-item tjg-csbs-candidate-update" href="#" data-id="'+idString+'" title="Update Candidate"><i class="fa fa-edit"></i> Update</a><div class="dropdown-divider"></div><a class="dropdown-item tjg-csbs-candidate-delete text-danger" href="#" data-id="'+idString+'" title="Delete Candidate"><i class="fa fa-exclamation-triangle"></i> Delete</a></div></div>';
+            const viewButton = '<a href="?page=tjg-csbs-admin-view-candidate&candidate_id=' + idString + '" class="btn btn-sm btn-primary tjg-csbs-candidate-view" title="View Candidate">View</a>';
+            const actionPopover = '<div class="btn-group dropleft tjg-csbs-candidate-actions" role="group" aria-label="Candidate Actions"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button><div class="dropdown-menu"><a class="dropdown-item tjg-csbs-candidate-view" href="?page=tjg-csbs-admin-view-candidate&candidate_id=' + idString + '" title="View Candidate"><i class="fa fa-eye"></i> View</a><a class="dropdown-item tjg-csbs-candidate-update" href="#" data-id="' + idString + '" title="Update Candidate"><i class="fa fa-edit"></i> Update</a><div class="dropdown-divider"></div><a class="dropdown-item tjg-csbs-candidate-delete text-danger" href="#" data-id="' + idString + '" title="Delete Candidate"><i class="fa fa-exclamation-triangle"></i> Delete</a></div></div>';
             return actionPopover;
           },
         },
@@ -239,6 +239,10 @@
               cascadePanes: true,
             },
           },
+          {
+            text: "Send Bulk Email to Selected",
+            className: "btn-sm btn-primary tjg-csbs-send-bulk-email-modal",
+          },
         ],
       },
       select: {
@@ -255,20 +259,20 @@
     // Add Select Agent dropdown
     $("div.select-agent").html(
       '<form id="tjg-csbs-select-agent-form">' +
-        '<label for="tjg-csbs-select-agent">Select Agent: </label>' +
-        '<select id="tjg-csbs-select-agent" class="form-control"><option value="0">Select Agent</option></select>' +
-        '<button id="tjg-csbs-assign-agent-btn" class="btn btn-primary btn-sm ml-2">Assign</button>' +
-        "</form>"
+      '<label for="tjg-csbs-select-agent">Select Agent: </label>' +
+      '<select id="tjg-csbs-select-agent" class="form-control"><option value="0">Select Agent</option></select>' +
+      '<button id="tjg-csbs-assign-agent-btn" class="btn btn-primary btn-sm ml-2">Assign</button>' +
+      "</form>"
     );
 
     // Add Select Template dropdown
-    $("div.select-template").html(
-      '<form id="tjg-csbs-select-template-form">' +
-        '<label for="tjg-csbs-select-template">Select Template: </label>' +
-        '<select id="tjg-csbs-select-template" class="form-control"><option value="0">Select Template</option></select>' +
-        '<button id="tjg-csbs-send-template-btn" class="btn btn-primary btn-sm ml-2" type="submit">Send</button>' +
-        "</form>"
-    );
+    // $("div.select-template").html(
+    //   '<form id="tjg-csbs-select-template-form">' +
+    //     '<label for="tjg-csbs-select-template">Select Template: </label>' +
+    //     '<select id="tjg-csbs-select-template" class="form-control"><option value="0">Select Template</option></select>' +
+    //     '<button id="tjg-csbs-send-template-btn" class="btn btn-primary btn-sm ml-2" type="submit">Send</button>' +
+    //     "</form>"
+    // );
 
     // Populate Select Agent dropdown
     $.ajax({
@@ -295,10 +299,10 @@
             success: function (nameCheck) {
               $("#tjg-csbs-select-agent").append(
                 '<option value="' +
-                  value.data.ID +
-                  '">' +
-                  nameCheck.data[0].agent_name +
-                  "</option>"
+                value.data.ID +
+                '">' +
+                nameCheck.data[0].agent_name +
+                "</option>"
               );
             },
           });
@@ -387,7 +391,7 @@
     );
 
     // Update Candidate
-    $(document).on('click', '.tjg-csbs-candidate-update', function(e) {
+    $(document).on('click', '.tjg-csbs-candidate-update', function (e) {
       e.preventDefault();
       // Get ID from data-id attribute
       const id = $(this).data("id");
@@ -412,10 +416,10 @@
 
     // Send AJAX to Update Candidate when form is submitted
     $('#updateCandidate').submit(
-      function(e) {
+      function (e) {
         e.preventDefault();
         const id = $('#tjg_csbs_id').val();
-        
+
         // Get form data
         let formData = new FormData(this);
         formData.append('candidate_id', id);
@@ -441,12 +445,12 @@
             console.log(error);
           },
         });
-            
+
       }
     );
-    
+
     // Delete Candidate
-    $(document).on('click', '.tjg-csbs-candidate-delete', function(e) {
+    $(document).on('click', '.tjg-csbs-candidate-delete', function (e) {
       e.preventDefault();
 
       // Show confirmation dialog
@@ -465,11 +469,11 @@
             method: 'delete_candidate',
             id: id
           },
-          success: function(response) {
+          success: function (response) {
             // redraw table
             $('#tjg-csbs-candidates').DataTable().ajax.reload();
           },
-          error: function(error) {
+          error: function (error) {
             console.log(error);
           }
         });
@@ -544,12 +548,12 @@
           success_message.attr("role", "alert");
           success_message.html(
             "Successfully assigned " +
-              response.data.candidates_assigned +
-              " candidates to " +
-              response.data.agent_name +
-              " with " +
-              response.data.error_count +
-              " errors."
+            response.data.candidates_assigned +
+            " candidates to " +
+            response.data.agent_name +
+            " with " +
+            response.data.error_count +
+            " errors."
           );
           $("#tjg-csbs-select-agent-form").append(success_message);
           setTimeout(function () {
@@ -636,18 +640,18 @@
         processData: false,
         data: form_data,
         success: function (response) { // wp_send_json always returns here, so handle logic here
-            // enable button
-            $("#create-single-candidate-submit").prop("disabled", false);
-            // clear form
-            $("#create-single-candidate").trigger("reset");
-            // show success message
-            successMessage.prop('hidden', false);
-            errorMessage.prop('hidden', true);
-  
-            // fade out success message after 5 seconds
-            setTimeout(function () {
-              successMessage.prop('hidden', true);
-            }, 5000);
+          // enable button
+          $("#create-single-candidate-submit").prop("disabled", false);
+          // clear form
+          $("#create-single-candidate").trigger("reset");
+          // show success message
+          successMessage.prop('hidden', false);
+          errorMessage.prop('hidden', true);
+
+          // fade out success message after 5 seconds
+          setTimeout(function () {
+            successMessage.prop('hidden', true);
+          }, 5000);
         },
         error: function (response) {
           // enable button
@@ -667,8 +671,8 @@
     });
 
     // View Candidate page actions
-    const updateButton    = $("#update-candidate");
-    const deleteButton    = $("#delete-candidate");
+    const updateButton = $("#update-candidate");
+    const deleteButton = $("#delete-candidate");
     const sendEmailButton = $("#send-email");
 
     // Email AJAX
@@ -707,53 +711,57 @@
       } // end else
     }); // end sendEmailButton click
 
+    $(document).on('click', '#tjg-csbs-send-bulk-email-modal', function (e) {
+      e.preventDefault();
+      $('#send-bulk-email').modal('show');
+    });
 
   });
 })(jQuery);
 
 /*
 $(document).ready(function() {
-	$('#example').DataTable.ext.pager.numbers_length = 4;
-	  $('#example').DataTable( {
-		  "fnDrawCallback": function( oSettings ){
-		  console.log("in");
-			  },
-			  dom: 'Bfrtip',
-	   buttons: {
-		buttons: [
-			  { extend: 'copy', className: 'btn btn-success'},
-			  { extend: 'excel', className: 'excelButton' }
-				 ],
-		 dom: {
-			button: {
-			className: 'btn'
-			   }
-		 }
-	   },
-		  "footerCallback": function ( row, data, start, end, display ) {
-			  var api = this.api();
-			  var intVal = function ( i ) {
-				console.log(i, numeral(i).value());
-				  return typeof i === 'string' ?
-						  numeral(i).value() : i;};
-			  total = api
-				  .column( 2 )
-				  .data()
-				  .reduce( function (a, b) {
-					  return intVal(a) + intVal(b);
-				  }, 0 );
-			  pageTotal = api
-				  .column( 2, { page: 'current'} )
-				  .data()
-				  .reduce( function (a, b) {
-					  return intVal(a) + intVal(b);
-				  }, 0 );
-			  total = numeral(total).format('0.0a');
-			  pageTotal = numeral(pageTotal).format('0.0a');
-						  $( api.column( 2 ).footer() ).html(
-				  '--'+pageTotal +' ( --'+ total +' total)'
-			  );
-		  }
-	  } );
+  $('#example').DataTable.ext.pager.numbers_length = 4;
+    $('#example').DataTable( {
+      "fnDrawCallback": function( oSettings ){
+      console.log("in");
+        },
+        dom: 'Bfrtip',
+     buttons: {
+    buttons: [
+        { extend: 'copy', className: 'btn btn-success'},
+        { extend: 'excel', className: 'excelButton' }
+         ],
+     dom: {
+      button: {
+      className: 'btn'
+         }
+     }
+     },
+      "footerCallback": function ( row, data, start, end, display ) {
+        var api = this.api();
+        var intVal = function ( i ) {
+        console.log(i, numeral(i).value());
+          return typeof i === 'string' ?
+              numeral(i).value() : i;};
+        total = api
+          .column( 2 )
+          .data()
+          .reduce( function (a, b) {
+            return intVal(a) + intVal(b);
+          }, 0 );
+        pageTotal = api
+          .column( 2, { page: 'current'} )
+          .data()
+          .reduce( function (a, b) {
+            return intVal(a) + intVal(b);
+          }, 0 );
+        total = numeral(total).format('0.0a');
+        pageTotal = numeral(pageTotal).format('0.0a');
+              $( api.column( 2 ).footer() ).html(
+          '--'+pageTotal +' ( --'+ total +' total)'
+        );
+      }
+    } );
   } );
   */
