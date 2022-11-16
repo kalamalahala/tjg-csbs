@@ -1745,8 +1745,6 @@ class Tjg_Csbs_Common
             'tjg_csbs_sendgrid_email_from_name' => $this->sendgrid_email_from_name()
         );
 
-
-
         if (in_array(null, $plugin_settings)) { // If any of the plugin settings are null, return false
             error_log('SendGrid plugin settings are not configured');
             return false;
