@@ -329,4 +329,5 @@ class Tjg_Csbs
 	{
 		return $this->version;
 	}
+
 }

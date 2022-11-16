@@ -231,6 +231,20 @@ class Tjg_Csbs_Admin
 				if (is_null($file)) wp_send_json_error('No file specified');
 				$payload[] = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
 				break;
+
+
+			case 'get_dnc_summary':
+				$file = $_FILES['dnc-file'] ?? null;
+				if (is_null($file)) wp_send_json_error('No file specified');
+				$payload[] = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
+				break;
+
+			case 'upload_dnc_list':
+				$file = $_FILES['dnc-file'] ?? null;
+				if (is_null($file)) wp_send_json_error('No file specified');
+				$payload[] = $common->handle_dnc_spreadsheet($file);
+				break;
+
 			case 'upload_new_candidates':
 				$file = $_FILES['file'] ?? null;
 				if (is_null($file)) wp_send_json_error('No file specified');

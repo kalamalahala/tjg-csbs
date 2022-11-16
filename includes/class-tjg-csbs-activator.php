@@ -49,6 +49,7 @@ class Tjg_Csbs_Activator
         $log_table_name = $wpdb->prefix . 'tjg_csbs_log';
         $candidate_notes_table_name = $wpdb->prefix . 'tjg_csbs_notes';
         $call_log_table_name = $wpdb->prefix . 'tjg_csbs_call_log';
+        $dnc_list_table_name = $wpdb->prefix . 'tjg_csbs_dnc_list';
 
         // Check if the table exists
         if ($wpdb->get_var("SHOW TABLES LIKE '$candidate_table_name'") != $candidate_table_name) {
@@ -116,11 +117,24 @@ class Tjg_Csbs_Activator
                 ) $charset_collate;";
         }
 
+        if ($wpdb->get_var("SHOW TABLES LIKE '$dnc_list_table_name'") != $dnc_list_table_name) {
+            // Create CSBS DNC List table
+            $dnc_list_table = "CREATE TABLE $dnc_list_table_name (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                phone VARCHAR(10) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                date_added DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                PRIMARY KEY  (id)
+                ) $charset_collate;";
+        }
+
+
         // Create the table
         if (isset($candidate_table_query)) dbDelta($candidate_table_query);
         if (isset($log_table)) dbDelta($log_table);
         if (isset($candidate_notes_table)) dbDelta($candidate_notes_table);
         if (isset($call_log_table)) dbDelta($call_log_table);
+        if (isset($dnc_list_table)) dbDelta($dnc_list_table);
 
         // do_action('qm/debug', 'Tjg_Csbs_Activator::activate()');
     }

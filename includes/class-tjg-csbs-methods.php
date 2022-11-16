@@ -236,6 +236,109 @@ class Tjg_Csbs_Common
             die();
     }
 
+    public function handle_dnc_spreadsheet($file) {
+        $payload = [];
+        $email_count = 0;
+
+        // Pass file to wp_handle_upload
+        $upload = wp_handle_upload($file, array('test_form' => false));
+
+        // File type using IOFactory::identify()
+        $file_type = IOFactory::identify($upload['file']);
+        $reader = IOFactory::createReader($file_type);
+
+        // Pass upload to reader
+        $spreadsheet = $reader->load($upload['file']);
+
+        if ($spreadsheet) {
+            // Get worksheet
+            $worksheet = $spreadsheet->getActiveSheet();
+
+            // Collect specified columns from each row and insert into database
+            foreach ($worksheet->getRowIterator(2) as $row) {
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(true);
+                // foreach ($cellIterator as $cell) {
+                //     $col = $cell->getColumn();
+                //     $val = $cell->getValue();
+
+                //     // Add column number and value to array
+                //     $row_data[$col] = $val;
+                // }
+
+                // collect email from cell if we're in column 1
+                if ($cellIterator->key() === 'A') {
+                    $email = $cellIterator->current()->getValue();
+                    $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+                    $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+                    if (!$email) {
+                        $payload['invalid'][] = $email;
+                        continue;
+                    }
+                }
+                
+                $phone = ''; // no phone in sheet, insert blank for now
+
+                // Add current date and time
+                $date = date("Y-m-d H:i:s");
+
+                $inserted = $this->tjg_csbs_insert_dnc($phone, $email, $date);
+
+                /* $inserted returns
+                 * true if candidate was inserted
+                 * false if candidate already exists
+                 * error string if error occurred
+                 */
+                if ($inserted === true) {
+                    $email_count++;
+                } else {
+                    $payload[$inserted][] = $email;
+                }
+            }
+
+        }
+
+        // Delete file from server
+        unlink($upload['file']);
+
+        // Send json success with payload
+        wp_send_json_success($payload, 200);
+        die();
+    }
+
+    public function tjg_csbs_insert_dnc($phone, $email, $date_added) {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'tjg_csbs_dnc_list';
+
+
+        // Check if candidate already exists
+        $exists = $wpdb->get_row("SELECT * FROM $table_name WHERE email = '$email'");
+        if ($exists) {
+            return false;
+        }
+
+        $inserted = $wpdb->insert(
+            $table_name,
+            array(
+                'phone' => $phone,
+                'email' => $email,
+                'date_added' => $date_added
+            ),
+            array(
+                '%s',
+                '%s',
+                '%s'
+            )
+        );
+
+        if ($inserted) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     #endregion Spreadsheet methods
 
     #region CRUD Operations for Candidates ################################
@@ -1620,6 +1723,19 @@ class Tjg_Csbs_Common
     {
         // echo '<h1>sendgrid_email_send_confirmation</h1>';
         // wp_send_json($candidate, 200, JSON_PRETTY_PRINT);
+
+        // If the email address is listed in $prefix . tjg_csbs_dnc_list, then do not send the email, return false
+        global $wpdb;
+        $prefix = $wpdb->prefix;
+        $dnc_list = $prefix . 'tjg_csbs_dnc_list';
+        $email = $candidate->email;
+        $sql = "SELECT * FROM $dnc_list WHERE email = '%s'";
+        $sql = $wpdb->prepare($sql, $email);
+        $result = $wpdb->get_results($sql);
+
+        if (count($result) > 0) {
+            return false;
+        }
 
         $email = new \SendGrid\Mail\Mail(); // Create a new SendGrid Mail object
 

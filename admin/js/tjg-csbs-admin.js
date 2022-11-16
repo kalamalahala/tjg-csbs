@@ -786,6 +786,95 @@
       });
     });
 
+    // listen for file added to #dnc-form #dnc-file
+    $(document).on('change', '#dnc-file', function (e) {
+      e.preventDefault();
+      const submitButton = $('#submit-dnc-button');
+      submitButton.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+      submitButton.prop('disabled', true);
+      // get the file name
+      let fileName = $(this).val().split('\\').pop();
+      // display the file name
+      $('#dnc-file-name').text(fileName);
+
+      // ajax to parse spreadsheet
+      let formData = new FormData();
+      let ajaxUrl = ajax_url;
+      let action = ajax_action;
+      let nonce = ajax_nonce;
+      let method = 'get_dnc_summary';
+
+      formData.append('action', action);
+      formData.append('nonce', nonce);
+      formData.append('method', method);
+      formData.append('dnc-file', $('#dnc-file')[0].files[0]);
+      
+      $.ajax({
+        url: ajaxUrl,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          console.log(response);
+          $('#debug-info').text(response);
+          submitButton.html('Submit ' + response.data.num_rows + ' DNC Candidate Records');
+        },
+        error: function (error) {
+          console.log(error);
+          $('#debug-info').text(response);
+          submitButton.html('Submit ' + response.data.num_rows + ' DNC Candidate Records');
+        },
+        complete: function () {
+          submitButton.prop('disabled', false);
+        }
+      });
+
+    });
+
+
+    $(document).on('submit', '#dnc-form', function (e) {
+      e.preventDefault();
+      const submitButton = $('#submit-dnc-button');
+      submitButton.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+      submitButton.prop('disabled', true);
+
+      let formData = new FormData(this);
+      let ajaxUrl = ajax_url;
+      let action = ajax_action;
+      let nonce = ajax_nonce;
+      let method = 'upload_dnc_list';
+
+      formData.append('action', action);
+      formData.append('nonce', nonce);
+      formData.append('method', method);
+
+      $.ajax({
+        url: ajaxUrl,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          console.log(response);
+          $('#debug-info').text(response.data);
+          submitButton.html('Submit');
+        },
+        error: function (error) {
+          console.log(error);
+          $('#debug-info').text(response.data);
+          submitButton.html('Submit');
+        },
+        complete: function () {
+          submitButton.prop('disabled', false);
+        }
+      });
+    });
+
+
+
+
+
   });
 })(jQuery);
 

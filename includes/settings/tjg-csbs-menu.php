@@ -95,6 +95,14 @@ class Tjg_Csbs_Menu
             'tjg-csbs-admin-bulk-message',
             array($this, 'tjg_csbs_admin_bulk_message_page')
         );
+        add_submenu_page(
+            'tjg-csbs-admin',
+            'Manage Opt-Outs',
+            'Manage Opt-Outs',
+            'tjg_csbs_admin',
+            'tjg-csbs-admin-opt-outs',
+            array($this, 'tjg_csbs_admin_opt_outs_page')
+        );
         $submenu['tjg-csbs-admin'][0][0] = 'Candidate List';
     }
 
@@ -144,4 +152,10 @@ class Tjg_Csbs_Menu
         include_once plugin_dir_path(__FILE__) . 'layouts/bulk-message.php';
         echo ob_get_clean();
     }
+
+	public function tjg_csbs_admin_opt_outs_page() {
+		ob_start();
+		include_once plugin_dir_path( __FILE__ ) . 'layouts/CRUD/dnc-list-upload.php';
+		echo ob_get_clean();
+	}
 }
