@@ -1734,7 +1734,7 @@ class Tjg_Csbs_Common
         $result = $wpdb->get_results($sql);
 
         if (count($result) > 0) {
-            return false;
+            return 'Do Not Contact';
         }
 
         $email = new \SendGrid\Mail\Mail(); // Create a new SendGrid Mail object
