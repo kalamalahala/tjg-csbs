@@ -731,7 +731,7 @@
       // collect the selected rows data-id attributes into a comma separated string
       let selectedRowsIds = [];
       $('#tjg-csbs-candidates').DataTable().rows('.selected').every(function () {
-          selectedRowsIds.push(this.data().id);
+        selectedRowsIds.push(this.data().id);
       });
       let selectedRowsIdsString = selectedRowsIds.join(',');
       console.log(selectedRowsIdsString);
@@ -739,6 +739,51 @@
 
       // show the modal
       emailModal.modal('show');
+    });
+
+
+    // bulk email submit
+    $(document).on('submit', '#send-bulk-email-form', function (e) {
+      e.preventDefault();
+
+      // if ($('#bulk-email').val().length === 0) {
+      //   return;
+      // }
+
+      $('.send-bulk-email-submit').prop('disabled', true);
+
+      $('.send-bulk-email-submit').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...');
+
+      let formData = new FormData(this);
+      let ajaxUrl = ajax_url;
+      let action = ajax_action;
+      let nonce = ajax_nonce;
+      let method = 'send_bulk_email';
+
+      formData.append('action', action);
+      formData.append('nonce', nonce);
+      formData.append('method', method);
+
+      $.ajax({
+        url: ajaxUrl,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+        complete: function () {
+          $('.send-bulk-email-submit').prop('disabled', false);
+          $('.send-bulk-email-submit').text('Send');
+          $('#send-bulk-email').modal('hide');
+          // reload the DataTables table
+          $('#tjg-csbs-candidates').DataTable().ajax.reload();
+        }
+      });
     });
 
   });
