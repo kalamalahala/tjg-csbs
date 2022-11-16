@@ -588,7 +588,7 @@
         data: {
           action: "tjg_csbs_admin",
           nonce: ajax_object.nonce,
-          method: "send_bulk_sms",
+          method: "send_bulk_email",
           numbers: numbers_array,
           message: message,
         },
@@ -713,7 +713,32 @@
 
     $(document).on('click', '.tjg-csbs-send-bulk-email-modal', function (e) {
       e.preventDefault();
-      $('#send-bulk-email').modal('show');
+      const emailModal = $('#send-bulk-email');
+      // $('#send-bulk-email').modal('show');
+      // const emailMessage = $('#bulk-email');
+
+      // $('.bulk-email-remaining').text('160');
+      // $('#bulk-email-remaining-text').removeClass('text-danger').addClass('text-muted');
+      // $('.send-bulk-email-submit').prop('disabled', false);
+      // emailMessage.val('');
+      // e.preventDefault();
+
+      // get the number of selected rows from the DataTables table
+      let selectedRows = $('#tjg-csbs-candidates').DataTable().rows('.selected').count();
+      $('.bulk-email-recipients-count').text(selectedRows);
+      $('#candidate-count').val(selectedRows);
+
+      // collect the selected rows data-id attributes into a comma separated string
+      let selectedRowsIds = [];
+      $('#tjg-csbs-candidates').DataTable().rows('.selected').every(function () {
+          selectedRowsIds.push(this.data().id);
+      });
+      let selectedRowsIdsString = selectedRowsIds.join(',');
+      console.log(selectedRowsIdsString);
+      $('#candidate-id-list').val(selectedRowsIdsString);
+
+      // show the modal
+      emailModal.modal('show');
     });
 
   });
