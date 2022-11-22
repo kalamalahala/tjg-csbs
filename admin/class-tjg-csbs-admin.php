@@ -231,8 +231,6 @@ class Tjg_Csbs_Admin
 				if (is_null($file)) wp_send_json_error('No file specified');
 				$payload[] = $common->tjg_csbs_ajax_get_spreadsheet_summary($file);
 				break;
-
-
 			case 'get_dnc_summary':
 				$file = $_FILES['dnc-file'] ?? null;
 				if (is_null($file)) wp_send_json_error('No file specified');
