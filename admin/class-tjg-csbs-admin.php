@@ -312,14 +312,14 @@ class Tjg_Csbs_Admin
 				$candidate_id = $candidate_to_email ?? null;
 				if (is_null($candidate_id)) wp_send_json_error('No candidate id specified');
 				$candidate = new Candidate($candidate_id);
-				$payload[] = $common->sendgrid_email_send_confirmation($candidate, 'd-dcedfb3d26fe40a89695e990d643e2ae', 'Interview Invitation', 'https://us02web.zoom.us/webinar/register/WN_53dnbGThQ-q4vDJOYApMVg');
+				$payload[] = $common->sendgrid_email_send_confirmation($candidate, 'd-dcedfb3d26fe40a89695e990d643e2ae', 'Interview Invitation', 'https://us02web.zoom.us/webinar/register/WN_bjsfXEyDTk6i47W0T5_7Zw');
 				break;
 			case 'send_bulk_email':
 				// break $_POST['candidate-id-list'] comma separated string into array
 				$candidate_id_list = explode(',', $_POST['candidate-id-list']);
 				foreach ($candidate_id_list as $candidate_id) {
 					$candidate = new Candidate($candidate_id);
-					$payload[] = $common->sendgrid_email_send_confirmation($candidate, 'd-dcedfb3d26fe40a89695e990d643e2ae', 'Interview Invitation', 'https://us02web.zoom.us/webinar/register/WN_53dnbGThQ-q4vDJOYApMVg');
+					$payload[] = $common->sendgrid_email_send_confirmation($candidate, 'd-dcedfb3d26fe40a89695e990d643e2ae', 'Interview Invitation', 'https://us02web.zoom.us/webinar/register/WN_bjsfXEyDTk6i47W0T5_7Zw');
 				}
 				break;
 			default:
