@@ -217,11 +217,11 @@
           },
         },
         buttons: [
-          //   {
-          //     extend: "selectAll",
-          //     className: "btn-primary",
-          //     text: "Select All",
-          //   },
+            {
+              extend: "selectAll",
+              className: "btn-primary",
+              text: "Select All",
+            },
           {
             text: "Select Visible",
             action: function (e, dt, node, config) {
